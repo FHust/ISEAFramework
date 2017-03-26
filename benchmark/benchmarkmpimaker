@@ -1,0 +1,28 @@
+#!/bin/bash
+
+config=$1
+
+cycles=10
+runs=1
+
+maxworker=`grep -c ^processor /proc/cpuinfo`
+#maxworker=1
+
+
+> benchmarkResultsMPI
+
+for worker in `seq $maxworker`; do
+  mpiworker=`expr $worker + 1`
+  for run in `seq $runs`; do
+    simout=`mpirun -np $mpiworker ./frameworkMPIBenchmark $config $cycles`
+    summary=`echo "$simout" | tail -n 4`
+
+    meantime=`    echo "$summary" | tail -n 4 | head -n 1 | cut -d " " -f 2`
+    mintime=`     echo "$summary" | tail -n 4 | head -n 1 | cut -d " " -f 5`
+    cellelements=`echo "$summary" | tail -n 2 | head -n 1 | cut -d " " -f 1`
+    workload=`    echo "$summary" | tail -n 1 | head -n 1 | cut -d " " -f 2`
+
+    echo "$worker;$run;$cellelements;$workload;$meantime;$mintime" >> benchmarkResultsMPI
+    #echo "$simout \n" >> benchmarkResultsMPI
+  done
+done

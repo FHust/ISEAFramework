@@ -1,0 +1,27 @@
+<MyZarcElement class="ZarcElement">
+
+    <LookupTau class="LookupObj2DWithState">
+        <RowState cacheref="ThermalState"/>
+        <ColState cacheref="Soc"/>
+        <LookupData> ... </LookupData>
+        <MeasurementPointsRow> ... </MeasurementPointsRow>
+        <MeasurementPointsColumn> ... </MeasurementPointsColumn>
+    </LookupTau>
+
+    <LookupOhmicResistance class="LookupObj2DWithState">
+        <RowState cacheref="ThermalState"/>
+        <ColState cacheref="Soc"/>
+        <LookupData> ... </LookupData>
+        <MeasurementPointsRow> ... </MeasurementPointsRow>
+        <MeasurementPointsColumn> ... </MeasurementPointsColumn>
+    </LookupOhmicResistance>
+
+    <LookupPhi class="LookupObj2DWithState">
+        <RowState cacheref="ThermalState"/>
+        <ColState cacheref="Soc"/>
+        <LookupData> ... </LookupData>
+        <MeasurementPointsRow> ... </MeasurementPointsRow>
+        <MeasurementPointsColumn> ... </MeasurementPointsColumn>
+    </LookupPhi>
+
+</MyZarcElement>

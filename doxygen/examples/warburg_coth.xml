@@ -1,0 +1,28 @@
+<MyWarburgCotanh1 class = "WarburgCotanh" RCCounter = "10" WithCapacity="True">
+    <Sigma class="LookupObj2dWithState">
+            <RowState cacheref="Soc"/>
+            <ColState cacheref="ThermalState"/>
+            <LookupData>
+                ...
+            </LookupData>
+            <MeasurementPointsRow desc="StateOfCharge">
+                ...
+            </MeasurementPointsRow>
+            <MeasurementPointsColumn desc="ThermalState">
+                ...
+            </MeasurementPointsColumn>
+    </Sigma>
+    <Clim class="LookupObj2dWithState">
+            <RowState cacheref="Soc"/>
+            <ColState cacheref="ThermalState"/>
+            <LookupData>
+                ...
+            </LookupData>
+            <MeasurementPointsRow desc="StateOfCharge">
+                ...
+            </MeasurementPointsRow>
+            <MeasurementPointsColumn desc="ThermalState">
+                ...
+            </MeasurementPointsColumn>
+    </Clim>
+</MyWarburgCotanh1>

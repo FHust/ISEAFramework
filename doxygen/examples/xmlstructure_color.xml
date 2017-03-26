@@ -1,0 +1,29 @@
+<div class="fragment">
+<!-- Generator: GNU source-highlight 3.1.7
+by Lorenzo Bettini
+http://www.lorenzobettini.it
+http://www.gnu.org/software/src-highlite -->
+<pre><tt><b><font color="#000080">&lt;?xml</font></b> <font color="#009900">version</font><font color="#990000">=</font><font color="#FF0000">"1.0"</font> <font color="#009900">encoding</font><font color="#990000">=</font><font color="#FF0000">"UTF-8"</font><b><font color="#000080">?&gt;</font></b>
+<b><font color="#0000FF">&lt;Configuration&gt;</font></b>
+
+    <b><font color="#0000FF">&lt;Options&gt;</font></b>
+    <b><font color="#0000FF">&lt;/Options&gt;</font></b>
+
+    <b><font color="#0000FF">&lt;Observer&gt;</font></b>
+    <b><font color="#0000FF">&lt;/Observer&gt;</font></b>
+
+    <b><font color="#0000FF">&lt;ThermalMaterials&gt;</font></b>
+    <b><font color="#0000FF">&lt;/ThermalMaterials&gt;</font></b>
+
+    <b><font color="#0000FF">&lt;Coolings&gt;</font></b>
+    <b><font color="#0000FF">&lt;/Coolings&gt;</font></b>
+
+    <b><font color="#0000FF">&lt;CustomDefinitions&gt;</font></b>
+    <b><font color="#0000FF">&lt;/CustomDefinitions&gt;</font></b>
+
+    <b><font color="#0000FF">&lt;RootElement</font></b> <font color="#009900">class</font><font color="#990000">=</font><font color="#FF0000">""</font><b><font color="#0000FF">&gt;</font></b>
+    <b><font color="#0000FF">&lt;/RootElement&gt;</font></b>
+
+<b><font color="#0000FF">&lt;/Configuration&gt;</font></b>
+</tt></pre>
+</div>

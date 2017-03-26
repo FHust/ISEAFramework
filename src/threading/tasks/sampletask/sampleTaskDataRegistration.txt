@@ -1,0 +1,27 @@
+/*
+ * sampleTaskDataRegistration.cpp
+ *
+ *  Created on: 18.11.2013
+ *      Author: chris
+ */
+
+
+
+#ifdef BOOST_MPI
+
+#include "sampleTaskInputData.h"
+#include "sampleTaskOutputData.h"
+
+#include <boost/serialization/shared_ptr.hpp>
+#include <boost/serialization/export.hpp>
+
+
+BOOST_SERIALIZATION_SHARED_PTR(threading::sampletask::SampleTaskInputData)
+BOOST_CLASS_EXPORT(threading::sampletask::SampleTaskInputData)
+
+BOOST_SERIALIZATION_SHARED_PTR(threading::sampletask::SampleTaskOutputData)
+BOOST_CLASS_EXPORT(threading::sampletask::SampleTaskOutputData)
+
+#endif //BOOST_MPI
+
+

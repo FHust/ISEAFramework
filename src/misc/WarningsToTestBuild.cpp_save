@@ -1,0 +1,68 @@
+#include "matrixInclude.h"
+
+#ifdef _ARMADILLO_
+    int PseudoFunction(int i)
+    {
+        return i + 1;
+    };
+  #ifdef SPARSE_MATRIX_FORMAT
+      int PseudoFunction2(int i)
+        {
+            return i - 1;
+        };
+    #warning Building with Sparse
+  #else
+      int PseudoFunction2(int i)
+        {
+            return i - 1;
+        };
+    #warning Building with Armadillo
+  #endif
+#elif _EIGEN_
+    int PseudoFunction(int i)
+    {
+        return i + 1;
+    };
+    #warning Building with Eigen
+#else
+    int PseudoFunction(int i)
+    {
+        return i + 1;
+    };
+    #Error Either _ARMADILLO_, or _EIGEN_ must be defined
+#endif
+
+
+
+#ifdef _DEBUG_
+    int PseudoFunction3(int i)
+    {
+        return i + 3;
+    };
+    #warning Building as debug
+#else
+    int PseudoFunction3(int i)
+    {
+        return i + 3;
+    };
+    #warning Building as release
+#endif
+
+
+
+#ifdef __NO_STRING__
+    int PseudoFunction4(int i)
+    {
+        return i + 4;
+    };
+    #warning Building with NO strings and streams
+#else
+    int PseudoFunction4(int i)
+    {
+        return i + 4;
+    };
+    #warning Building with strings and streams
+#endif
+
+
+

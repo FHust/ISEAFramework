@@ -1,0 +1,8 @@
+<BlockType1 class="RectangularBlock">
+    <Material cacheref="Rubber"/>
+    <Dimensions>0.2, 0.2, 0.2</Dimensions>
+    <SizeX>5</SizeX>
+    <SizeY>6</SizeY>
+    <SizeZ>7</SizeZ>
+    <InitialTemperature>25.0</InitialTemperature>
+</BlockType1>

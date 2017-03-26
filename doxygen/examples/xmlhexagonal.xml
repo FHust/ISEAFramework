@@ -1,0 +1,12 @@
+<BlockType class="HexagonalCellBlock">
+    <Length>0.1</Length>
+    <RadiusCell>0.04</RadiusCell>
+    <Height>0.15</Height>
+    <CellRhoDivision>2</CellRhoDivision>
+    <PhiDivision>6</PhiDivision>
+    <HeightDivision>3</HeightDivision>
+    <ArcPolygonization>0.005</ArcPolygonization>
+    <CellMaterial cacheref="Copper"/>
+    <FillMaterial cacheref="Iron"/>
+    <InitialTemperature>25</InitialTemperature>
+</BlockType>

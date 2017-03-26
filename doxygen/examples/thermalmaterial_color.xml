@@ -1,0 +1,12 @@
+<div class="fragment">
+<!-- Generator: GNU source-highlight 3.1.7
+by Lorenzo Bettini
+http://www.lorenzobettini.it
+http://www.gnu.org/software/src-highlite -->
+<pre><tt><b><font color="#0000FF">&lt;Electrolyte</font></b> <font color="#009900">class</font><font color="#990000">=</font><font color="#FF0000">"Material"</font> <font color="#009900">cache</font><font color="#990000">=</font><font color="#FF0000">"true"</font><b><font color="#0000FF">&gt;</font></b>
+    <b><font color="#0000FF">&lt;Density&gt;</font></b>2000<b><font color="#0000FF">&lt;/Density&gt;</font></b>
+    <b><font color="#0000FF">&lt;SpecificCapacity&gt;</font></b>4000<b><font color="#0000FF">&lt;/SpecificCapacity&gt;</font></b>
+    <b><font color="#0000FF">&lt;Conductivity&gt;</font></b>15<b><font color="#0000FF">&lt;/Conductivity&gt;</font></b>
+<b><font color="#0000FF">&lt;/Electrolyte&gt;</font></b>
+</tt></pre>
+</div>

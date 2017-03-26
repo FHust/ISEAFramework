@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration>
+    
+    <!-- Simulationsoptionen -->
+    <Options>
+        <SampleRate>10</SampleRate>                         <!-- Vereinfachungskriterium: Alle RC-Glieder für di gilt 3*RC = 2*Tau < 1/Samplerate werden als ohmsche Widerstände mit Wert R betrachtet. -->
+        <MaxStateSize>1</MaxStateSize>                      <!-- Mindestanzahl der Zustaende (relevant fuer Simulationen auf Echtzeithardware) -->
+        <MaxOutputSize>1</MaxOutputSize>                    <!-- Mindestanzahl der Outputs in Simulink (relevant fuer Simulationen auf Echtzeithardware) -->
+        <MaxNumberOfCells>1</MaxNumberOfCells>              <!-- Mindestanzahl der Batterien fuer die Daten geschrieben werden in Simulink (relevant fuer Simulationen auf Echtzeithardware) -->
+        <AirTemperature>25</AirTemperature>                 <!-- Globale Umgebungstemperatur -->
+        <ConvectionActivated>true</ConvectionActivated>    <!-- Schalter zur Beruecksichtigung von Freier Konvektion -->
+        <RadiationActivated>true</RadiationActivated>      <!-- Schalter zur Beruecksichtigung von Wärmestrahlung -->
+        <ThermalVisualizer>
+            <MaxNumberOfFrames>1000</MaxNumberOfFrames>         <!-- Maximale Anzahl der Bilder, die fuer die Visualisierung aufgenommen werden -->
+            <TimeBetweenFramesInSec>1</TimeBetweenFramesInSec> <!-- Zeit zwischen der Aufnahme von zwei Bildern fuer die Visualisierung -->
+        </ThermalVisualizer>
+    </Options>
+    
+    <!-- Materialien fuer die thermische Simulation -->
+    <ThermalMaterials>
+        
+        <Aluminium class="Material" cache="true">
+            <Density>2700</Density>                         <!-- Dichte [kg/m^3] -->
+            <SpecificCapacity>897</SpecificCapacity>        <!-- Spezifische Waermekapazitaet [J/(kg*K)] -->
+            <Conductivity>235</Conductivity>                <!-- Isotrope Waermeleitfaehigkeit [W/(m*K)] -->
+        </Aluminium>
+        
+    </ThermalMaterials>
+    
+    <!-- Kuehlungen fuer die thermische Simulation -->
+    <CoolingBlocks/>
+    <CachedCoolings/>
+    
+    <!-- Modellierung des elektrischen Ersatzschaltbildes und der thermischen Bloecke-->
+    <CustomDefinitions>
+         
+        <!-- Elektrisches Ersatzschaltbild -->
+        <MyParallelRC class="ParallelRC">
+            <LookupOhmicResistance class="ConstObj">
+                <Value> 1 </Value> <!-- [Ohm] -->
+            </LookupOhmicResistance>
+            <LookupTau class="ConstObj">
+                <Value> 10 </Value> <!-- [sec] -->
+            </LookupTau>
+        </MyParallelRC>
+        
+        <MyOhmicResistance class="OhmicResistance">
+            <Object class="ConstObj">
+                <Value> 1 </Value> <!-- [Ohm] -->
+            </Object>
+        </MyOhmicResistance>
+        
+        <!-- Thermische Bloecke -->
+        <MyThermalBlock class="RectangularBlock">
+            <Material cacheref="Aluminium"/>
+            <Dimensions>0.15, 0.20, 0.25</Dimensions>       <!-- Abmessungen in x-Richtungm, y-Richtung, z-Richtung -->
+            <SizeX>15</SizeX>                                <!-- Diskretisierung in x-Richtung -->
+            <SizeY>20</SizeY>                                <!-- Diskretisierung in y-Richtung -->
+            <SizeZ>25</SizeZ>                                <!-- Diskretisierung in z-Richtung -->
+            <InitialTemperature>100</InitialTemperature>   <!-- Anfangstemperatur des thermischen Blocks -->
+        </MyThermalBlock>
+        
+        <!-- CellElement: Zuweisung des elektrischen Ersatzschaltbildes und der thermischen Bloecke an eine Zelle -->
+        <MyCellElement class="CellElement" observable="True">
+            <ThermalState class="ThermalState" cache="True">
+                <InitialTemperature>25</InitialTemperature>
+            </ThermalState>
+            <Soc class="Soc" cache="True">
+                <MaxCapacity>5</MaxCapacity>                <!-- Maximale Kapazitaet der Zelle [Ah] -->
+                <InitialSoc>100</InitialSoc>                <!-- Ladezustand der Zelle zu Beginn der Simulation [%] -->
+                <Measurmentpoints>0, 10, 20, 30, 40, 50, 60, 80, 90, 100</Measurmentpoints>
+            </Soc>
+            <Children>
+                <MyOhmicResistance ref="MyOhmicResistance"/>
+                <MyParallelRC ref="MyParallelRC"/>
+            </Children>
+            <ThermalBlock ref="MyThermalBlock"/>
+        </MyCellElement>
+        
+    </CustomDefinitions>
+    
+    <!-- Wurzelknoten des Systems. Dieses Batterienetzwerk wird in der Anwendung simuliert. -->
+    <RootElement ref="MyCellElement">
+    </RootElement>
+    
+    <ThermalProbe>
+        <Position>
+            0.005, 0.005, 0.005;
+            0.005, 0.005, 0.245;
+            0.145, 0.005, 0.005;
+            0.145, 0.005, 0.245;
+            0.145, 0.195, 0.005;
+            0.145, 0.195, 0.245;
+            0.005, 0.195, 0.005;
+            0.005, 0.195, 0.245;
+        </Position>
+    </ThermalProbe>
+</Configuration>

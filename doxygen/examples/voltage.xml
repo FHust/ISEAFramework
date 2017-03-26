@@ -1,0 +1,5 @@
+<MyVoltageSource class="VoltageSource">
+    <Object class="ConstObj">
+        <Value>10</Value>
+    </Object>
+</MyVoltageSource>

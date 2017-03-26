@@ -1,0 +1,50 @@
+<div class="fragment">
+<!-- Generator: GNU source-highlight 3.1.7
+by Lorenzo Bettini
+http://www.lorenzobettini.it
+http://www.gnu.org/software/src-highlite -->
+<pre><tt>//Simulationszeit
+double t = 0.0;
+
+//Sollstrom
+double Current = 2.0;
+
+//Erzeugen eines elektrischen Netzwerkes
+boost::shared_ptr&lt; electrical::TwoPort&lt; MatrixType &gt; &gt; rootPort( GenerateNetworkFromFile("MySuperXmlConfigFile.xml") );
+
+//Erzeugen einer StateSystemGroup. Alle Gleichungen, der StateVector und das aktuelle dT werden darin gespeichert.
+systm::StateSystemGroup&lt; myMatrixType &gt; stateSystemGroup;
+
+//Zuweisen der StateSystemGroup zu allen Netzwerkobjekten
+rootPort-&gt;SetSystem(&amp;stateSystemGroup);
+
+//Initialisieren der StateSystemGroup
+stateSystemGroup.Initialize();
+
+//Initialisierung der Stromvektoren in den Netzwerkobjekten
+rootPort-&gt;SetInitialCurrent(Current);
+
+//Aufstellen der Maschen- und Differentialgleichungen. 
+//Dieser Schritt muss an dieser Stelle erfolgen, da ansonsten der initiale Zustandsvektor vom Solversystem nicht berechnet werden kann.
+rootPort-&gt;UpdateStateSystemGroup();
+
+//Erzeugen eines Solversystems mit konstanter Schrittweite von 1ms
+systm::ConstantStepDglSystemSolver&lt; myMatrixType &gt; solver(&amp;stateSystemGroup, 0.001);
+
+//Simulationschleife. Es werde exakt zehn Sekunden simuliert.
+while (t &lt; 10.00)
+{
+    //Setzen eines neuen Sollstromes
+    roorPort-&gt;SetCurrent(Current += 0.1);
+    
+    //Aufstellen der Maschen- und Differentialgleichungen
+    rootPort-&gt;UpdateStateSystemGroup();
+
+    //Lösen des Zustandsraummodells
+    t = solver.Solve();
+
+    //Berechnen der skalaren Ströme, Spannungen und Verlustleistungen. Der SoC wird integriert.
+    rootPort-&gt;CalculateStateDependentValues();
+}
+</tt></pre>
+</div>

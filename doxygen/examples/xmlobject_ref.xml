@@ -1,0 +1,27 @@
+<?xml version='1.0'?>
+<ThermalState class='ThermalState' cache='True'> ... </ThermalState>
+<Soc class='Soc' cache='True'> ... </Soc>
+ ...
+<ZarcElement class='ZarcElement' observable='TRUE'>
+    <LookupTau class='LookupObj2DWithState'>
+        <RowState cacheref='ThermalState'/>
+        <ColState cacheref='Soc'/>
+        <LookupData> ... </LookupData>
+        <MeasurementPointsRow> ... </MeasurementPointsRow>
+        <MeasurementPointsColumn> ... </MeasurementPointsColumn>
+    </LookupTau>
+    <LookupOhmicResistance class='LookupObj2DWithState'>
+        <RowState cacheref='Soc'/>
+        <ColState cacheref='ThermalState'/>
+        <LookupData> ... </LookupData>
+        <MeasurementPointsRow> ... </MeasurementPointsRow>
+        <MeasurementPointsColumn> ... </MeasurementPointsColumn>
+    </LookupOhmicResistance>
+    <LookupPhi class='LookupObj2DWithState'>
+        <RowState cacheref='Soc'/>
+        <ColState cacheref='ThermalState'/>
+        <LookupData> ... </LookupData>
+        <MeasurementPointsRow> ... </MeasurementPointsRow>
+        <MeasurementPointsColumn> ... </MeasurementPointsColumn>
+    </LookupPhi>
+</ZarcElement>

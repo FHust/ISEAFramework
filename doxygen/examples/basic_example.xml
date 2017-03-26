@@ -1,0 +1,11 @@
+<?xml version='1.0'?>
+<Configuration>
+   <CustomDefinitions>
+       <MyCapacity class='Capacity' observable='TRUE'>
+           <Object class='ConstObj'>
+                 <Value>10</Value>
+           </Object>
+       </MyCapacity>
+   </CustomDefinitions>
+   <RootElement ref='MyCapacity'/>
+</Configuration>

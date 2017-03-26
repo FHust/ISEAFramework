@@ -1,0 +1,13 @@
+<SupercapCellBlock class="Supercap">
+    <Length>0.078</Length>
+    <InnerRadiusCell>0.03163</InnerRadiusCell>
+    <OuterRadiusCell>0.0375</OuterRadiusCell>
+    <Height>0.092</Height>
+    <PhiDivision>8</PhiDivision>
+    <HeightDivision>15</HeightDivision>
+    <ArcPolygonization>0.001</ArcPolygonization>
+    <InnerCellMaterial cacheref="SupercapInnerMaterial"/>
+    <OuterCellMaterial cacheref="SupercapOuterMaterial"/>
+    <FillMaterial cacheref="Epoxy"/>
+    <InitialTemperature>25</InitialTemperature>
+</SupercapCellBlock>

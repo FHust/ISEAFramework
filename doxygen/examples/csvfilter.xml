@@ -1,0 +1,10 @@
+<Observer>
+    <Filter4 class="CSVFilter">
+        <filename>
+            sanyo.csv
+        </filename>
+        <printHeader> 1 </printHeader>
+    </Filter4>
+</Observer>
+
+

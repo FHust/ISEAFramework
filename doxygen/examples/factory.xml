@@ -1,0 +1,25 @@
+#include "../src/factory/electrical/electricalfactorybuilder.h"
+#include "../src/factory/object/objectfactorybuilder.h"
+#include "../src/factory/state/statefactorybuilder.h"
+#include "../src/xmlparser/tinyxml2/xmlparserimpl.h"
+
+template< class MatrixType >
+boost::shared_ptr< electrical::TwoPort< MatrixType > > GenerateNetworkFromFile( const char* fileName)
+{
+    //Erzeugung der Factories
+    boost::scoped_ptr< factory::Factory< ::state::Dgl_state > > stateFactory( factory::BuildStateFactory() );
+    boost::scoped_ptr< factory::Factory<object::Object<double> > > objectFactory( factory::BuildObjectFactory<double>( stateFactory.get() ) );
+    boost::scoped_ptr< factory::Factory<electrical::TwoPort< MatrixType > > > electricalFactory( factory::BuildElectricalFactory<MatrixType, double>( objectFactory.get(), stateFactory.get() ) );
+
+    //Instanziierung des Parsers und einlesen der XML-Datei
+    boost::scoped_ptr<xmlparser::XmlParser> parser(new xmlparser::tinyxml2::XmlParserImpl());
+    parser->ReadFromFile(fileName);
+
+    //XML-Element "RootPort"
+    boost::shared_ptr<xmlparser::XmlParameter> rootParam( parser->GetRoot()->GetElementChild("RootElement") );
+    
+    //Rekursive Erzeugung des gesamten elektrischen Netzwerkes
+    boost::shared_ptr< electrical::TwoPort< MatrixType > > rootPort( electricalFactory->CreateInstance(rootParam) );
+
+    return rootPort;
+}

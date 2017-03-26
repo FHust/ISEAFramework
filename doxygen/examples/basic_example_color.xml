@@ -1,0 +1,18 @@
+<div class="fragment">
+<!-- Generator: GNU source-highlight 3.1.7
+by Lorenzo Bettini
+http://www.lorenzobettini.it
+http://www.gnu.org/software/src-highlite -->
+<pre><tt><b><font color="#000080">&lt;?xml</font></b> <font color="#009900">version</font><font color="#990000">=</font><font color="#FF0000">'1.0'</font><b><font color="#000080">?&gt;</font></b>
+<b><font color="#0000FF">&lt;Configuration&gt;</font></b>
+   <b><font color="#0000FF">&lt;CustomDefinitions&gt;</font></b>
+       <b><font color="#0000FF">&lt;MyCapacity</font></b> <font color="#009900">class</font><font color="#990000">=</font><font color="#FF0000">'Capacity'</font> <font color="#009900">observable</font><font color="#990000">=</font><font color="#FF0000">'TRUE'</font><b><font color="#0000FF">&gt;</font></b>
+           <b><font color="#0000FF">&lt;Object</font></b> <font color="#009900">class</font><font color="#990000">=</font><font color="#FF0000">'ConstObj'</font><b><font color="#0000FF">&gt;</font></b>
+                 <b><font color="#0000FF">&lt;Value&gt;</font></b>10<b><font color="#0000FF">&lt;/Value&gt;</font></b>
+           <b><font color="#0000FF">&lt;/Object&gt;</font></b>
+       <b><font color="#0000FF">&lt;/MyCapacity&gt;</font></b>
+   <b><font color="#0000FF">&lt;/CustomDefinitions&gt;</font></b>
+   <b><font color="#0000FF">&lt;RootElement</font></b> <font color="#009900">ref</font><font color="#990000">=</font><font color="#FF0000">'MyCapacity'</font><b><font color="#0000FF">/&gt;</font></b>
+<b><font color="#0000FF">&lt;/Configuration&gt;</font></b>
+</tt></pre>
+</div>

@@ -1,0 +1,32 @@
+<div class="fragment">
+<!-- Generator: GNU source-highlight 3.1.7
+by Lorenzo Bettini
+http://www.lorenzobettini.it
+http://www.gnu.org/software/src-highlite -->
+<pre><tt>#include "../src/factory/electrical/electricalfactorybuilder.h"
+#include "../src/factory/object/objectfactorybuilder.h"
+#include "../src/factory/state/statefactorybuilder.h"
+#include "../src/xmlparser/tinyxml2/xmlparserimpl.h"
+
+template&lt; class MatrixType &gt;
+boost::shared_ptr&lt; electrical::TwoPort&lt; MatrixType &gt; &gt; GenerateNetworkFromFile( const char* fileName)
+{
+    //Erzeugung der Factories
+    boost::scoped_ptr&lt; factory::Factory&lt; ::state::Dgl_state &gt; &gt; stateFactory( factory::BuildStateFactory() );
+    boost::scoped_ptr&lt; factory::Factory<b><font color="#0000FF">&lt;object::Object</font></b>&lt;<font color="#009900">double</font><b><font color="#0000FF">&gt;</font></b> &gt; &gt; objectFactory( factory::BuildObjectFactory<b><font color="#0000FF">&lt;double&gt;</font></b>( stateFactory.get() ) );
+    boost::scoped_ptr&lt; factory::Factory<b><font color="#0000FF">&lt;electrical::TwoPort</font></b>&lt; <font color="#009900">MatrixType</font> <b><font color="#0000FF">&gt;</font></b> &gt; &gt; electricalFactory( factory::BuildElectricalFactory<b><font color="#0000FF">&lt;MatrixType</font></b>, <font color="#009900">double</font><b><font color="#0000FF">&gt;</font></b>( objectFactory.get(), stateFactory.get() ) );
+
+    //Instanziierung des Parsers und einlesen der XML-Datei
+    boost::scoped_ptr<b><font color="#0000FF">&lt;xmlparser::XmlParser&gt;</font></b> parser(new xmlparser::tinyxml2::XmlParserImpl());
+    parser-&gt;ReadFromFile(fileName);
+
+    //XML-Element "RootPort"
+    boost::shared_ptr<b><font color="#0000FF">&lt;xmlparser::XmlParameter&gt;</font></b> rootParam( parser-&gt;GetRoot()-&gt;GetElementChild("RootElement") );
+    
+    //Rekursive Erzeugung des gesamten elektrischen Netzwerkes
+    boost::shared_ptr&lt; electrical::TwoPort&lt; MatrixType &gt; &gt; rootPort( electricalFactory-&gt;CreateInstance(rootParam) );
+
+    return rootPort;
+}
+</tt></pre>
+</div>

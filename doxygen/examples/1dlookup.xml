@@ -1,0 +1,5 @@
+<Object class="LookupObj1dWithState" LookupType="LinearInterpolation">
+    <State cacheref="Soc" />
+    <LookupData>1,2,3</LookupData>
+    <MeasurementPoints>10.2,22.0,13.1</MeasurementPoints>
+</Object>

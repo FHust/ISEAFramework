@@ -1,0 +1,27 @@
+#!/bin/bash
+
+config=$1
+
+cycles=5
+runs=1
+
+maxworker=`grep -c ^processor /proc/cpuinfo`
+
+simcmd="./frameworkMultiThreadBenchmark $config $cycles" 
+
+> benchmarkResults
+
+for worker in `seq $maxworker`; do
+
+  for run in `seq $runs`; do
+    simout=`$simcmd $worker`
+    summary=`echo "$simout" | tail -n 4`
+
+    meantime=`    echo "$summary" | tail -n 4 | head -n 1 | cut -d " " -f 2`
+    mintime=`     echo "$summary" | tail -n 4 | head -n 1 | cut -d " " -f 5`
+    cellelements=`echo "$summary" | tail -n 2 | head -n 1 | cut -d " " -f 1`
+    workload=`    echo "$summary" | tail -n 1 | head -n 1 | cut -d " " -f 2`
+
+    echo "$worker;$run;$cellelements;$workload;$meantime;$mintime" >> benchmarkResults
+  done
+done

@@ -1,0 +1,43 @@
+//Simulationszeit
+double t = 0.0;
+
+//Sollstrom
+double Current = 2.0;
+
+//Erzeugen eines elektrischen Netzwerkes
+boost::shared_ptr< electrical::TwoPort< MatrixType > > rootPort( GenerateNetworkFromFile("MySuperXmlConfigFile.xml") );
+
+//Erzeugen einer StateSystemGroup. Alle Gleichungen, der StateVector und das aktuelle dT werden darin gespeichert.
+systm::StateSystemGroup< myMatrixType > stateSystemGroup;
+
+//Zuweisen der StateSystemGroup zu allen Netzwerkobjekten
+rootPort->SetSystem(&stateSystemGroup);
+
+//Initialisieren der StateSystemGroup
+stateSystemGroup.Initialize();
+
+//Initialisierung der Stromvektoren in den Netzwerkobjekten
+rootPort->SetInitialCurrent(Current);
+
+//Aufstellen der Maschen- und Differentialgleichungen. 
+//Dieser Schritt muss an dieser Stelle erfolgen, da ansonsten der initiale Zustandsvektor vom Solversystem nicht berechnet werden kann.
+rootPort->UpdateStateSystemGroup();
+
+//Erzeugen eines Solversystems mit konstanter Schrittweite von 1ms
+systm::ConstantStepDglSystemSolver< myMatrixType > solver(&stateSystemGroup, 0.001);
+
+//Simulationschleife. Es werde exakt zehn Sekunden simuliert.
+while (t < 10.00)
+{
+    //Setzen eines neuen Sollstromes
+    roorPort->SetCurrent(Current += 0.1);
+    
+    //Aufstellen der Maschen- und Differentialgleichungen
+    rootPort->UpdateStateSystemGroup();
+
+    //Lösen des Zustandsraummodells
+    t = solver.Solve();
+
+    //Berechnen der skalaren Ströme, Spannungen und Verlustleistungen. Der SoC wird integriert.
+    rootPort->CalculateStateDependentValues();
+}

@@ -1,0 +1,228 @@
+<div class="fragment">
+<!-- Generator: GNU source-highlight 3.1.7
+by Lorenzo Bettini
+http://www.lorenzobettini.it
+http://www.gnu.org/software/src-highlite -->
+<pre><tt><b><font color="#000080">&lt;?xml</font></b> <font color="#009900">version</font><font color="#990000">=</font><font color="#FF0000">"1.0"</font> <font color="#009900">encoding</font><font color="#990000">=</font><font color="#FF0000">"UTF-8"</font><b><font color="#000080">?&gt;</font></b>
+<b><font color="#0000FF">&lt;Configuration&gt;</font></b>
+    
+    <b><font color="#0000FF">&lt;Options&gt;</font></b>
+        <b><font color="#0000FF">&lt;SampleRate&gt;</font></b> 1000 <b><font color="#0000FF">&lt;/SampleRate&gt;</font></b>
+        <b><font color="#0000FF">&lt;AirTemperature&gt;</font></b> 25.0 <b><font color="#0000FF">&lt;/AirTemperature&gt;</font></b>
+        <b><font color="#0000FF">&lt;ConvectionActivated&gt;</font></b>true<b><font color="#0000FF">&lt;/ConvectionActivated&gt;</font></b>
+        <b><font color="#0000FF">&lt;RadiationActivated&gt;</font></b>true<b><font color="#0000FF">&lt;/RadiationActivated&gt;</font></b>
+        <b><font color="#0000FF">&lt;ArcPolygonizationForVisualzation&gt;</font></b>0.00, 8; 0.03, 16<b><font color="#0000FF">&lt;/ArcPolygonizationForVisualzation&gt;</font></b> <i><font color="#9A1900">&lt;!-- Not yet implemented--&gt;</font></i>
+    <b><font color="#0000FF">&lt;/Options&gt;</font></b>
+    
+    <i><font color="#9A1900">&lt;!-- Hier werden die für das thermische Modell benutzten Materialien definiert und gecachet --&gt;</font></i>
+    
+    <b><font color="#0000FF">&lt;ThermalMaterials&gt;</font></b>
+        <b><font color="#0000FF">&lt;Electrolyte</font></b> <font color="#009900">class</font><font color="#990000">=</font><font color="#FF0000">"Material"</font> <font color="#009900">cache</font><font color="#990000">=</font><font color="#FF0000">"true"</font><b><font color="#0000FF">&gt;</font></b>
+            <b><font color="#0000FF">&lt;Density&gt;</font></b>2000<b><font color="#0000FF">&lt;/Density&gt;</font></b>
+            <b><font color="#0000FF">&lt;Capacity&gt;</font></b>4000<b><font color="#0000FF">&lt;/Capacity&gt;</font></b>
+            <b><font color="#0000FF">&lt;Conductivity0&gt;</font></b>10<b><font color="#0000FF">&lt;/Conductivity0&gt;</font></b>
+            <b><font color="#0000FF">&lt;Conductivity1&gt;</font></b>10<b><font color="#0000FF">&lt;/Conductivity1&gt;</font></b>
+            <b><font color="#0000FF">&lt;Conductivity2&gt;</font></b>25<b><font color="#0000FF">&lt;/Conductivity2&gt;</font></b>
+        <b><font color="#0000FF">&lt;/Electrolyte&gt;</font></b>
+    
+        <b><font color="#0000FF">&lt;Rubber</font></b> <font color="#009900">class</font><font color="#990000">=</font><font color="#FF0000">"Material"</font> <font color="#009900">cache</font><font color="#990000">=</font><font color="#FF0000">"true"</font><b><font color="#0000FF">&gt;</font></b>
+            <b><font color="#0000FF">&lt;Density&gt;</font></b>900<b><font color="#0000FF">&lt;/Density&gt;</font></b>
+            <b><font color="#0000FF">&lt;Capacity&gt;</font></b>1500<b><font color="#0000FF">&lt;/Capacity&gt;</font></b>
+            <b><font color="#0000FF">&lt;Conductivity0&gt;</font></b>0.5<b><font color="#0000FF">&lt;/Conductivity0&gt;</font></b>
+            <b><font color="#0000FF">&lt;Conductivity1&gt;</font></b>0.5<b><font color="#0000FF">&lt;/Conductivity1&gt;</font></b>
+            <b><font color="#0000FF">&lt;Conductivity2&gt;</font></b>0.5<b><font color="#0000FF">&lt;/Conductivity2&gt;</font></b>
+        <b><font color="#0000FF">&lt;/Rubber&gt;</font></b>
+    <b><font color="#0000FF">&lt;/ThermalMaterials&gt;</font></b>
+
+    <i><font color="#9A1900">&lt;!-- Hier werden die für das thermische Modell benutzten Kühlungen neben Konvektion und Wärmestrahlung definiert und gecachet --&gt;</font></i>
+
+    <b><font color="#0000FF">&lt;Coolings&gt;</font></b>
+        <b><font color="#0000FF">&lt;WaterCooling</font></b> <font color="#009900">class</font><font color="#990000">=</font><font color="#FF0000">"CoolingHorizontalPlane"</font> <font color="#009900">cache</font><font color="#990000">=</font><font color="#FF0000">"true"</font><b><font color="#0000FF">&gt;</font></b>
+            <b><font color="#0000FF">&lt;Vertices&gt;</font></b>0.0, 0.0; 0.0, 0.075; 0.075, 0.075; 0.075, 0.0<b><font color="#0000FF">&lt;/Vertices&gt;</font></b>
+            <b><font color="#0000FF">&lt;ZCoordinate&gt;</font></b>0.215<b><font color="#0000FF">&lt;/ZCoordinate&gt;</font></b>
+            <b><font color="#0000FF">&lt;Cooling</font></b> <font color="#009900">class</font><font color="#990000">=</font><font color="#FF0000">"CoolingByConstantValue"</font><b><font color="#0000FF">&gt;</font></b>
+                <b><font color="#0000FF">&lt;Value&gt;</font></b>5000.0<b><font color="#0000FF">&lt;/Value&gt;</font></b>
+            <b><font color="#0000FF">&lt;/Cooling&gt;</font></b>
+        <b><font color="#0000FF">&lt;/WaterCooling&gt;</font></b>"
+    <b><font color="#0000FF">&lt;/Coolings&gt;</font></b>
+    
+    <i><font color="#9A1900">&lt;!-- Hier werden genutzte Bauelemente und Verschaltugen definiert</font></i>
+<i><font color="#9A1900">         Dieser Teil kann als Bibliothek angesehen werden in dem genutzte Elemente definiert und später verwendet werden --&gt;</font></i>
+
+    <b><font color="#0000FF">&lt;CustomDefinitions&gt;</font></b>
+            
+        <i><font color="#9A1900">&lt;!-- Ein Ohmscher Widerstand, der von Temperatur und SOC abhängig ist. Dieser wird als 2D Lookup hinterlegt  --&gt;</font></i>
+
+        <b><font color="#0000FF">&lt;MyOhmicResistance</font></b> <font color="#009900">class</font><font color="#990000">=</font><font color="#FF0000">"OhmicResistance"</font><b><font color="#0000FF">&gt;</font></b>
+            <b><font color="#0000FF">&lt;Object</font></b> <font color="#009900">class</font><font color="#990000">=</font><font color="#FF0000">"LookupObj2dWithState"</font><b><font color="#0000FF">&gt;</font></b>
+                <b><font color="#0000FF">&lt;RowState</font></b> <font color="#009900">cacheref</font><font color="#990000">=</font><font color="#FF0000">"ThermalState"</font><b><font color="#0000FF">/&gt;</font></b>
+                <b><font color="#0000FF">&lt;ColState</font></b> <font color="#009900">cacheref</font><font color="#990000">=</font><font color="#FF0000">"Soc"</font><b><font color="#0000FF">/&gt;</font></b>
+                <b><font color="#0000FF">&lt;LookupData</font></b> <font color="#009900">desc</font><font color="#990000">=</font><font color="#FF0000">"Rser"</font><b><font color="#0000FF">&gt;</font></b>0.0288200000000001,0.0273753907300395,0.0264344729259093,0.0135127660821939;0.0288200000000001,0.0273753907300395,0.0270767085789135,0.0275280515729565;0.0290500142586083,0.0277525443197526,0.0275261486868454,0.0276368633915343;0.0288630838514731,0.0278576890117617,0.0275537618404411,0.0277933657755191;0.0286781206123875,0.0277738617773271,0.0275453220226692,0.0259269199477185;0.0285331061111646,0.0277867915477187,0.0268358840093433,0.0267808653711796;0.0286358289536196,0.0277803384908296,0.0257328031445100,0.0272959924289106<b><font color="#0000FF">&lt;/LookupData&gt;</font></b>
+                <b><font color="#0000FF">&lt;MeasurementPointsRow</font></b> <font color="#009900">desc</font><font color="#990000">=</font><font color="#FF0000">"MeasureTemp"</font><b><font color="#0000FF">&gt;</font></b>0,10,23,50<b><font color="#0000FF">&lt;/MeasurementPointsRow&gt;</font></b>
+                <b><font color="#0000FF">&lt;MeasurementPointsColumn</font></b> <font color="#009900">desc</font><font color="#990000">=</font><font color="#FF0000">"StateOfCharge"</font><b><font color="#0000FF">&gt;</font></b>5,20,35,50,65,80,90<b><font color="#0000FF">&lt;/MeasurementPointsColumn&gt;</font></b>
+            <b><font color="#0000FF">&lt;/Object&gt;</font></b>
+        <b><font color="#0000FF">&lt;/MyOhmicResistance&gt;</font></b>
+
+        <i><font color="#9A1900">&lt;!-- Eine OCV, die von Temperatur und SOC abhängig ist als 2D Lookup  --&gt;</font></i>
+
+        <b><font color="#0000FF">&lt;MyVoltageSource</font></b> <font color="#009900">class</font><font color="#990000">=</font><font color="#FF0000">"VoltageSource"</font><b><font color="#0000FF">&gt;</font></b>
+            <b><font color="#0000FF">&lt;Object</font></b> <font color="#009900">class</font><font color="#990000">=</font><font color="#FF0000">"LookupObj2dWithState"</font><b><font color="#0000FF">&gt;</font></b>
+                <b><font color="#0000FF">&lt;RowState</font></b> <font color="#009900">cacheref</font><font color="#990000">=</font><font color="#FF0000">"Soc"</font><b><font color="#0000FF">/&gt;</font></b>
+                <b><font color="#0000FF">&lt;ColState</font></b> <font color="#009900">cacheref</font><font color="#990000">=</font><font color="#FF0000">"ThermalState"</font><b><font color="#0000FF">/&gt;</font></b>
+                <b><font color="#0000FF">&lt;LookupData</font></b> <font color="#009900">desc</font><font color="#990000">=</font><font color="#FF0000">"OCV"</font><b><font color="#0000FF">&gt;</font></b>3.47980625000000,3.56020000000000,3.61080000000000,3.64033750000000,3.67903750000000,3.74791250000000,3.84935000000000,3.94420000000000,4.05327500000000,4.18230000000000;3.48386250000000,3.56396250000000,3.61388750000000,3.64350000000000,3.68183750000000,3.75231250000000,3.85146875000000,3.94563750000000,4.05550000000000,4.18410000000000;3.48390000000000,3.56456250000000,3.61843125000000,3.64930000000000,3.68808750000000,3.76500000000000,3.85450000000000,3.94680000000000,4.05477500000000,4.17770000000000;3.47570000000000,3.55060000000000,3.60896250000000,3.64975000000000,3.68677500000000,3.75358750000000,3.84280000000000,3.93626250000000,4.04295000000000,4.16480000000000<b><font color="#0000FF">&lt;/LookupData&gt;</font></b>
+                <b><font color="#0000FF">&lt;MeasurementPointsRow</font></b> <font color="#009900">desc</font><font color="#990000">=</font><font color="#FF0000">"StateOfChargeOCV"</font><b><font color="#0000FF">&gt;</font></b>10,20,30,40,50,60,70,80,90,100<b><font color="#0000FF">&lt;/MeasurementPointsRow&gt;</font></b>
+                <b><font color="#0000FF">&lt;MeasurementPointsColumn</font></b> <font color="#009900">desc</font><font color="#990000">=</font><font color="#FF0000">"MeasureTemp"</font><b><font color="#0000FF">&gt;</font></b>0,10,23,50<b><font color="#0000FF">&lt;/MeasurementPointsColumn&gt;</font></b>
+            <b><font color="#0000FF">&lt;/Object&gt;</font></b>
+        <b><font color="#0000FF">&lt;/MyVoltageSource&gt;</font></b>
+
+        <i><font color="#9A1900">&lt;!-- Eine Liste von Zarc Elementen die im elektrischen Ersatzschaltbild genutzt wird.</font></i>
+<i><font color="#9A1900">             R / ( 1 + (R*C)^phi)</font></i>
+<i><font color="#9A1900">             Die Parameter sind abhängig von Temperatur und Temperatur</font></i>
+<i><font color="#9A1900">         --&gt;</font></i>
+
+
+        <b><font color="#0000FF">&lt;MyZarcElement</font></b> <font color="#009900">class</font><font color="#990000">=</font><font color="#FF0000">"ZarcElement"</font><b><font color="#0000FF">&gt;</font></b>
+            <b><font color="#0000FF">&lt;ThermalState</font></b> <font color="#009900">cacheref</font><font color="#990000">=</font><font color="#FF0000">"ThermalState"</font><b><font color="#0000FF">/&gt;</font></b>
+            <b><font color="#0000FF">&lt;Soc</font></b> <font color="#009900">cacheref</font><font color="#990000">=</font><font color="#FF0000">"Soc"</font><b><font color="#0000FF">/&gt;</font></b>
+            <b><font color="#0000FF">&lt;LookupTau</font></b> <font color="#009900">class</font><font color="#990000">=</font><font color="#FF0000">"LookupObj2DWithState"</font><b><font color="#0000FF">&gt;</font></b>
+                <b><font color="#0000FF">&lt;RowState</font></b> <font color="#009900">cacheref</font><font color="#990000">=</font><font color="#FF0000">"ThermalState"</font><b><font color="#0000FF">/&gt;</font></b>
+                <b><font color="#0000FF">&lt;ColState</font></b> <font color="#009900">cacheref</font><font color="#990000">=</font><font color="#FF0000">"Soc"</font><b><font color="#0000FF">/&gt;</font></b>
+                <b><font color="#0000FF">&lt;LookupData&gt;</font></b>
+                    1.12980227037822e-01, 1.71749789914134e-01, 4.27878577005388e-01, 4.70584769553997e-01;
+                    2.88029269499999e-01, 2.03069924403468e-01, 7.59434298204209e-02, 5.38248547348156e-02;
+                    1.80149147116020e-01, 1.12630469688383e-01, 3.52185854766679e-02, 2.98230802877780e-02;
+                    1.47909096582298e-01, 8.33921914682953e-02, 2.57060565921076e-02, 2.22501291807582e-02;
+                    1.32900242338032e-01, 7.22938740353130e-02, 2.05480235442034e-02, 9.95886997764575e-02;
+                    1.19852623435413e-01, 6.56657395160509e-02, 2.36971844841798e-02, 1.02914420936082e-01;
+                    1.18273000586515e-01, 6.60491071602289e-02, 3.25921294643322e-02, 1.09197268465146e-01
+                <b><font color="#0000FF">&lt;/LookupData&gt;</font></b>
+                <b><font color="#0000FF">&lt;MeasurementPointsRow&gt;</font></b>0, 10, 23, 50<b><font color="#0000FF">&lt;/MeasurementPointsRow&gt;</font></b>
+                <b><font color="#0000FF">&lt;MeasurementPointsColumn&gt;</font></b>5, 20, 35, 50, 65, 80, 90<b><font color="#0000FF">&lt;/MeasurementPointsColumn&gt;</font></b>
+            <b><font color="#0000FF">&lt;/LookupTau&gt;</font></b>
+            <b><font color="#0000FF">&lt;LookupOhmicResistance</font></b> <font color="#009900">class</font><font color="#990000">=</font><font color="#FF0000">"LookupObj2DWithState"</font><b><font color="#0000FF">&gt;</font></b>
+                <b><font color="#0000FF">&lt;RowState</font></b> <font color="#009900">cacheref</font><font color="#990000">=</font><font color="#FF0000">"ThermalState"</font><b><font color="#0000FF">/&gt;</font></b>
+                <b><font color="#0000FF">&lt;ColState</font></b> <font color="#009900">cacheref</font><font color="#990000">=</font><font color="#FF0000">"Soc"</font><b><font color="#0000FF">/&gt;</font></b>
+                <b><font color="#0000FF">&lt;LookupData&gt;</font></b>
+                    0.0264994082415437, 0.0264994082415437, 0.0264994082415437, 0.0299913094135788;
+                    0.0675569999999998, 0.0313318160740531, 0.0127731516995969, 0.00404164451684630;
+                    0.0536386688114087, 0.0248200664672378, 0.00989750001969683, 0.00303781463624295;
+                    0.0478600636580172, 0.0219992555610513, 0.00877924658179266, 0.00234391473354453;
+                    0.0441171340633137, 0.0206405039153971, 0.00794555485936455, 0.00454415109298745;
+                    0.0418986584966986, 0.0203278573267527, 0.00866505912064747, 0.00344848953405180;
+                    0.0421316495020664, 0.0207584663601899, 0.0102011087727835, 0.00296383805146105
+                <b><font color="#0000FF">&lt;/LookupData&gt;</font></b>
+                <b><font color="#0000FF">&lt;MeasurementPointsRow&gt;</font></b>0, 10, 23, 50<b><font color="#0000FF">&lt;/MeasurementPointsRow&gt;</font></b>
+                <b><font color="#0000FF">&lt;MeasurementPointsColumn&gt;</font></b>5, 20, 35, 50, 65, 80, 90<b><font color="#0000FF">&lt;/MeasurementPointsColumn&gt;</font></b>
+            <b><font color="#0000FF">&lt;/LookupOhmicResistance&gt;</font></b>
+            <b><font color="#0000FF">&lt;LookupPhi</font></b> <font color="#009900">class</font><font color="#990000">=</font><font color="#FF0000">"LookupObj2DWithState"</font><b><font color="#0000FF">&gt;</font></b>
+                <b><font color="#0000FF">&lt;RowState</font></b> <font color="#009900">cacheref</font><font color="#990000">=</font><font color="#FF0000">"ThermalState"</font><b><font color="#0000FF">/&gt;</font></b>
+                <b><font color="#0000FF">&lt;ColState</font></b> <font color="#009900">cacheref</font><font color="#990000">=</font><font color="#FF0000">"Soc"</font><b><font color="#0000FF">/&gt;</font></b>
+                    <b><font color="#0000FF">&lt;LookupData&gt;</font></b>
+                        0.574590000000000, 0.516891694022437, 0.408379079339744, 0.110443124808620;
+                        0.574590000000000, 0.516891694022437, 0.568073405078093, 0.566435038531618;
+                        0.616859078283881, 0.579111165549142, 0.662374262351899, 0.620812008168125;
+                        0.625502091112064, 0.610693210867254, 0.697319797270455, 0.671812046180353;
+                        0.621586176902636, 0.620972340223097, 0.721715387830978, 0.323239015612757;
+                        0.620607929391110, 0.630419920219851, 0.671002168217511, 0.371661290927877;
+                        0.620534462894923, 0.628465004550853, 0.585312180039373, 0.410302314031108
+                    <b><font color="#0000FF">&lt;/LookupData&gt;</font></b>
+                <b><font color="#0000FF">&lt;MeasurementPointsRow&gt;</font></b>0, 10, 23, 50<b><font color="#0000FF">&lt;/MeasurementPointsRow&gt;</font></b>
+                <b><font color="#0000FF">&lt;MeasurementPointsColumn&gt;</font></b>5, 20, 35, 50, 65, 80, 90<b><font color="#0000FF">&lt;/MeasurementPointsColumn&gt;</font></b>
+            <b><font color="#0000FF">&lt;/LookupPhi&gt;</font></b>
+        <b><font color="#0000FF">&lt;/MyZarcElement&gt;</font></b>
+
+        <i><font color="#9A1900">&lt;!-- Vordefiniertes Zellelement einer Lithium-Ionen Batterie.</font></i>
+<i><font color="#9A1900">             Standarmäßig besteht ein Zellelement aus einem ohmschen Serienwiderstand, einer OCV, und einer Liste von ZarcElementen. </font></i>
+<i><font color="#9A1900">             Die Elemente sind dabei jeweils von den States Temperatur und State of Charge abhängig.</font></i>
+<i><font color="#9A1900">             Temperatur stellt die anfängliche Temperatur in °C dar. </font></i>
+<i><font color="#9A1900">             SOC benötigt eine nominale Kapazität, einen anfänglichen SOC in % sowie die Diskretisierung.</font></i>
+<i><font color="#9A1900">         --&gt;</font></i>
+
+        <b><font color="#0000FF">&lt;BatteryCell</font></b> <font color="#009900">class</font><font color="#990000">=</font><font color="#FF0000">"CellElement"</font> <font color="#009900">observable</font><font color="#990000">=</font><font color="#FF0000">"True"</font><b><font color="#0000FF">&gt;</font></b>
+            <b><font color="#0000FF">&lt;ThermalState</font></b> <font color="#009900">class</font><font color="#990000">=</font><font color="#FF0000">"ThermalState"</font> <font color="#009900">cache</font><font color="#990000">=</font><font color="#FF0000">"True"</font><b><font color="#0000FF">&gt;</font></b>
+                <b><font color="#0000FF">&lt;InitialTemperature&gt;</font></b>25<b><font color="#0000FF">&lt;/InitialTemperature&gt;</font></b>
+            <b><font color="#0000FF">&lt;/ThermalState&gt;</font></b>
+            <b><font color="#0000FF">&lt;Soc</font></b> <font color="#009900">class</font><font color="#990000">=</font><font color="#FF0000">"Soc"</font> <font color="#009900">cache</font><font color="#990000">=</font><font color="#FF0000">"True"</font><b><font color="#0000FF">&gt;</font></b>
+                <b><font color="#0000FF">&lt;MaxCapacity&gt;</font></b>120.0<b><font color="#0000FF">&lt;/MaxCapacity&gt;</font></b>
+                <b><font color="#0000FF">&lt;InitialSoc&gt;</font></b>5<b><font color="#0000FF">&lt;/InitialSoc&gt;</font></b>
+                <b><font color="#0000FF">&lt;MeasurementPoints&gt;</font></b>5,10,20,23,35,50,65,80,90<b><font color="#0000FF">&lt;/MeasurementPoints&gt;</font></b>
+            <b><font color="#0000FF">&lt;/Soc&gt;</font></b>
+            <b><font color="#0000FF">&lt;Children&gt;</font></b>
+                <b><font color="#0000FF">&lt;OhmicResistance</font></b> <font color="#009900">ref</font><font color="#990000">=</font><font color="#FF0000">"MyOhmicResistance"</font><b><font color="#0000FF">/&gt;</font></b>
+                <b><font color="#0000FF">&lt;VoltageSource</font></b> <font color="#009900">ref</font><font color="#990000">=</font><font color="#FF0000">"MyVoltageSource"</font><b><font color="#0000FF">/&gt;</font></b>
+                <b><font color="#0000FF">&lt;ZarcElement</font></b> <font color="#009900">ref</font><font color="#990000">=</font><font color="#FF0000">"MyZarcElement"</font><b><font color="#0000FF">/&gt;</font></b>
+            <b><font color="#0000FF">&lt;/Children&gt;</font></b>
+            <b><font color="#0000FF">&lt;ThermalBlock</font></b> <font color="#009900">ref</font><font color="#990000">=</font><font color="#FF0000">"PouchBagThermal"</font><b><font color="#0000FF">/&gt;</font></b>
+            <b><font color="#0000FF">&lt;UnheatedBlocks&gt;</font></b>
+                <b><font color="#0000FF">&lt;Block</font></b> <font color="#009900">ref</font><font color="#990000">=</font><font color="#FF0000">"UnheatedBlockTypeX"</font> <font color="#009900">dy</font><font color="#990000">=</font><font color="#FF0000">"0.075"</font><b><font color="#0000FF">/&gt;</font></b>
+                <b><font color="#0000FF">&lt;Block</font></b> <font color="#009900">ref</font><font color="#990000">=</font><font color="#FF0000">"UnheatedBlockTypeY"</font> <font color="#009900">dx</font><font color="#990000">=</font><font color="#FF0000">"-0.015"</font><b><font color="#0000FF">/&gt;</font></b>
+                <b><font color="#0000FF">&lt;Block</font></b> <font color="#009900">ref</font><font color="#990000">=</font><font color="#FF0000">"UnheatedBlockTypeBottom"</font> <font color="#009900">dx</font><font color="#990000">=</font><font color="#FF0000">"-0.015"</font> <font color="#009900">dz</font><font color="#990000">=</font><font color="#FF0000">"-0.015"</font><b><font color="#0000FF">/&gt;</font></b>
+            <b><font color="#0000FF">&lt;/UnheatedBlocks&gt;</font></b>
+        <b><font color="#0000FF">&lt;/BatteryCell&gt;</font></b>
+
+        <i><font color="#9A1900">&lt;!-- Definitionen von Block-Typen für das thermische Modell --&gt;</font></i>
+        
+        <b><font color="#0000FF">&lt;PouchBagThermal</font></b> <font color="#009900">class</font><font color="#990000">=</font><font color="#FF0000">"RectangularBlock"</font><b><font color="#0000FF">&gt;</font></b>
+            <b><font color="#0000FF">&lt;Material</font></b> <font color="#009900">cacheref</font><font color="#990000">=</font><font color="#FF0000">"Electrolyte"</font><b><font color="#0000FF">/&gt;</font></b>
+            <b><font color="#0000FF">&lt;Dimensions&gt;</font></b>0.075, 0.075, 0.1<b><font color="#0000FF">&lt;/Dimensions&gt;</font></b>
+            <b><font color="#0000FF">&lt;SizeX&gt;</font></b>3<b><font color="#0000FF">&lt;/SizeX&gt;</font></b>
+            <b><font color="#0000FF">&lt;SizeY&gt;</font></b>4<b><font color="#0000FF">&lt;/SizeY&gt;</font></b>
+            <b><font color="#0000FF">&lt;SizeZ&gt;</font></b>5<b><font color="#0000FF">&lt;/SizeZ&gt;</font></b>
+            <b><font color="#0000FF">&lt;InitialTemperature&gt;</font></b>25<b><font color="#0000FF">&lt;/InitialTemperature&gt;</font></b>
+        <b><font color="#0000FF">&lt;/PouchBagThermal&gt;</font></b>
+        
+        <b><font color="#0000FF">&lt;UnheatedBlockTypeX</font></b> <font color="#009900">class</font><font color="#990000">=</font><font color="#FF0000">"RectangularBlock"</font><b><font color="#0000FF">&gt;</font></b>
+            <b><font color="#0000FF">&lt;Material</font></b> <font color="#009900">cacheref</font><font color="#990000">=</font><font color="#FF0000">"Rubber"</font><b><font color="#0000FF">/&gt;</font></b>
+            <b><font color="#0000FF">&lt;Dimensions&gt;</font></b>0.075, 0.015, 0.1<b><font color="#0000FF">&lt;/Dimensions&gt;</font></b>
+            <b><font color="#0000FF">&lt;SizeX&gt;</font></b>4<b><font color="#0000FF">&lt;/SizeX&gt;</font></b>
+            <b><font color="#0000FF">&lt;SizeY&gt;</font></b>1<b><font color="#0000FF">&lt;/SizeY&gt;</font></b>
+            <b><font color="#0000FF">&lt;SizeZ&gt;</font></b>4<b><font color="#0000FF">&lt;/SizeZ&gt;</font></b>
+            <b><font color="#0000FF">&lt;InitialTemperature&gt;</font></b>25<b><font color="#0000FF">&lt;/InitialTemperature&gt;</font></b>
+        <b><font color="#0000FF">&lt;/UnheatedBlockTypeX&gt;</font></b>
+        
+        <b><font color="#0000FF">&lt;UnheatedBlockTypeY</font></b> <font color="#009900">class</font><font color="#990000">=</font><font color="#FF0000">"RectangularBlock"</font><b><font color="#0000FF">&gt;</font></b>
+            <b><font color="#0000FF">&lt;Material</font></b> <font color="#009900">cacheref</font><font color="#990000">=</font><font color="#FF0000">"Rubber"</font><b><font color="#0000FF">/&gt;</font></b>
+            <b><font color="#0000FF">&lt;Dimensions&gt;</font></b>0.015, 0.09, 0.1<b><font color="#0000FF">&lt;/Dimensions&gt;</font></b>
+            <b><font color="#0000FF">&lt;SizeX&gt;</font></b>1<b><font color="#0000FF">&lt;/SizeX&gt;</font></b>
+            <b><font color="#0000FF">&lt;SizeY&gt;</font></b>4<b><font color="#0000FF">&lt;/SizeY&gt;</font></b>
+            <b><font color="#0000FF">&lt;SizeZ&gt;</font></b>4<b><font color="#0000FF">&lt;/SizeZ&gt;</font></b>
+            <b><font color="#0000FF">&lt;InitialTemperature&gt;</font></b>25<b><font color="#0000FF">&lt;/InitialTemperature&gt;</font></b>
+        <b><font color="#0000FF">&lt;/UnheatedBlockTypeY&gt;</font></b>
+
+        <b><font color="#0000FF">&lt;UnheatedBlockTypeBottom</font></b> <font color="#009900">class</font><font color="#990000">=</font><font color="#FF0000">"RectangularBlock"</font><b><font color="#0000FF">&gt;</font></b>
+            <b><font color="#0000FF">&lt;Material</font></b> <font color="#009900">cacheref</font><font color="#990000">=</font><font color="#FF0000">"Rubber"</font><b><font color="#0000FF">/&gt;</font></b>
+            <b><font color="#0000FF">&lt;Dimensions&gt;</font></b>0.09, 0.09, 0.015<b><font color="#0000FF">&lt;/Dimensions&gt;</font></b>
+            <b><font color="#0000FF">&lt;SizeX&gt;</font></b>4<b><font color="#0000FF">&lt;/SizeX&gt;</font></b>
+            <b><font color="#0000FF">&lt;SizeY&gt;</font></b>4<b><font color="#0000FF">&lt;/SizeY&gt;</font></b>
+            <b><font color="#0000FF">&lt;SizeZ&gt;</font></b>1<b><font color="#0000FF">&lt;/SizeZ&gt;</font></b>
+            <b><font color="#0000FF">&lt;InitialTemperature&gt;</font></b>25<b><font color="#0000FF">&lt;/InitialTemperature&gt;</font></b>
+        <b><font color="#0000FF">&lt;/UnheatedBlockTypeBottom&gt;</font></b>
+
+        <i><font color="#9A1900">&lt;!-- Weitere elektrische Verschaltungen, die von RootElement aufgerufen werden --&gt;</font></i>
+
+        <b><font color="#0000FF">&lt;BatteryString</font></b> <font color="#009900">class</font><font color="#990000">=</font><font color="#FF0000">"ParallelTwoPort"</font><b><font color="#0000FF">&gt;</font></b>
+            <b><font color="#0000FF">&lt;Children</font></b> <font color="#009900">count</font><font color="#990000">=</font><font color="#FF0000">"2"</font> <font color="#009900">dx</font><font color="#990000">=</font><font color="#FF0000">"0.18"</font><b><font color="#0000FF">&gt;</font></b>
+                <b><font color="#0000FF">&lt;BatteryCell</font></b> <font color="#009900">ref</font><font color="#990000">=</font><font color="#FF0000">"BatteryCell"</font><b><font color="#0000FF">/&gt;</font></b>
+                <b><font color="#0000FF">&lt;BatteryCell</font></b> <font color="#009900">ref</font><font color="#990000">=</font><font color="#FF0000">"BatteryCell"</font> <font color="#009900">dx</font><font color="#990000">=</font><font color="#FF0000">"0.09"</font><b><font color="#0000FF">/&gt;</font></b>
+            <b><font color="#0000FF">&lt;/Children&gt;</font></b>
+        <b><font color="#0000FF">&lt;/BatteryString&gt;</font></b>
+        
+        <b><font color="#0000FF">&lt;BatteryPack</font></b> <font color="#009900">class</font><font color="#990000">=</font><font color="#FF0000">"SerialTwoPort"</font><b><font color="#0000FF">&gt;</font></b>
+            <b><font color="#0000FF">&lt;Children</font></b> <font color="#009900">count</font><font color="#990000">=</font><font color="#FF0000">"3"</font> <font color="#009900">dy</font><font color="#990000">=</font><font color="#FF0000">"0.09"</font><b><font color="#0000FF">&gt;</font></b>
+                <b><font color="#0000FF">&lt;BatteryString</font></b> <font color="#009900">ref</font><font color="#990000">=</font><font color="#FF0000">"BatteryString"</font><b><font color="#0000FF">/&gt;</font></b>
+            <b><font color="#0000FF">&lt;/Children&gt;</font></b>
+        <b><font color="#0000FF">&lt;/BatteryPack&gt;</font></b>
+        
+    <b><font color="#0000FF">&lt;/CustomDefinitions&gt;</font></b>
+
+    <i><font color="#9A1900">&lt;!-- Von diesem Knoten aus beginnt das Parsen sowohl des elektrischen, als auch des thermischen Modells --&gt;</font></i>
+    
+    <b><font color="#0000FF">&lt;RootElement</font></b> <font color="#009900">class</font><font color="#990000">=</font><font color="#FF0000">"ParallelTwoPort"</font><b><font color="#0000FF">&gt;</font></b>
+      <b><font color="#0000FF">&lt;Children</font></b> <font color="#009900">dz</font><font color="#990000">=</font><font color="#FF0000">"0.115"</font> <font color="#009900">count</font><font color="#990000">=</font><font color="#FF0000">"2"</font><b><font color="#0000FF">&gt;</font></b>
+          <b><font color="#0000FF">&lt;ZLayer</font></b> <font color="#009900">ref</font><font color="#990000">=</font><font color="#FF0000">"BatteryPack"</font><b><font color="#0000FF">/&gt;</font></b>
+      <b><font color="#0000FF">&lt;/Children&gt;</font></b>
+    <b><font color="#0000FF">&lt;/RootElement&gt;</font></b>
+
+<b><font color="#0000FF">&lt;/Configuration&gt;</font></b>
+</tt></pre>
+</div>

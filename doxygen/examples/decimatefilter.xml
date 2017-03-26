@@ -1,0 +1,7 @@
+<Observer>
+    <Filter2 class="DecimateFilter">
+        <TimeDelay>
+            0.1
+        </TimeDelay>
+    </Filter2>
+</Observer>

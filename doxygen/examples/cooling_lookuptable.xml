@@ -1,0 +1,7 @@
+<Cooling class="CoolingByLookUp">
+    <LookUpTable class='LookupObj1D'>
+        <LookupData>0,60,7500,15000</LookupData>
+        <MeasurementPoints>39.8,40,50,60</MeasurementPoints>
+    </LookUpTable>
+</Cooling>
+

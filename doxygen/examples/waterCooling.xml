@@ -1,0 +1,9 @@
+<WaterCooling class="CoolingPrismatic" cache="true">
+    <Vertices>0.0, 0.0; 0.702, 0.0; 0.702, 0.39; 0.0, 0.39</Vertices>
+    <LowerZCoordinate>-0.1</LowerZCoordinate>
+    <UpperZCoordinate>0.0</UpperZCoordinate>
+    <Cooling class=...>
+        ...
+    </Cooling>
+</WaterCooling>
+

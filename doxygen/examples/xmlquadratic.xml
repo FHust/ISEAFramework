@@ -1,0 +1,12 @@
+<BlockType2 class="QuadraticCellBlock">
+    <Length>0.1</Length>
+    <RadiusCell>0.04</RadiusCell>
+    <Height>0.2</Height>
+    <CellRhoDivision>3</CellRhoDivision>
+    <PhiDivision>8</PhiDivision>
+    <HeightDivision>15</HeightDivision>
+    <ArcPolygonization>0.001</ArcPolygonization>
+    <CellMaterial cacheref="Electrolyte"/>
+    <FillMaterial cacheref="Foam"/>
+    <InitialTemperature>25</InitialTemperature>
+</BlockType2>

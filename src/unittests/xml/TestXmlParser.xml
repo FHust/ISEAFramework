@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration>
+    <TestGetElementUnreferencedChild>
+        <ElementWithRef1 ref="Reference" anAttribute="0.1">
+        </ElementWithRef1>
+        <ElementWithRef2 ref="Reference" anotherAttribute="-3.1">
+        </ElementWithRef2>
+    </TestGetElementUnreferencedChild>
+</Configuration>

@@ -1,0 +1,7 @@
+<Electrolyte class="Material" cache="true">
+    <Density>2000</Density>
+    <SpecificCapacity>4000</SpecificCapacity>
+    <ConductivityX>10</ConductivityX>
+    <ConductivityY>10</ConductivityY>
+    <ConductivityZ>25</ConductivityZ>
+</Electrolyte>

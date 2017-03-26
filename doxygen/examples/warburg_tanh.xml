@@ -1,0 +1,29 @@
+<MyWarburgTanh class = "WarburgTanh">
+        <OhmicResistance class="LookupObj2dWithState">
+                <RowState cacheref="Soc"/>
+                <ColState cacheref="ThermalState"/>
+                <LookupData>
+                    ...
+                </LookupData>
+                <MeasurementPointsRow desc="StateOfCharge">
+                    ...
+                </MeasurementPointsRow>
+                <MeasurementPointsColumn desc="ThermalState">
+                    ...
+                </MeasurementPointsColumn>
+        </OhmicResistance>
+        <Tau class="LookupObj2dWithState">
+                <RowState cacheref="Soc"/>
+                <ColState cacheref="ThermalState"/>
+                <LookupData>
+                    ...
+                </LookupData>
+                <MeasurementPointsRow desc="StateOfCharge">
+                    ...
+                </MeasurementPointsRow>
+                <MeasurementPointsColumn desc="ThermalState">
+                    ...
+                </MeasurementPointsColumn>
+        </Tau>
+</MyWarburgTanh>
+

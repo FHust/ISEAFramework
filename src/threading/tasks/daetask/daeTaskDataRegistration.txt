@@ -1,0 +1,30 @@
+/*
+ * daeTaskDataRegistration.cpp
+ *
+ *  Created on: 18.11.2013
+ *      Author: chris
+ */
+
+
+
+#ifdef BOOST_MPI
+
+#include "daeInputData.h"
+#include "daeOutputData.h"
+#include "../../../misc/matrixInclude.h"
+
+#include "../../../electrical/twoport.h"
+
+#include <boost/serialization/shared_ptr.hpp>
+#include <boost/serialization/export.hpp>
+
+
+BOOST_SERIALIZATION_SHARED_PTR(threading::daetask::DAEInputData<myMatrixType>)
+BOOST_CLASS_EXPORT(threading::daetask::DAEInputData<myMatrixType>)
+
+BOOST_SERIALIZATION_SHARED_PTR(threading::daetask::DAEOutputData<myMatrixType>)
+BOOST_CLASS_EXPORT(threading::daetask::DAEOutputData<myMatrixType>)
+
+#endif //BOOST_MPI
+
+

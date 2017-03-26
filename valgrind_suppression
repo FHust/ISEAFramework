@@ -1,0 +1,403 @@
+{
+   mem
+   Memcheck:Cond
+   fun:__ieee754_pow_sse2
+   fun:pow
+}
+
+{
+   Memcheck:Cond
+   fun:pow
+}
+{
+   exp1sup
+   Memcheck:Cond
+   fun:__exp1
+   fun:__ieee754_pow_sse2
+   ...
+}
+{
+   Memcheck:Value8
+   fun:__ieee754_pow_sse2
+   fun:pow
+}
+{
+   ignorefunpow
+   Memcheck:Cond
+   fun:pow
+}
+{
+   supvalue8
+   Memcheck:Value8
+   fun:__ieee754_pow_sse2
+   fun:pow
+}
+
+{
+    valuexp
+   Memcheck:Value8
+   fun:__exp1
+   fun:__ieee754_pow_sse2
+   ...
+}
+
+{
+   libboost_filesystem
+   Memcheck:Addr8
+   fun:wcscmp
+   fun:*moneypunct*
+   ...
+}
+
+{
+   mwi18
+   Memcheck:Leak
+   fun:_*nwm
+   ...
+}
+
+{
+   libmwservices
+   Memcheck:Leak
+   fun:malloc
+   obj:*/libut.so
+   ...
+   obj:*/libmwservices.so
+   ...
+}
+
+{
+   libboost_log
+   Memcheck:Leak
+   fun:malloc
+   fun:_*boost*detail*get_once_per_thread_epoch*
+   ...
+   obj:*/libboost_log.so.1.44.0
+   ...
+}
+{
+   nam
+   Memcheck:Leak
+   fun:_*nam
+   obj:*/libmwi18n.so
+   ...
+}
+
+{
+   libtbb
+   Memcheck:Leak
+   fun:calloc
+   fun:_dlerror_run
+   ...
+   obj:*/libtbb.so.2
+   ...
+}
+{
+   libmwi18n malloc
+   Memcheck:Leak
+   fun:malloc
+   ...
+   obj:*/libmwi18n.so
+}
+
+{
+   xercesc
+   Memcheck:Leak
+   fun:malloc
+   ...
+   fun:_*xercesc*
+   ...
+   obj:*/libmwxmlcore.so
+   ...
+}
+{
+   Memcheck:Leak
+   fun:_Znam
+   ...
+}
+
+{
+   libut.so
+   Memcheck:Leak
+   fun:_Znam
+   ...
+   obj:*/glnxa64/libut.so
+}
+
+
+{
+   libmwservice
+   Memcheck:Leak
+   fun:malloc
+   ...
+   obj:*/libmwservices.so
+}
+
+{
+   __kmp
+   Memcheck:Addr8
+   ...
+   fun:__kmp*
+    ...
+   obj:*libmwlapack.so
+}
+
+{
+   condjump kmp
+   Memcheck:Cond
+   fun:__kmp*
+   ...
+   fun:_ZN6Binder17_load_and_resolveEv
+   ...
+}
+
+{
+   memcheck kmp
+   Memcheck:Addr8
+   ...
+   fun:__kmp*
+   ...
+   fun:_ZN6Binder17_load_and_resolveEv
+   ...
+}
+
+{
+   leak kmp
+   Memcheck:Leak
+   ...
+   fun:*__kmp_*
+   fun:*__kmp_*
+   ...
+}
+
+{
+   leak mkl
+   Memcheck:Leak
+   fun:malloc
+   fun:mkl*
+   ...
+   fun:DGETRF
+   ...
+}
+
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:__kmp*
+   ...
+   fun:mkl_blas_dgemm
+   fun:DGEMM
+   ...
+}
+
+{
+   memcheck_kmp
+   Memcheck:Addr8
+   ...
+   fun:__kmp_env_get
+   ...
+   fun:_dl_fini
+   ...
+}
+{
+   paramBinder
+   Memcheck:Param
+   sched_setaffinity(mask)
+   ...
+   fun:__kmp_serial_initialize
+   fun:__kmp_aux_set_stacksize
+   fun:kmp_set_stacksize_s
+   fun:_ZN10ompwrapper4initEv
+   fun:_ZN6Binder17_load_and_resolveEv
+   ...
+}
+
+
+{
+   leak_mkl
+   Memcheck:Leak
+   ...
+   fun:mkl_blas_avx_dgemm_get_bufs
+   fun:mkl_blas_avx_xdgemm_par
+   fun:mkl_blas_avx_xdgemm
+   fun:mkl_blas_xdgemm
+   fun:mkl_blas_dgemm
+   fun:DGEMM
+   ...
+}
+{
+   leak_dl
+   Memcheck:Leak
+   fun:malloc
+   fun:decompose_rpath
+   fun:_dl_map_object
+   fun:openaux
+   fun:_dl_catch_error
+   fun:_dl_map_object_deps
+   fun:dl_open_worker
+   fun:_dl_catch_error
+   fun:_dl_open
+   fun:dlopen_doit
+   fun:_dl_catch_error
+   fun:_dlerror_run
+}
+
+{
+   leak_path
+   Memcheck:Leak
+   fun:malloc
+   fun:open_path
+   fun:_dl_map_object
+   fun:openaux
+   fun:_dl_catch_error
+   fun:_dl_map_object_deps
+   fun:dl_open_worker
+   fun:_dl_catch_error
+   fun:_dl_open
+   fun:dlopen_doit
+   fun:_dl_catch_error
+   fun:_dlerror_run
+}
+
+{
+   leaklibmwinder
+   Memcheck:Leak
+   fun:malloc
+   fun:open_path
+   fun:_dl_map_object
+   fun:dl_open_worker
+   fun:_dl_catch_error
+   fun:_dl_open
+   fun:dlopen_doit
+   fun:_dl_catch_error
+   fun:_dlerror_run
+   ...
+   obj:*libmwbinder.so
+}
+
+{
+   leak_utLoadLib
+   Memcheck:Leak
+   fun:malloc
+   fun:_dl_new_object
+   fun:_dl_map_object_from_fd
+   fun:_dl_map_object
+   fun:dl_open_worker
+   fun:_dl_catch_error
+   fun:_dl_open
+   fun:dlopen_doit
+   fun:_dl_catch_error
+   fun:_dlerror_run
+   fun:dlopen@@GLIBC_2.2.5
+   fun:utLoadLibrary
+}
+
+{
+   leakdgemm
+   Memcheck:Leak
+   fun:malloc
+   fun:mkl_serv_allocate
+   fun:mkl_blas_avx_dgemm_get_bufs
+   fun:mkl_blas_avx_xdgemm_par
+   fun:mkl_blas_avx_xdgemm
+   fun:mkl_blas_xdgemm
+   fun:mkl_blas_dgemm
+   fun:DGEMM
+   ...
+}
+{
+   leak...
+   Memcheck:Leak
+   fun:malloc
+   fun:_dl_new_object
+   fun:_dl_map_object_from_fd
+   fun:_dl_map_object
+   fun:openaux
+   fun:_dl_catch_error
+   fun:_dl_map_object_deps
+   fun:dl_open_worker
+   fun:_dl_catch_error
+   fun:_dl_open
+   fun:dlopen_doit
+   fun:_dl_catch_error
+}
+{
+   leakchecklibmwbinder
+   Memcheck:Leak
+   fun:calloc
+   fun:_dl_check_map_versions
+   fun:dl_open_worker
+   fun:_dl_catch_error
+   fun:_dl_open
+   fun:dlopen_doit
+   fun:_dl_catch_error
+   fun:_dlerror_run
+   fun:dlopen@@GLIBC_2.2.5
+   fun:utLoadLibrary
+   obj:*libmwbinder.so
+   ...
+}
+
+{
+   dlleak
+   Memcheck:Leak
+   fun:calloc
+   fun:_dl_new_object
+   fun:_dl_map_object_from_fd
+   fun:_dl_map_object
+   fun:openaux
+   fun:_dl_catch_error
+   fun:_dl_map_object_deps
+   fun:dl_open_worker
+   fun:_dl_catch_error
+   fun:_dl_open
+   fun:dlopen_doit
+   fun:_dl_catch_error
+}
+
+{
+   leakutLoad
+   Memcheck:Leak
+   fun:calloc
+   fun:_dl_new_object
+   fun:_dl_map_object_from_fd
+   fun:_dl_map_object
+   fun:dl_open_worker
+   fun:_dl_catch_error
+   fun:_dl_open
+   fun:dlopen_doit
+   fun:_dl_catch_error
+   fun:_dlerror_run
+   fun:dlopen@@GLIBC_2.2.5
+   fun:utLoadLibrary
+}
+
+{
+   kmp
+   Memcheck:Leak
+   fun:malloc
+   fun:_ZN3rml8internal12getRawMemoryEmb
+   fun:_ZN3rml8internal17mallocLargeObjectEmmb
+   fun:scalable_malloc
+   fun:__kmp_affinity_determine_capable
+   fun:_Z20__kmp_env_initializePKc
+   fun:_Z26__kmp_do_serial_initializev
+   fun:__kmp_serial_initialize
+   fun:__kmp_aux_set_stacksize
+   fun:kmp_set_stacksize_s
+   fun:_ZN10ompwrapper4initEv
+   fun:_ZN6Binder17_load_and_resolveEv
+}
+
+{
+   matfilter
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   obj:/usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.21
+   fun:call_init.part.0
+   fun:call_init
+   fun:_dl_init
+   obj:/lib/x86_64-linux-gnu/ld-2.19.so
+   ...
+}

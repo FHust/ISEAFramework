@@ -1,0 +1,300 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration>
+
+    <Options>
+        <SampleRate> 1000 </SampleRate>
+         <MaxStateSize>1</MaxStateSize>
+		<MaxOutputSize>1</MaxOutputSize>
+        <MaxNumberOfCells>1</MaxNumberOfCells>
+        <AirTemperature ReadFromFile="false"> 25.0 </AirTemperature>
+        <ConvectionActivated>true</ConvectionActivated>
+        <RadiationActivated>true</RadiationActivated>
+        <ArcPolygonizationForVisualzation>0.00, 8; 0.03, 16</ArcPolygonizationForVisualzation> <!-- Not yet implemented-->
+    </Options>
+
+    <!-- Hier werden die für das thermische Modell benutzten Materialien gecachet -->
+    <ThermalMaterials>
+        <Electrolyte class="MaterialCylindric" cache="true">
+            <Density>50</Density>
+            <SpecificCapacity>51</SpecificCapacity>
+            <ConductivityRho>52</ConductivityRho>
+            <ConductivityPhi>53</ConductivityPhi>
+            <ConductivityZ>54</ConductivityZ>
+        </Electrolyte>
+    
+        <Foam class="Material" cache="true">
+            <Density>60</Density>
+            <SpecificCapacity>61</SpecificCapacity>
+            <Conductivity>62</Conductivity>
+        </Foam>
+    </ThermalMaterials>
+
+    <CachedCoolings>
+        <ConstantCooling class="CoolingByConstantValue" cache="true">
+            <Value>13.4</Value>
+        </ConstantCooling>
+    </CachedCoolings>
+
+    <CoolingBlocks>
+        <WaterCooling class="CoolingPrismatic">
+            <Vertices>0.5, 0.1; 0.5, 0.2; 0.051, 0.15</Vertices>
+            <LowerZCoordinate>0.07</LowerZCoordinate>
+            <UpperZCoordinate>0.13</UpperZCoordinate>
+            <Cooling class="DirichletBoundaryCondition">
+                <SurfaceTemperature>10.0</SurfaceTemperature>
+            </Cooling>
+        </WaterCooling>
+    </CoolingBlocks>
+    
+    <!-- Hier werden genutzte Bauelemente und Verschaltugen definiert
+         Dieser Teil kann als Bibliothek angesehen werden in dem genutzte Elemente definiert und später verwendet werden -->
+
+    <CustomDefinitions>
+            
+        <!-- Ein Ohmscher Widerstand, der von Temperatur und SOC abhängig ist. Dieser wird als 2D Lookup hinterlegt  -->
+
+        <MyOhmicResistance class="OhmicResistance">
+            <Object class="LookupObj2dWithState">
+                <RowState cacheref="ThermalState"/>
+                <ColState cacheref="Soc"/>
+                <LookupData desc="Rser">0.0288200000000001,0.0273753907300395,0.0264344729259093,0.0135127660821939;0.0288200000000001,0.0273753907300395,0.0270767085789135,0.0275280515729565;0.0290500142586083,0.0277525443197526,0.0275261486868454,0.0276368633915343;0.0288630838514731,0.0278576890117617,0.0275537618404411,0.0277933657755191;0.0286781206123875,0.0277738617773271,0.0275453220226692,0.0259269199477185;0.0285331061111646,0.0277867915477187,0.0268358840093433,0.0267808653711796;0.0286358289536196,0.0277803384908296,0.0257328031445100,0.0272959924289106</LookupData>
+                <MeasurementPointsRow desc="MeasureTemp">0,10,23,50</MeasurementPointsRow>
+                <MeasurementPointsColumn desc="StateOfCharge">5,20,35,50,65,80,90</MeasurementPointsColumn>
+            </Object>
+        </MyOhmicResistance>
+
+        <!-- Eine OCV, die von Temperatur und SOC abhängig ist als 2D Lookup  -->
+
+        <MyVoltageSource class="VoltageSource">
+            <Object class="LookupObj2dWithState">
+                <RowState cacheref="Soc"/>
+                <ColState cacheref="ThermalState"/>
+                <LookupData desc="OCV">3.47980625000000,3.56020000000000,3.61080000000000,3.64033750000000,3.67903750000000,3.74791250000000,3.84935000000000,3.94420000000000,4.05327500000000,4.18230000000000;3.48386250000000,3.56396250000000,3.61388750000000,3.64350000000000,3.68183750000000,3.75231250000000,3.85146875000000,3.94563750000000,4.05550000000000,4.18410000000000;3.48390000000000,3.56456250000000,3.61843125000000,3.64930000000000,3.68808750000000,3.76500000000000,3.85450000000000,3.94680000000000,4.05477500000000,4.17770000000000;3.47570000000000,3.55060000000000,3.60896250000000,3.64975000000000,3.68677500000000,3.75358750000000,3.84280000000000,3.93626250000000,4.04295000000000,4.16480000000000</LookupData>
+                <MeasurementPointsRow desc="StateOfChargeOCV">10,20,30,40,50,60,70,80,90,100</MeasurementPointsRow>
+                <MeasurementPointsColumn desc="MeasureTemp">0,10,23,50</MeasurementPointsColumn>
+            </Object>
+        </MyVoltageSource>
+
+        <!-- Eine Liste von Zarc Elementen die im elektrischen Ersatzschaltbild genutzt wird.
+             R / ( 1 + (R*C)^phi)
+             Die Parameter sind abhängig von Temperatur und Temperatur
+         -->
+
+
+        <MyZarcElement class="ZarcElement">
+            <ThermalState cacheref="ThermalState"/>
+            <Soc cacheref="Soc"/>
+            <LookupTau class="LookupObj2DWithState">
+                <RowState cacheref="ThermalState"/>
+                <ColState cacheref="Soc"/>
+                <LookupData>
+                    1.12980227037822e-01, 1.71749789914134e-01, 4.27878577005388e-01, 4.70584769553997e-01;
+                    2.88029269499999e-01, 2.03069924403468e-01, 7.59434298204209e-02, 5.38248547348156e-02;
+                    1.80149147116020e-01, 1.12630469688383e-01, 3.52185854766679e-02, 2.98230802877780e-02;
+                    1.47909096582298e-01, 8.33921914682953e-02, 2.57060565921076e-02, 2.22501291807582e-02;
+                    1.32900242338032e-01, 7.22938740353130e-02, 2.05480235442034e-02, 9.95886997764575e-02;
+                    1.19852623435413e-01, 6.56657395160509e-02, 2.36971844841798e-02, 1.02914420936082e-01;
+                    1.18273000586515e-01, 6.60491071602289e-02, 3.25921294643322e-02, 1.09197268465146e-01
+                </LookupData>
+                <MeasurementPointsRow>0, 10, 23, 50</MeasurementPointsRow>
+                <MeasurementPointsColumn>5, 20, 35, 50, 65, 80, 90</MeasurementPointsColumn>
+            </LookupTau>
+            <LookupOhmicResistance class="LookupObj2DWithState">
+                <RowState cacheref="ThermalState"/>
+                <ColState cacheref="Soc"/>
+                <LookupData>
+                    0.0264994082415437, 0.0264994082415437, 0.0264994082415437, 0.0299913094135788;
+                    0.0675569999999998, 0.0313318160740531, 0.0127731516995969, 0.00404164451684630;
+                    0.0536386688114087, 0.0248200664672378, 0.00989750001969683, 0.00303781463624295;
+                    0.0478600636580172, 0.0219992555610513, 0.00877924658179266, 0.00234391473354453;
+                    0.0441171340633137, 0.0206405039153971, 0.00794555485936455, 0.00454415109298745;
+                    0.0418986584966986, 0.0203278573267527, 0.00866505912064747, 0.00344848953405180;
+                    0.0421316495020664, 0.0207584663601899, 0.0102011087727835, 0.00296383805146105
+                </LookupData>
+                <MeasurementPointsRow>0, 10, 23, 50</MeasurementPointsRow>
+                <MeasurementPointsColumn>5, 20, 35, 50, 65, 80, 90</MeasurementPointsColumn>
+            </LookupOhmicResistance>
+            <LookupPhi class="LookupObj2DWithState">
+                <RowState cacheref="ThermalState"/>
+                <ColState cacheref="Soc"/>
+                    <LookupData>
+                        0.574590000000000, 0.516891694022437, 0.408379079339744, 0.110443124808620;
+                        0.574590000000000, 0.516891694022437, 0.568073405078093, 0.566435038531618;
+                        0.616859078283881, 0.579111165549142, 0.662374262351899, 0.620812008168125;
+                        0.625502091112064, 0.610693210867254, 0.697319797270455, 0.671812046180353;
+                        0.621586176902636, 0.620972340223097, 0.721715387830978, 0.323239015612757;
+                        0.620607929391110, 0.630419920219851, 0.671002168217511, 0.371661290927877;
+                        0.620534462894923, 0.628465004550853, 0.585312180039373, 0.410302314031108
+                    </LookupData>
+                <MeasurementPointsRow>0, 10, 23, 50</MeasurementPointsRow>
+                <MeasurementPointsColumn>5, 20, 35, 50, 65, 80, 90</MeasurementPointsColumn>
+            </LookupPhi>
+        </MyZarcElement>
+
+        <MyZarcElement2 class="ZarcElement">
+          <ThermalState cacheref="ThermalState"/>
+            <Soc cacheref="Soc"/>
+            <LookupTau class="LookupObj2DWithState">
+                <RowState cacheref="ThermalState"/>
+                <ColState cacheref="Soc"/>
+                <LookupData>
+                    7.18995948733622e+01, 7.18995948733622e+01, 7.18995948733622e+01, 1.72014439980198e+02;
+                    1.06291852663799e+02, 6.72360031885497e+01, 2.25315701158008e+01, 1.24381452400449e+01;
+                    8.51369323682503e+01, 7.96790294643858e+01, 4.06553583608283e+01, 1.39605547315769e+01;
+                    4.12117841438823e+01, 3.30438276807885e+01, 1.46796092234978e+01, 1.05173129607056e+01;
+                    2.09612418598535e+01, 2.05572641277478e+01, 1.30382153158531e+01, 8.83888257496744e+00;
+                    2.91126500497086e+01, 1.79756822658049e+01, 1.00747391004287e+01, 7.40983806343882e+00;
+                    1.61252822647543e+01, 1.05500749096217e+01, 8.03484722536149e+00, 5.90166478298738e+00
+                </LookupData>
+                <MeasurementPointsRow>0, 10, 23, 50</MeasurementPointsRow>
+                <MeasurementPointsColumn>5, 20, 35, 50, 65, 80, 90</MeasurementPointsColumn>
+            </LookupTau>
+            <LookupOhmicResistance class="LookupObj2DWithState">
+                <RowState cacheref="ThermalState"/>
+                <ColState cacheref="Soc"/>
+                <LookupData>
+                    0.0422632965521782, 0.0422632965521782, 0.0422632965521782, 0.0646154311756893;
+                    0.0122909999999999, 0.00820305593966980, 0.00584662021670523, 0.00383743519303631;
+                    0.0322225070656886, 0.0289438148360227, 0.0225495908462913, 0.00599634893454420;
+                    0.0257481760483287, 0.0186632656230284, 0.00993329376244036, 0.00582987109816202;
+                    0.0157426548912461, 0.0171684201770746, 0.0134953332473813, 0.00457332312382527;
+                    0.0218280618476754, 0.0131225853688649, 0.00741527720123879, 0.00329020951414971;
+                    0.0153521701301020, 0.00846967601820038, 0.00563955480281332, 0.00315825717209717
+                </LookupData>
+                <MeasurementPointsRow>0, 10, 23, 50</MeasurementPointsRow>
+                <MeasurementPointsColumn>5, 20, 35, 50, 65, 80, 90</MeasurementPointsColumn>
+            </LookupOhmicResistance>
+            <LookupPhi class="LookupObj2DWithState">
+                <RowState cacheref="ThermalState"/>
+                <ColState cacheref="Soc"/>
+                <LookupData>
+                    1, 0.957683980942010, 0.762474540690386, 0.810166837787303;
+                    1, 0.957683980942010, 0.837851589303327, 0.826206919812180;
+                    0.806534226878276, 0.755415801951905, 0.630228467428149, 0.686969202518359;
+                    0.708526377255388, 0.661628608281274, 0.630894213874104, 0.675415879938948;
+                    0.791964147404381, 0.697353484425094, 0.628110619592649, 0.801166605326404;
+                    0.759343341643463, 0.720390317831926, 0.755733232495091, 0.938336421996388;
+                    0.790468798628622, 0.797350100822233, 0.852903199927494, 0.986742576117900
+                </LookupData>
+                <MeasurementPointsRow>0, 10, 23, 50</MeasurementPointsRow>
+                <MeasurementPointsColumn>5, 20, 35, 50, 65, 80, 90</MeasurementPointsColumn>
+            </LookupPhi>
+        </MyZarcElement2>
+
+        <!-- Vordefiniertes Zellelement einer Lithium-Ionen Batterie.
+             Standarmäßig besteht ein Zellelement aus einem ohmschen Serienwiderstand, einer OCV, und einer Liste von ZarcElementen. 
+             Die Elemente sind dabei jeweils von den States Temperatur und State of Charge abhängig.
+             Temperatur stellt die anfängliche Temperatur in °C dar. 
+             SOC benötigt eine nominale Kapazität, einen anfänglichen SOC in % sowie die Diskretisierung.
+         -->
+
+        <MyCellElement1 class="CellElement" observable="True">
+            <ThermalState class="ThermalState" cache="True">
+                <InitialTemperature>25</InitialTemperature>
+            </ThermalState>
+            <Soc class="Soc" cache="True">
+                <MaxCapacity>2.05</MaxCapacity>
+                <InitialSoc>55</InitialSoc>
+                <MeasurementPoints>5,10,20,23,35,50,65,80,90</MeasurementPoints>
+            </Soc>
+            <Children>
+                <OhmicResistance ref="MyOhmicResistance"/>
+                <VoltageSource ref="MyVoltageSource"/>
+                <ZarcElement ref="MyZarcElement"/>
+                <ZarcElement2 ref="MyZarcElement"/>
+            </Children>
+            <ThermalBlock ref="BlockType2"/>
+        </MyCellElement1>
+      
+      
+        <!-- Zwei Typen thermischer Blöcke -->
+        <BlockType1 class="RectangularBlock">
+            <Material cacheref="Foam"/>
+            <Dimensions>0.2, 0.2, 0.2</Dimensions>
+            <SizeX>5</SizeX>
+            <SizeY>6</SizeY>
+            <SizeZ>7</SizeZ>
+            <InitialTemperature>25.0</InitialTemperature>
+        </BlockType1>
+
+        <BlockType2 class="QuadraticCellBlock">
+            <Length>0.1</Length>
+            <RadiusCell>0.04</RadiusCell>
+            <Height>0.2</Height>
+            <CellRhoDivision>3</CellRhoDivision>
+            <PhiDivision>8</PhiDivision>
+            <HeightDivision>15</HeightDivision>
+            <ArcPolygonization>0.001</ArcPolygonization>
+            <CellMaterial cacheref="Electrolyte"/>
+            <FillMaterial cacheref="Foam"/>
+            <InitialTemperature>3</InitialTemperature>
+        </BlockType2>
+
+
+
+        <!-- Beispielverschaltung von jeweils 10 Batterien der beiden Typen (MyCellElement1,MyCellElement2).
+             Diese werden parallel verschaltet.
+         -->
+        
+        <NormalBatteryPack class="ParallelTwoPort">
+            <Children count="2" dx="0.2">
+                <Battery ref="MyCellElement1"/>
+                <Battery ref="MyCellElement1" dx="0.1"/>
+            </Children>
+        </NormalBatteryPack>
+
+        <!-- Hier werden zwei Batterypacks(NormalBatteryPack) in Serie verschaltet -->
+        <BatteryString class="SerialTwoPort">
+			<CoolingBlocks>
+                <WaterCooling class="CoolingPrismatic" dx="-1.0">
+                    <Vertices>0.0, 0.1; 0.1, 0.1; 0.1, 0.0; 0.0, 0.0</Vertices>
+                    <LowerZCoordinate>0.07</LowerZCoordinate>
+                    <UpperZCoordinate>0.13</UpperZCoordinate>
+                    <Cooling cacheref="ConstantCooling"/>
+                </WaterCooling>
+            </CoolingBlocks>
+            <Children count="3" dy="0.1">
+                <BatteryPack ref="NormalBatteryPack"/>
+            </Children>
+        </BatteryString>
+  
+    </CustomDefinitions>
+
+    <!-- Wurzelknoten des Systems.
+         Dieses Batterienetzwerk wird in der Anwendung simuliert.  
+     -->
+
+    <RootElement class="ParallelTwoPort">
+      <AdditionalBlocks>
+          <Block1 ref="BlockType1" dx="0.05" dy="0.05" dz="0.4"/>
+      </AdditionalBlocks>  
+      <Children dz="0.2" count="2">
+            <BatteryString ref="BatteryString"/>
+            <MyOhmicResistance class="OhmicResistance" dy="-1.0">
+                <Object class="LookupObj1dWithState">
+                    <State class="ThermalState">
+                        <InitialTemperature>25.0</InitialTemperature>
+                    </State>
+                    <LookupData desc="Rser">0.0288200000000001,0.0273753907300395,0.0264344729259093,0.0235127660821939</LookupData>
+                    <MeasurementPoints desc="MeasureTemp">0,10,23,50</MeasurementPoints>
+                </Object>
+                <ThermalBlock class="RectangularBlock">
+                    <Material cacheref="Foam"/>
+                    <Dimensions>0.1, 0.1, 0.1</Dimensions>
+                    <SizeX>5</SizeX>
+                    <SizeY>6</SizeY>
+                    <SizeZ>7</SizeZ>
+                    <InitialTemperature>25.0</InitialTemperature>
+                </ThermalBlock>
+            </MyOhmicResistance>
+        </Children>
+    </RootElement>
+
+    <ThermalProbe>
+        <Position>
+            0,0,0;
+            1,1,1;
+        </Position>
+    </ThermalProbe>
+
+</Configuration>

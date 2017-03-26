@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration>
+    <Options>
+        <SampleRate>1000</SampleRate>
+        <MaxStateSize>1</MaxStateSize>
+        <MaxOutputSize>1</MaxOutputSize>
+    </Options>
+
+    <Observer>
+        <Electrical>
+            <Filter1 class="DecimateFilter">
+                <TimeDelay>0.1</TimeDelay>
+            </Filter1>
+            <Filter2 class="MatlabFilter">
+                <Filename>parallelRC_ser.mat</Filename>
+            </Filter2>
+        </Electrical>
+    </Observer>
+
+    <CustomDefinitions>
+        <RC1 class="ParallelRC">
+            <LookupOhmicResistance class="ConstObj">
+                <Value>
+                    10
+                </Value>
+            </LookupOhmicResistance>
+            <LookupTau class="ConstObj">
+                <Value>
+                    15
+                </Value>
+            </LookupTau>
+        </RC1>
+    </CustomDefinitions>
+
+    <RootElement class="SerialTwoPort">
+        <Children count="DISC">
+            <Pack ref="RC1"/>
+        </Children>
+    </RootElement>
+
+</Configuration>

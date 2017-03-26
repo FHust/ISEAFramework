@@ -1,0 +1,8 @@
+<Observer>
+    <Filter1 class="MatlabFilter">
+        <filename>
+            sanyo.mat
+        </filename>
+    </Filter1>
+</Observer>
+

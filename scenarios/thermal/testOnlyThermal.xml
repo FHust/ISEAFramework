@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration>
+    
+    <Options>
+        <SampleRate> 1000 </SampleRate>
+        <MaxStateSize>1</MaxStateSize>
+        <MaxNumberOfCells>1</MaxNumberOfCells>
+        <AirTemperature ReadFromFile="false">25</AirTemperature>
+        <ConvectionActivated advancedAreaAggregation="true">true</ConvectionActivated>
+        <RadiationActivated>true</RadiationActivated>
+    </Options>
+    
+    <!-- Hier werden die für das thermische Modell benutzten Materialien definiert und gecachet -->
+ 
+    <Observer>
+        <Thermal>
+            <Filter1 class="DecimateFilter">
+                <TimeDelay>0.1</TimeDelay>
+            </Filter1>
+            <Filter2 class="MatlabFilter">
+                <Filename>testOnlyThermal.mat</Filename>
+            </Filter2>
+        </Thermal>
+    </Observer>
+   
+    <ThermalMaterials>
+        <Electrolyte class="Material" cache="true">
+            <Density>2000</Density>
+            <SpecificCapacity>4000</SpecificCapacity>
+            <Conductivity>10</Conductivity>
+        </Electrolyte>
+    
+        <Rubber class="Material" cache="true">
+            <Density>900</Density>
+            <SpecificCapacity>1500</SpecificCapacity>
+            <Conductivity>0.5</Conductivity>
+        </Rubber>
+    </ThermalMaterials>
+
+    <!-- Hier werden die für das thermische Modell benutzten Kühlungen neben Konvektion und Wärmestrahlung definiert und gecachet -->
+
+    <CoolingBlocks>
+        <WaterCooling class="CoolingPrismatic" cache="true">
+            <Vertices>0.0, 0.0; 0.0, 0.075; 0.075, 0.075; 0.075, 0.0</Vertices>
+            <LowerZCoordinate>0.215</LowerZCoordinate>
+            <UpperZCoordinate>0.3</UpperZCoordinate>
+            <Cooling class="CoolingByConstantValue">
+                <Value>5000.0</Value>
+            </Cooling>
+        </WaterCooling>
+    </CoolingBlocks>
+    
+    <CachedCoolings/>
+    
+    <!-- Hier werden genutzte Bauelemente und Verschaltugen definiert
+         Dieser Teil kann als Bibliothek angesehen werden in dem genutzte Elemente definiert und später verwendet werden -->
+
+    <CustomDefinitions>
+
+        <BatteryCell class="CellElement" observable="True">
+            <ThermalBlock ref="PouchBagThermal"/>
+            <AdditionalBlocks>
+                <Block ref="UnheatedBlockTypeX" dy="0.075"/>
+                <Block ref="UnheatedBlockTypeY" dx="-0.015"/>
+                <Block ref="UnheatedBlockTypeBottom" dx="-0.015" dz="-0.015"/>
+            </AdditionalBlocks>
+        </BatteryCell>
+
+        <!-- Definitionen von Block-Typen für das thermische Modell -->
+        
+        <PouchBagThermal class="RectangularBlock">
+            <Material cacheref="Electrolyte"/>
+            <Dimensions>0.075, 0.075, 0.1</Dimensions>
+            <SizeX>3</SizeX>
+            <SizeY>4</SizeY>
+            <SizeZ>5</SizeZ>
+            <InitialTemperature>25</InitialTemperature>
+        </PouchBagThermal>
+        
+        <UnheatedBlockTypeX class="RectangularBlock">
+            <Material cacheref="Rubber"/>
+            <Dimensions>0.075, 0.015, 0.1</Dimensions>
+            <SizeX>4</SizeX>
+            <SizeY>1</SizeY>
+            <SizeZ>4</SizeZ>
+            <InitialTemperature>25</InitialTemperature>
+        </UnheatedBlockTypeX>
+        
+        <UnheatedBlockTypeY class="RectangularBlock">
+            <Material cacheref="Rubber"/>
+            <Dimensions>0.015, 0.09, 0.1</Dimensions>
+            <SizeX>1</SizeX>
+            <SizeY>4</SizeY>
+            <SizeZ>4</SizeZ>
+            <InitialTemperature>25</InitialTemperature>
+        </UnheatedBlockTypeY>
+
+        <UnheatedBlockTypeBottom class="RectangularBlock">
+            <Material cacheref="Rubber"/>
+            <Dimensions>0.09, 0.09, 0.015</Dimensions>
+            <SizeX>4</SizeX>
+            <SizeY>4</SizeY>
+            <SizeZ>1</SizeZ>
+            <InitialTemperature>25</InitialTemperature>
+        </UnheatedBlockTypeBottom>
+
+        <!-- Weitere elektrische Verschaltungen, die von RootElement aufgerufen werden -->
+
+        <BatteryString class="ParallelTwoPort">
+            <Children count="1" dx="0.18">
+                <BatteryCell ref="BatteryCell"/>
+            </Children>
+        </BatteryString>
+        
+        <BatteryPack class="SerialTwoPort">
+            <Children count="3" dy="0.09">
+                <BatteryString ref="BatteryString"/>
+            </Children>
+        </BatteryPack>
+        
+    </CustomDefinitions>
+
+    <!-- Von diesem Knoten aus beginnt das Parsen sowohl des elektrischen, als auch des thermischen Modells -->
+    
+    <RootElement class="ParallelTwoPort">
+      <Children dz="0.115" count="2">
+          <ZLayer ref="BatteryPack"/>
+      </Children>
+    </RootElement>
+
+</Configuration>

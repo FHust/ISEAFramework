@@ -1,0 +1,6 @@
+<RootElement class="ParallelTwoPort">
+    <Children>
+        <MyCapacity1 class="Capacity"> ... </MyCapacity>
+        <MyCapacity2 class="Capacity"> ... </MyCapacity>
+    </Children>
+</RootElement>

@@ -1,0 +1,4 @@
+<Cooling class="CoolingByConstantValue">
+    <Value>5000.0</Value>
+</Cooling>
+

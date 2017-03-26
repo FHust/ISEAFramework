@@ -1,0 +1,4 @@
+<Cooling class="DirichletBoundaryCondition">
+    <SurfaceTemperature>15.0</SurfaceTemperature>
+</Cooling>
+

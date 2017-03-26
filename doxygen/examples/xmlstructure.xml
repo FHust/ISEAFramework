@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration>
+
+    <Options>
+    </Options>
+
+    <Observer>
+    </Observer>
+
+    <ThermalMaterials>
+    </ThermalMaterials>
+
+    <Coolings>
+    </Coolings>
+
+    <CustomDefinitions>
+    </CustomDefinitions>
+
+    <RootElement class="">
+    </RootElement>
+
+</Configuration>

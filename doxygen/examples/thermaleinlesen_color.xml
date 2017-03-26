@@ -1,0 +1,25 @@
+<div class="fragment">
+<!-- Generator: GNU source-highlight 3.1.7
+by Lorenzo Bettini
+http://www.lorenzobettini.it
+http://www.gnu.org/software/src-highlite -->
+<pre><tt><b><font color="#0000FF">&lt;RootElement</font></b> <font color="#009900">class</font><font color="#990000">=</font><font color="#FF0000">"SerialTwoPort"</font><b><font color="#0000FF">&gt;</font></b>
+    <b><font color="#0000FF">&lt;Children</font></b> <font color="#009900">count</font><font color="#990000">=</font><font color="#FF0000">"3"</font> <font color="#009900">dx</font><font color="#990000">=</font><font color="#FF0000">"0.05"</font><b><font color="#0000FF">&gt;</font></b>
+        <b><font color="#0000FF">&lt;Line</font></b> <font color="#009900">class</font><font color="#990000">=</font><font color="#FF0000">"ParallelTwoPort"</font><b><font color="#0000FF">&gt;</font></b>
+            <b><font color="#0000FF">&lt;Children</font></b> <font color="#009900">count</font><font color="#990000">=</font><font color="#FF0000">"5"</font> <font color="#009900">dy</font><font color="#990000">=</font><font color="#FF0000">"0.04"</font><b><font color="#0000FF">&gt;</font></b>
+                <b><font color="#0000FF">&lt;Cell</font></b> <font color="#009900">ref</font><font color="#990000">=</font><font color="#FF0000">"MyCellElement1"</font><b><font color="#0000FF">/&gt;</font></b>
+                <b><font color="#0000FF">&lt;Cell</font></b> <font color="#009900">ref</font><font color="#990000">=</font><font color="#FF0000">"MyCellElement1"</font> <font color="#009900">dz</font><font color="#990000">=</font><font color="#FF0000">"0.03"</font><b><font color="#0000FF">/&gt;</font></b>
+            <b><font color="#0000FF">&lt;/Children&gt;</font></b>
+        <b><font color="#0000FF">&lt;/Line&gt;</font></b>
+    <b><font color="#0000FF">&lt;/Children&gt;</font></b>
+<b><font color="#0000FF">&lt;/RootElement&gt;</font></b>
+<b><font color="#0000FF">&lt;MyCellElement1</font></b> <font color="#009900">class</font><font color="#990000">=</font><font color="#FF0000">"CellElement"</font> <font color="#009900">observable</font><font color="#990000">=</font><font color="#FF0000">"True"</font><b><font color="#0000FF">&gt;</font></b>
+      ...
+      <b><font color="#0000FF">&lt;ThermalBlock</font></b> <font color="#009900">ref</font><font color="#990000">=</font><font color="#FF0000">"SupercapCellBlock"</font><b><font color="#0000FF">/&gt;</font></b>
+      <b><font color="#0000FF">&lt;UnheatedBlocks&gt;</font></b>
+        <b><font color="#0000FF">&lt;Block1</font></b> <font color="#009900">ref</font><font color="#990000">=</font><font color="#FF0000">"BlockType1"</font><b><font color="#0000FF">/&gt;</font></b>
+        <b><font color="#0000FF">&lt;Block2</font></b> <font color="#009900">ref</font><font color="#990000">=</font><font color="#FF0000">"BlockType1"</font> <font color="#009900">dy</font><font color="#990000">=</font><font color="#FF0000">"0.075"</font><b><font color="#0000FF">/&gt;</font></b>
+      <b><font color="#0000FF">&lt;/UnheatedBlocks&gt;</font></b>
+<b><font color="#0000FF">&lt;/MyCellElement1&gt;</font></b>
+</tt></pre>
+</div>

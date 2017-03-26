@@ -1,0 +1,23 @@
+<Observer>
+    <Filter1 class="MatlabFilter">
+        <filename>
+            sanyo.mat
+        </filename>
+    </Filter1>
+
+    <Filter2 class="DecimateFilter">
+        <TimeDelay>
+            0.1
+        </TimeDelay>
+    </Filter2>
+
+    <Filter3 class="StdOutFilter"/>
+
+    <Filter4 class="CSVFilter">
+        <filename>
+            sanyo.csv
+        </filename>
+        <printHeader> 1 </printHeader>
+    </Filter4>
+</Observer>
+

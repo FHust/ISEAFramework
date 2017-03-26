@@ -1,0 +1,18 @@
+<RootElement class="SerialTwoPort">
+    <Children count="3" dx="0.05">
+        <Line class="ParallelTwoPort">
+            <Children count="5" dy="0.04">
+                <Cell ref="MyCellElement1"/>
+                <Cell ref="MyCellElement1" dz="0.03"/>
+            </Children>
+        </Line>
+    </Children>
+</RootElement>
+<MyCellElement1 class="CellElement" observable="True">
+      ...
+      <ThermalBlock ref="SupercapCellBlock"/>
+      <UnheatedBlocks>
+        <Block1 ref="BlockType1"/>
+        <Block2 ref="BlockType1" dy="0.075"/>
+      </UnheatedBlocks>
+</MyCellElement1>

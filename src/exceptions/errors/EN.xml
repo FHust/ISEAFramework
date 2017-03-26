@@ -1,0 +1,718 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mainroot>
+<getchildren>
+    <!--- Undefined Errors -->
+
+    <ErrorPassThrough>
+        Error: %s.
+    </ErrorPassThrough>
+
+    <DefaultError>
+        Something went wrong.
+    </DefaultError>
+
+    <!--- Framework errors -->
+
+    <ElementsDimensionsNegative used="blocks/rectangular_blocks.h">  
+        Every element of Dimensions must be bigger than zero in %s.
+    </ElementsDimensionsNegative>
+
+    <DivisibleByElectricalDiscretization used="blocks/rectangular_blocks.h,hexagonal_cell_block.h,quadratic_cell_block.h,supercap.h,triangular_prism_block.h"> 
+        Division into finite volumes must be divisible by electrical discretization for every dimension in %s.
+    </DivisibleByElectricalDiscretization>
+
+    <thermalStatesEqualElectricaldiscretization used="blocks/rectangular_blocks.h,hexagonal_cell_block.h,supercap.h,triangular_prism_block.h">
+        Size of thermalStates must be equal to electrical discretization.
+    </thermalStatesEqualElectricaldiscretization>
+
+    <LengthNegative used="blocks/hexagonal_cell_block.h,quadratic_cell_block.h,supercap.h">
+        Length must be bigger than zero in %s.
+    </LengthNegative>
+
+    <RadiusCellDoesNotFitInHexagonal used="blocks/hexagonal_cell_block.h">
+        RadiusCell must be bigger than zero and less than sqrt(3)/2*length, in order that the cell fits into the block in %s.
+    </RadiusCellDoesNotFitInHexagonal>
+
+    <PhiDivisionNonDivisible6 used="blocks/hexagonal_cell_block.h">
+        PhiDivision must be divisible by six in %s.
+    </PhiDivisionNonDivisible6>
+
+    <HeightNegative used="blocks/hexagonal_cell_block.h,quadratic_cell_block.h,supercap.h,triangular_prism_block.h">
+        Height must be bigger than zero in %s.
+    </HeightNegative>
+
+    <ArcPolygonizationNegative used="blocks/hexagonal_cell_block.h,quadratic_cell_block.h">
+         ArcPolygonization must be bigger than zero in %s.
+    </ArcPolygonizationNegative>
+
+    <RadiusCellDoesNotFitInQuadratic used="blocks/quadratic_cell_block.h">
+        RadiusCell must be bigger than zero and less than half of length, in order that the cell fits into the block in %s.
+    </RadiusCellDoesNotFitInQuadratic>
+
+    <PhiDivisionNonDivisibleBy4 used="blocks/quadratic_cell_block.h,supercap.h">
+        PhiDivision must be divisible by four in %s.
+    </PhiDivisionNonDivisibleBy4>
+
+    <InnerRadiusCellDoesNotFitInSupercap used="blocks/supercap.h">
+        InnerRadiusCell must be bigger than zero and less than half of length, in order that the cell fits into the block in %s.
+    </InnerRadiusCellDoesNotFitInSupercap>
+
+    <OuterRadiusCellDoesNotFitInSupercap used="blocks/supercap.h">
+        OuterRadiusCell must be bigger than zero and less than half of length, in order that the cell fits into the block in %s.
+    </OuterRadiusCellDoesNotFitInSupercap>
+
+    <ArcPolygonEdgesLengthNegative used="blocks/supercap.h">
+        ArcPolygonEdgesLength must be bigger than zero in %s.
+    </ArcPolygonEdgesLengthNegative>
+
+    <deltaPhiBigger90deg used="blocks/elements/cutcyl_element.h">
+        deltaPhi must be 90 deg or smaller than 90 deg.
+    </deltaPhiBigger90deg>
+
+    <errorRhoGreaterEqZero used="blocks/elements/cutyl_element.h,cylindric_element.h">
+        mRho of startVector must be zero or bigger than zero.
+    </errorRhoGreaterEqZero>
+
+    <cutLineDirectionNoDirection used="blocks/elements/cutyl_element.h">
+        cutLineDirection: Get1() and Get2() are zero, thus there is no direction.
+    </cutLineDirectionNoDirection>
+
+    <cutLineCutsElementIncorrectly used="blocks/elements/cutyl_element.h">
+        cutLine does not cut element to three straight and one arc line.
+    </cutLineCutsElementIncorrectly>
+
+    <errorAngleSmaller180 used="blocks/elements/cylindric_element.h">
+        deltaPhi must be 180 deg or smaller than 180 deg.
+    </errorAngleSmaller180>
+
+    <errorDifferenceRhoDeltavector used="blocks/elements/cylindric_element.h">
+        Difference between mRho of startVector and deltaVector must be zero or bigger than zero.
+    </errorDifferenceRhoDeltavector>
+
+    <VerticesDoesNotFormArea used="blocks/elements/triangular_element.h">
+        vertices 1, 2 and 3 form a line or a point and not an area.
+    </VerticesDoesNotFormArea>
+
+    <NoEnoughVerticesToFormArea used="boundaryConditions/cooling_block.h">
+        Vertices must have more than two elements to form an area.
+    </NoEnoughVerticesToFormArea>
+
+    <UpperZCoordinateSmallerLowerZ used="boundaryConditions/cooling_block.h">
+        UpperZCoordinate must be bigger than LowerZCoordinate.
+    </UpperZCoordinateSmallerLowerZ>
+
+    <polygonOverlap used="boundaryConditions/cooling_block.h">
+        Vertices create an overlapping polygon.
+    </polygonOverlap>
+
+    <preFactorNegative used="boundaryConditions/default_convection.h">
+        preFactor must be bigger than zero.
+    </preFactorNegative>
+
+    <DensityNegative used="materials/material.h">
+        Density must be bigger than zero.
+    </DensityNegative>
+
+    <SpecificCapacityNegative used="materials/material.h">
+        SpecificCapacity must be bigger than zero.
+    </SpecificCapacityNegative>
+
+    <ConductivitiesNegative used="materials/material.h">
+        Conductivities must be bigger than zero.
+    </ConductivitiesNegative>
+
+    <UnvalidType used="materials/material.h">
+        Unvalid type passed to material.
+    </UnvalidType>
+
+    <IndexForGetConductivityBigger3 used="materials/material.h">
+        Index passed for GetConductivity() must be smaller than 3
+    </IndexForGetConductivityBigger3>
+
+    <NumberOfCellsAndThermalblocksUnequal used="thermal/block_observer.h">
+        The number of thermal blocks with connections to the electrical model and the number of cells are not equal.
+    </NumberOfCellsAndThermalblocksUnequal>
+
+    <CellsNonTwoportsWithChild used="thermal/block_observer.h">
+        All cells passed to block observer must be twoports with child, because they must be either a parallel twoport or a cellement.
+    </CellsNonTwoportsWithChild>
+
+    <BlockObserverNonInitialized used="thermal/block_observer">
+        BlockObserver has not been initialized.
+    </BlockObserverNonInitialized>
+
+    <SocStopCriterionInPercentNegative used="thermal/electrical_simulation.h">
+        SocStopCriterionInPercent must be positive in 'options' in xml-file.
+    </SocStopCriterionInPercentNegative>
+
+    <errorResetStatesToPointOfTimeExecution used="thermal/electrical_simulation.h">
+        Conditions for correct execution of ResetStatesToPointOfTime() are not met.
+    </errorResetStatesToPointOfTimeExecution>
+
+    <thermalElementEqualSize used="thermal/ode_system_thermal.h">
+        size() of thermalElements, a_th_Conductivity, coolingDataVector and dirchletDataVector must be equal.
+    </thermalElementEqualSize>
+
+    <thermalElementsconductivityMatrixUnEqual used="thermal/thermal_model.h">
+        size() of thermalElements and conductivityMatrix must be equal.
+    </thermalElementsconductivityMatrixUnEqual>
+
+    <OutOfRangeIndex used="thermal/thermal_model.h">
+        Biggest mIndex in surfaceAreas must be smaller than size() of thermalElements.
+    </OutOfRangeIndex>
+
+    <DimensionSmallerTolerance used="thermal/thermal_model.h">
+        Dimension of thermal block is smaller than tolerance in %s.
+    </DimensionSmallerTolerance>
+
+    <IndexOutOfDefinition1 used="thermal/thermal_model.h">
+        Location enum index out of definition(1)
+    </IndexOutOfDefinition1>
+
+    <IndexOutOfDefinition2 used="thermal/thermal_model.h">
+        Location enum index out of definition(2)
+    </IndexOutOfDefinition2>
+
+    <OverlappingAreaBiggerActualOne used="thermal/thermal_model.h">
+        Area has an overlapping area value bigger than actual area.
+    </OverlappingAreaBiggerActualOne>
+
+    <IndexOccuredTwice used="thermal/thermal_model.h">
+        The same index occurred twice in one row of conductivityMatrix.
+    </IndexOccuredTwice>
+
+    <SelfConductivityPositive used="thermal/thermal_model.h">
+        Self conductivity is not negative.
+    </SelfConductivityPositive>
+
+    <NegativeConductivity used="thermal/thermal_model.h">
+        Negative conductivity was found.
+    </NegativeConductivity>
+
+    <AreaFoundTwice used="thermal/thermal_model.h">
+        The same area was found twice.
+    </AreaFoundTwice>
+
+    <CollisionThermalBlocks used="thermal/thermal_model.h">
+        Collision between thermal block %s and thermal block %s.
+    </CollisionThermalBlocks>
+
+    <CollisionThermalCoolingBlocks used="thermal/thermal_model.h">
+         Collision between thermal block %s and cooling %s.
+    </CollisionThermalCoolingBlocks>
+
+    <CollisionCoolingBlocks used="thermal/thermal_model.h">
+        Collision between cooling %s and cooling %s.
+    </CollisionCoolingBlocks>
+
+    <FileInAirTemperatureCannotBeOpened used="thermal/thermal_simulation.h">
+        File given in Options/AirTemperature could not be opened in xml-file.
+    </FileInAirTemperatureCannotBeOpened>
+
+    <AirTemperatureFileDefinition used="thermal/thermal_simulation.h">
+        %s in AirTemperature-file as defined in xml-file.
+    </AirTemperatureFileDefinition>
+
+    <ReadFromFileInOptionsNonFalse used="thermal/thermal_simulation.h">
+        ReadFromFile-Attribute in 'Options' must be set to false, because with strings and streams disabled no file can be read in xml-file.
+    </ReadFromFileInOptionsNonFalse>
+
+    <ThermalStopCriterionInDegreeCNegative used="thermal/thermal_simulation.h">
+        ThermalStopCriterionInDegreeC must be positive in Options in xml-file.
+    </ThermalStopCriterionInDegreeCNegative>
+
+    <EmptyArea used="thermal/thermal_visualizer.h">
+        An empty area occurred.
+    </EmptyArea>
+
+    <volumeNamesVecNonEqualVolumesVec used="thermal/thermal_visualizer.h">
+         Size of vector volumeNames not equivalent to size of vector volumes.
+    </volumeNamesVecNonEqualVolumesVec>
+
+    <EmptyVolume used="thermal/thermal_visualizer.h">
+        An empty volume occurred.
+    </EmptyVolume>
+
+    <error56 used="factory/check_positive_int.cpp">
+        %s %s.
+    </error56>
+
+    <UndefinedXmlParameterCheckPositiveInt used="factory/check_positive_int.cpp">
+         Undefined XML Parameter in CheckPositiveInt.
+    </UndefinedXmlParameterCheckPositiveInt>
+
+    <InvalidXML used="factory/check_positive_int.cpp">
+        Invalid XML-parameter.
+    </InvalidXML>
+
+    <MultiplierNotFound used="factory/check_positive_int.cpp">
+        Multiplier not found.
+    </MultiplierNotFound>
+
+    <DiscretizationRhoNonImplemented used="factory/get_electrical_discretization.cpp">
+        Discretization in Rho-direction not yet implemented in %s %zu.
+    </DiscretizationRhoNonImplemented>
+
+    <ThermalBlockClassNotValid used="factory/get_electrical_discretization.cpp">
+        Thermal block class not valid in %s %zu.
+    </ThermalBlockClassNotValid>
+
+    <ElectricalDiscretizationNegative used="factory/get_electrical_discretization.cpp">
+        Electrical discretization cannot be zero or negative in %s %zu.
+    </ElectricalDiscretizationNegative>
+
+    <RequestedClassNotFound used="factory/factory.h">
+        The factory could not find the requested class %s.
+    </RequestedClassNotFound>
+
+    <NotCachedClass used="factory/factory.h">
+        The factory has not cached the requested class %s.
+    </NotCachedClass>
+
+    <negativeValue used="factory/electrical/electricalclasswrapper.h(for=NegativeValue)">
+        Unexpected negative value %d.
+    </negativeValue>
+
+    <NoChildrenException used="factory/electrical/electricalclasswrapper.h(for=NoChildrenException)">
+        An instance of %s has no children.
+    </NoChildrenException>
+
+    <argNullPointer used="factory/thermal/blockclasswrapper.h">
+        arg must not be a null pointer for the creation of a thermal block.
+    </argNullPointer>
+
+    <MaterialNonCartesianOrIsotropic used="factory/thermal/blockclasswrapper.h">
+         Material must be cartesian or isotropic in %s of class %s at (%f,%f,%f) in xml-file line %zu.
+    </MaterialNonCartesianOrIsotropic>
+
+    <InElectricalDiscretizationInRectBlockXyZAllowed used="factory/thermal/blockclasswrapper.h">
+        In 'ElectricalDiscretization' in RectangularBlock only x, y or z is allowed in %s of class %s at (%f,%f,%f) in xml-file line %zu.
+    </InElectricalDiscretizationInRectBlockXyZAllowed>
+
+    <CellMaterialNonCylindricOrIsotropic used="factory/thermal/blockclasswrapper.h">
+        CellMaterial must be cylindric or isotropic in %s of class %s at (%f,%f,%f) in xml-file line %zu.
+    </CellMaterialNonCylindricOrIsotropic>
+
+    <FillMaterialNonCylindricOrIsotropic used="factory/thermal/blockclasswrapper.h">
+        FillMaterial must be cylindric or isotropic in %s of class %s at (%f,%f,%f) in xml-file line %zu.
+    </FillMaterialNonCylindricOrIsotropic>
+
+    <InElectricalDiscretizationInQuadrCellBlockPhiOrZAllowed used="factory/thermal/blockclasswrapper.h">
+        In 'ElectricalDiscretization' in QuadraticCellBlock only phi or z is allowed in %s of class %s at (%f,%f,%f) in xml-file line %zu.
+    </InElectricalDiscretizationInQuadrCellBlockPhiOrZAllowed>
+
+    <InnerCellMaterialNonCylindricOrIsotropic used="factory/thermal/blockclasswrapper.h">
+        InnerCellMaterial must be cylindric or isotropic in %s of class %s at (%f,%f,%f) in xml-file line %zu.
+    </InnerCellMaterialNonCylindricOrIsotropic>
+
+    <OuterCellMaterialNonCylindricOrIsotropic used="factory/thermal/blockclasswrapper.h">
+        OuterCellMaterial must be cylindric or isotropic in %s of class %s at (%f,%f,%f) in xml-file line %zu.
+    </OuterCellMaterialNonCylindricOrIsotropic>
+
+    <InElectricalDiscretizationInSupercapPhiOrZAllowed used="factory/thermal/blockclasswrapper.h">
+        In 'ElectricalDiscretization' in Supercap only phi or z is allowed in %s of class %s at (%f,%f,%f) in xml-file line %zu.
+    </InElectricalDiscretizationInSupercapPhiOrZAllowed>
+
+    <InElectricalDiscretizationInHexCellBlockPhiOrZAllowed used="factory/thermal/blockclasswrapper.h">
+        In 'ElectricalDiscretization' in HexagonalCellBlock only phi or z is allowed in %s of class %s at (%f,%f,%f) in xml-file line %zu.
+    </InElectricalDiscretizationInHexCellBlockPhiOrZAllowed>
+
+    <VerticesThreeTimesTwoElements used="factory/thermal/blockclasswrapper.h">
+        Vertices must be three times two elements: "x_1,y_1;x_2,y_2;x_3,y_3" in %s of class %s at (%f,%f,%f) in xml-file line %zu.
+    </VerticesThreeTimesTwoElements>
+
+    <InElectricalDiscretizationInTriangPrismBlockZAllowed used="factory/thermal/blockclasswrapper.h">
+        In 'ElectricalDiscretization' in TriangularPrismBlock only z is allowed in %s of class %s at (%f,%f,%f) in xml-file line %zu.
+    </InElectricalDiscretizationInTriangPrismBlockZAllowed>
+
+    <error77 used="factory/thermal/blockclasswrapper.h,coolingblockclasswrapper.h">
+        %s in %s of class %s at (%f,%f,%f) in xml-file line %zu.
+    </error77>
+
+    <CacherefAttribute used="factory/object/objectclasswrapper.h">
+        %s must have cacheref-attribute in xml-file line %zu.
+    </CacherefAttribute>
+
+    <error79 used="factory/thermal/coolingclasswrapper.h,materialclasswrapper.h">
+        %s in %s of class %s in xml-file line %zu.
+    </error79>
+
+    <CoolingHorizontalPlaneDeprecated used="factory/thermal/coolingblockclasswrapper.h">
+        CoolingHorizontalPlane is deprecated in %s of class %s at (%f,%f,%f) in xml-file line %zu.
+    </CoolingHorizontalPlaneDeprecated>
+
+    <TwoCoordinatesForTwoDim used="factory/thermal/coolingblockclasswrapper.h">
+        Two coordinates must be passed for TwoDim instance in %s of class %s at (%f,%f,%f) in xml-file line %zu.
+    </TwoCoordinatesForTwoDim>
+
+    <CoolingVerticalPlaneDeprecated used="factory/thermal/coolingblockclasswrapper.h">
+        CoolingVerticalPlane is deprecated in %s of class %s at (%f,%f,%f) in xml-file line %zu.
+    </CoolingVerticalPlaneDeprecated>
+
+    <EachMaterialNotCached used="factory/thermal/materialclasswrapper.h">
+        Each material must be cached (cache = \"true\") in %s of class %s in xml-file line %zu.
+    </EachMaterialNotCached>
+
+    <EachMaterialInThermalMaterialsNotCached used="factory/thermal/thermal_factory.h">
+        Each material in 'ThermalMaterials must be cached in %s in xml-file line %zu.
+    </EachMaterialInThermalMaterialsNotCached>
+
+    <EachCoolingNotCached used="factory/thermal/thermal_factory.h">
+        Each cooling in 'CachedCoolings' must be cached in %s in xml-file line %zu.
+    </EachCoolingNotCached>
+
+    <MoreThermalStatesPassedThanTheNumberOfStates used="factory/thermal/thermal_factory.h">
+        More thermal states passed than the number of states, which were used while parsing the electrical model and assigning thermal states.
+    </MoreThermalStatesPassedThanTheNumberOfStates>
+
+    <LessThermalStatesPassedThanTheNumberOfStates used="factory/thermal/thermal_factory.h">
+        Less thermal states passed than the number of states, which were used while parsing the electrical model and assigning thermal states.
+    </LessThermalStatesPassedThanTheNumberOfStates>
+
+    <CellElementWithNoConnectionToTheThermalPart used="factory/thermal/thermal_factory.h">
+        Every CellElement must have a connection to the thermal part of the model in %s in xml-file line %zu.
+    </CellElementWithNoConnectionToTheThermalPart>
+
+    <SyntaxErrorXmlNodeThermalBlock used="factory/thermal/thermal_factory.h">
+        Syntax error! Only CellElement or OhmicResistance may have a xml-node 'ThermalBlock' in %s in xml-file line %zu.
+    </SyntaxErrorXmlNodeThermalBlock>
+
+    <SyntaxErrorXmlNodeAdditionalBlocks used="factory/thermal/thermal_factory.h">
+        Syntax error! Only CellElement, OhmicResistance, SerialTwoPort or ParallelTwoPort may have xml-node 'AdditionalBlocks' in %s in xml-file line %zu.
+    </SyntaxErrorXmlNodeAdditionalBlocks>
+
+    <SyntaxErrorXmlNodeCoolingBlocks used="factory/thermal/thermal_factory.h">
+        Syntax error! Only CellElement, OhmicResistance, SerialTwoPort or ParallelTwoPort may have xml-node 'CoolingBlocks' in %s in xml-file line %zu.
+    </SyntaxErrorXmlNodeCoolingBlocks>
+
+    <ObjectNonClassLookupObj1dWithState used="factory/thermal/thermal_factory.h">
+         Object must be of class LookupObj1dWithState in %s in xml-file line %zu.
+    </ObjectNonClassLookupObj1dWithState>
+
+    <StateNonClassThermalState used="factory/thermal/thermal_factory.h">
+        State must be of class ThermalState in %s in xml-file line %zu.
+    </StateNonClassThermalState>
+
+    <StateHasCacheAttribute used="factory/thermal/thermal_factory.h">
+        State must not have cache attribute in %s in xml-file line %zu.
+    </StateHasCacheAttribute>
+
+    <StateHasCacherefAttribute used="factory/thermal/thermal_factory.h">
+        State must not have cacheref attribute in %s in xml-file line %zu.
+    </StateHasCacherefAttribute>
+
+    <ElectricalDiscretizationNotValidForOhmicResistances used="factory/thermal/thermal_factory.h">
+        'ElectricalDiscretization' is only valid for cells, not for ohmic resistances in %s in xml-file line %zu.
+    </ElectricalDiscretizationNotValidForOhmicResistances>
+
+    <errorVolZero used="states/thermal_state.h">
+        Volume must be bigger than zero.
+    </errorVolZero>
+
+    <errorVolZero2 used="thermal/blocks/elements/thermal_element.h">
+        Volume must be zero or bigger than zero.
+    </errorVolZero2>
+
+    <errorTimePowerDissipation used="states/thermal_state.h">
+        Time passed for GetPowerDissipation() must be equal or later than starting time of last electrical simulation.
+    </errorTimePowerDissipation>
+
+    <errorThermalStateFactor used="thermal/blocks/elements/thermal_element.h">
+        ThermalStateFactor must be part of (0, 1].
+    </errorThermalStateFactor>
+
+    <verticesTwoElements used="geometry/geometry2D.h">
+        Vertices must have at least two elements to form an area or a line.
+    </verticesTwoElements>
+
+    <arcPolygonEdgesLength used="geometry/geometry2D.h">
+        If there are arcs, arcPolygonEdgesLength must be bigger than zero.
+    </arcPolygonEdgesLength>
+
+    <arcKey used="geometry/geometry2D.h">
+        If there are arcs, every key of arcs must be assignable to an element of vertices.
+    </arcKey>
+
+    <PolygonSelfIntersecting used="geometry/geometry2D.h">
+        mPolygon is not not allowed to be self intersecting.
+    </PolygonSelfIntersecting>
+
+    <distanceToGridVertex used="geometry/area.h">
+        distanceToGridVertex must be zero or bigger than zero.
+    </distanceToGridVertex>
+
+    <ConductivityLessThanZero used="geometry/area.h">
+        Conductivity must be zero or bigger than zero.
+    </ConductivityLessThanZero>
+
+    <NoTransformationPossible used="geometry/area.h">
+        No transformation is possible, because this instance and rhsArea are not coplanar.
+    </NoTransformationPossible>
+
+    <zLowerToSmall used="geometry/area.h">
+        zLower must not be bigger than zUpper.
+    </zLowerToSmall>
+
+    <NoDirection used="geometry/unit_vector.h">
+        (X,Y,Z) == (0,0,0), i.e. unit vector has no direction.
+    </NoDirection>
+
+    <LengthSmallerZero used="geometry/tolerance.h">
+        Length must be zero or bigger than zero.
+    </LengthSmallerZero>
+
+    <AngleSmallerZero used="geometry/tolerance.h">
+         Angle must be zero or bigger than zero.
+    </AngleSmallerZero>
+
+    <PercentOfQunatitySmallerZero used="geometry/tolerance.h">
+        percentOfQuantity must be zero or bigger than zero.
+    </PercentOfQunatitySmallerZero>
+
+    <UnEqualTimeData used="time_series/time_series.h">
+        The size of mTimesData and mValuesData must be equal.
+    </UnEqualTimeData>
+
+    <AtLeasOneElement used="time_series/time_series.h">
+        mTimesData must have at least one element.
+    </AtLeasOneElement>
+
+    <FirstPointNonNegative used="time_series/time_series.h">
+        First point of time must not be negativ.
+    </FirstPointNonNegative>
+
+    <NonMonotonicData used="time_series/time_series.h">
+        Points of time in must be in strictly ascending order: (%i)th point of time smaller than (%i+1)th point of time for all %i.
+    </NonMonotonicData>
+
+    <DataFormat used="time_series/time_series.h">
+         Each line must be of the form: time, value.
+    </DataFormat>
+
+    <NoEntry used="time_series/time_series.h">
+        No entry found in timeseries data.
+    </NoEntry>
+
+    <timeScalingFactorLessZero used="time_series/time_series.h">
+        timeScalingFactor must be bigger than zero.
+    </timeScalingFactorLessZero>
+
+    <NotYet used="geometry/plane.h">
+        Not yet implemented.
+    </NotYet>
+
+    <ArgumentError used="geometry/math/bessel.cpp">
+        Argument must be between 0.0 and %f.
+    </ArgumentError>
+
+    <matioCreation>
+        Trying to create a variable with no name for matio.
+    </matioCreation>
+
+    <matioEmptyVariable>
+        Trying to create MatioData from empty variable.
+    </matioEmptyVariable>
+
+    <AsymetricLookup>
+        Rows are having asymetric number of elements %i.
+    </AsymetricLookup>
+
+    <UnsupportedOperation>
+        This object does not support %s().
+    </UnsupportedOperation>
+
+    <VectorSizeError>
+        Size of %s (= %i) is too large. Maximum size is %i.
+    </VectorSizeError>
+
+    <UnequalSize>
+        Provided vector vector does not have an equal size of elements [%i][%i].
+    </UnequalSize>
+
+    <unsupportedDimension>
+        No support for arrays unequal 2.
+    </unsupportedDimension>
+
+    <OutOfBound>
+        Out of bound %i, max %i.
+    </OutOfBound>
+
+    <UnknowFile>
+        Unknown file: %s
+    </UnknowFile>
+
+    <FileNotWorking>
+        File doesn't seem to exist or work.
+    </FileNotWorking>
+
+    <EmptyLookupData>
+        Trying to create an lookup from empty data.
+    </EmptyLookupData>
+
+    <NonSortedLookup>
+        The measurement points are not in ascending order.
+    </NonSortedLookup>
+
+    <UnknownLookupType>
+        Unknown lookup type found.
+    </UnknownLookupType>
+
+    <DtIsZero>
+         Dt cannot be equal to zero.
+    </DtIsZero>
+
+    <ErrorStep>
+        Stepper error!
+    </ErrorStep>
+
+    <DGLNotEnough>
+        Not enough Elements for differential system.
+    </DGLNotEnough>
+
+    <AlgNotInvertable>
+        Cannot invert algebraic System. Check the electric setup. Pure capacities in parallel cannot be solved (this also applies to ParallelRC elements)
+    </AlgNotInvertable>
+
+    <AlreadyInitialized>
+        The %s has already been initialized.
+    </AlreadyInitialized>
+
+    <StillNotInitialized>
+        %s is still not initialized.
+    </StillNotInitialized>
+
+    <CannotRegisterEquationAfterInitializationException>
+        Cannot register a new equation after the system is initialized.
+    </CannotRegisterEquationAfterInitializationException>
+
+    <OnlyArmadillo>
+        A variable step solver is only available for armadillo yet.
+    </OnlyArmadillo>
+
+
+    <!-- Matio -->
+
+    <EmptyToken>
+        Tokens inside [] operator are empty.
+    </EmptyToken>
+
+    <UnfindableToken>
+        Can't find %s.
+    </UnfindableToken>
+
+    <OnlyRootport>
+        Only supposed to be called on rootport!
+    </OnlyRootport>
+
+    <SystemAlreadyDefined>
+        TwoPort already has a System.
+    </SystemAlreadyDefined>
+
+    <NoRoot>
+        No rootport specified.
+    </NoRoot>
+
+    <UnknownTwoPort>
+        Unknown Twoport: %s
+    </UnknownTwoPort>
+
+    <!-- SVG Export -->
+
+    <UndefinedStream>
+        No stream defined in SVGexport specified.
+    </UndefinedStream>
+
+    <UndefindedNetwork>
+        Can't display network.
+    </UndefindedNetwork>
+
+    <TwoPortNotInMap>
+        TwoPort not in map.
+    </TwoPortNotInMap>
+
+    <TagNotFound>
+        Couldn't find  %s in SVG.
+    </TagNotFound>
+
+    <TagCompoundNotFound>
+        Couldn't find %s in SVG, while searching for %s.
+    </TagCompoundNotFound>
+
+    <NoSimulationPossible>
+        %s is not meant to be simulated. Please remove this element from the XML-File. Aborting Simulation.
+    </NoSimulationPossible>
+
+    <InvalidSampleRate>
+        Sampling Rate is set to invalid value.
+    </InvalidSampleRate>
+
+    <ThermalProbeError>
+        Can't find any corresponding thermal element for probing.
+    </ThermalProbeError>
+
+    <ProbePosition>
+        Error in the ThermalProbe Positions. Probe position %i is faulty.
+    </ProbePosition>
+
+    <!-- Parallel -->
+
+    <TooFewThreads>
+        There are more workers %i than work %i.
+    </TooFewThreads>
+
+    <TooFewWorker>
+        There is more work %i than possible worker %i.
+    </TooFewWorker>
+
+    <!-- Simulink modelcreatoor errors -->
+
+    <CreateModelWithAlgebraicLoops1>
+        Error in CreateModelWithAlgebraicLoops 1
+    </CreateModelWithAlgebraicLoops1>
+
+    <CreateModelWithAlgebraicLoops2>
+        Error in CreateModelWithAlgebraicLoops 2
+    </CreateModelWithAlgebraicLoops2>
+
+    <CreateModelWithDerivatives1>
+        Error in CreateModelWithDerivatives 1
+    </CreateModelWithDerivatives1>
+
+    <CreateModelWithDerivatives2>
+        Error in CreateModelWithDerivatives 2
+    </CreateModelWithDerivatives2>
+
+    <ErrorPlacing>
+        Error while placing %s
+    </ErrorPlacing>
+
+    <ErrorObject>
+        Error in GetObjectData %i
+    </ErrorObject>
+
+    <CreateModelWithAlgebraicLoops>
+        Error while creating algebraic loop %i
+    </CreateModelWithAlgebraicLoops>
+
+    <CreateModelWithDerivatives>
+        Error while creating model with derivatives %i
+    </CreateModelWithDerivatives>
+
+    <PowOverload>
+        std::pow overload for Symbolic only valid as square function.
+    </PowOverload>
+
+    <ErrorMatrixModel>
+        Error in matrix model creation %i.
+    </ErrorMatrixModel>
+
+    <ErrorThermalModel>
+        Error creating thermal model.
+    </ErrorThermalModel>
+
+    <ErrorCoolingModel>
+        Error in creating cooling model %i.
+    </ErrorCoolingModel>
+
+</getchildren>
+</mainroot>

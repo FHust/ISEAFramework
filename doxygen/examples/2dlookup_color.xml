@@ -1,0 +1,22 @@
+<div class="fragment">
+<!-- Generator: GNU source-highlight 3.1.7
+by Lorenzo Bettini
+http://www.lorenzobettini.it
+http://www.gnu.org/software/src-highlite -->
+<pre><tt><b><font color="#0000FF">&lt;Object</font></b> <font color="#009900">class</font><font color="#990000">=</font><font color="#FF0000">"LookupObj2dWithState"</font> <font color="#009900">LookupType</font><font color="#990000">=</font><font color="#FF0000">"LinearInterpolation"</font><b><font color="#0000FF">&gt;</font></b>
+    <b><font color="#0000FF">&lt;RowState</font></b> <font color="#009900">cacheref</font><font color="#990000">=</font><font color="#FF0000">"ThermalState"</font><b><font color="#0000FF">/&gt;</font></b>
+    <b><font color="#0000FF">&lt;ColState</font></b> <font color="#009900">cacheref</font><font color="#990000">=</font><font color="#FF0000">"Soc"</font><b><font color="#0000FF">/&gt;</font></b>
+    <b><font color="#0000FF">&lt;LookupData&gt;</font></b>
+        0.0288200000000001, 0.0273753907300395, 0.0264344729259093, 0.0135127660821939;
+        0.0288200000000001, 0.0273753907300395, 0.0270767085789135, 0.0275280515729565;
+        0.0290500142586083, 0.0277525443197526, 0.0275261486868454, 0.0276368633915343;
+        0.0288630838514731, 0.0278576890117617, 0.0275537618404411, 0.0277933657755191;
+        0.0286781206123875, 0.0277738617773271, 0.0275453220226692, 0.0259269199477185;
+        0.0285331061111646, 0.0277867915477187, 0.0268358840093433, 0.0267808653711796;
+        0.0286358289536196, 0.0277803384908296, 0.0257328031445100, 0.0272959924289106;
+    <b><font color="#0000FF">&lt;/LookupData&gt;</font></b>
+    <b><font color="#0000FF">&lt;MeasurementPointsRow&gt;</font></b>0, 10, 23, 50<b><font color="#0000FF">&lt;/MeasurementPointsRow&gt;</font></b>
+    <b><font color="#0000FF">&lt;MeasurementPointsColumn&gt;</font></b>5, 20, 35, 50, 65, 80, 90<b><font color="#0000FF">&lt;/MeasurementPointsColumn&gt;</font></b>
+<b><font color="#0000FF">&lt;/Object&gt;</font></b>
+</tt></pre>
+</div>

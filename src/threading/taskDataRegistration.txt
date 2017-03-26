@@ -1,0 +1,11 @@
+/*
+ * taskDataRegistration.cpp
+ *
+ *  Created on: 18.11.2013
+ *      Author: chris
+ */
+
+#include "taskData.h"
+
+BOOST_SERIALIZATION_SHARED_PTR(threading::TaskData)
+BOOST_CLASS_EXPORT(threading::TaskData)

@@ -1,0 +1,5 @@
+<MyOhmicResistance class="OhmicResistance">
+    <Object class="ConstObj">
+        <Value>10</Value>
+    </Object>
+</MyOhmicResistance>

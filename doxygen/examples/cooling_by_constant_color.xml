@@ -1,0 +1,11 @@
+<div class="fragment">
+<!-- Generator: GNU source-highlight 3.1.7
+by Lorenzo Bettini
+http://www.lorenzobettini.it
+http://www.gnu.org/software/src-highlite -->
+<pre><tt><b><font color="#0000FF">&lt;Cooling</font></b> <font color="#009900">class</font><font color="#990000">=</font><font color="#FF0000">"CoolingByConstantValue"</font><b><font color="#0000FF">&gt;</font></b>
+    <b><font color="#0000FF">&lt;Value&gt;</font></b>5000.0<b><font color="#0000FF">&lt;/Value&gt;</font></b>
+<b><font color="#0000FF">&lt;/Cooling&gt;</font></b>
+
+</tt></pre>
+</div>

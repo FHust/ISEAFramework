@@ -1,0 +1,14 @@
+<div class="fragment">
+<!-- Generator: GNU source-highlight 3.1.7
+by Lorenzo Bettini
+http://www.lorenzobettini.it
+http://www.gnu.org/software/src-highlite -->
+<pre><tt><b><font color="#0000FF">&lt;Cooling</font></b> <font color="#009900">class</font><font color="#990000">=</font><font color="#FF0000">"CoolingByLookUp"</font><b><font color="#0000FF">&gt;</font></b>
+    <b><font color="#0000FF">&lt;LookUpTable</font></b> <font color="#009900">class</font><font color="#990000">=</font><font color="#FF0000">'LookupObj1D'</font><b><font color="#0000FF">&gt;</font></b>
+        <b><font color="#0000FF">&lt;LookupData&gt;</font></b>0,60,7500,15000<b><font color="#0000FF">&lt;/LookupData&gt;</font></b>
+        <b><font color="#0000FF">&lt;MeasurementPoints&gt;</font></b>39.8,40,50,60<b><font color="#0000FF">&lt;/MeasurementPoints&gt;</font></b>
+    <b><font color="#0000FF">&lt;/LookUpTable&gt;</font></b>
+<b><font color="#0000FF">&lt;/Cooling&gt;</font></b>
+
+</tt></pre>
+</div>

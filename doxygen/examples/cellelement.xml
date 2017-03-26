@@ -1,0 +1,19 @@
+<MyCellElement class="CellElement">
+
+    <ThermalState class="ThermalState" cache="True">
+        <InitialTemperature> ... </InitialTemperature>
+    </ThermalState>
+
+    <Soc class="Soc" cache="True">
+        <MaxCapacity> ... </MaxCapacity>
+        <InitialSoc> ... </InitialSoc>
+        <MeasurementPoints> ... </MeasurementPoints>
+    </Soc>
+
+    <Children>
+        <OhmicResistance ref="MyOhmicResistance"/>
+        <VoltageSource ref="MyVoltageSource"/>
+        <ZarcElement1 ref="MyZarcElement"/>
+    </Children>
+
+</MyCellElement>

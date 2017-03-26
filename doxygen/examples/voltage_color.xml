@@ -1,0 +1,12 @@
+<div class="fragment">
+<!-- Generator: GNU source-highlight 3.1.7
+by Lorenzo Bettini
+http://www.lorenzobettini.it
+http://www.gnu.org/software/src-highlite -->
+<pre><tt><b><font color="#0000FF">&lt;MyVoltageSource</font></b> <font color="#009900">class</font><font color="#990000">=</font><font color="#FF0000">"VoltageSource"</font><b><font color="#0000FF">&gt;</font></b>
+    <b><font color="#0000FF">&lt;Object</font></b> <font color="#009900">class</font><font color="#990000">=</font><font color="#FF0000">"ConstObj"</font><b><font color="#0000FF">&gt;</font></b>
+        <b><font color="#0000FF">&lt;Value&gt;</font></b>10<b><font color="#0000FF">&lt;/Value&gt;</font></b>
+    <b><font color="#0000FF">&lt;/Object&gt;</font></b>
+<b><font color="#0000FF">&lt;/MyVoltageSource&gt;</font></b>
+</tt></pre>
+</div>
