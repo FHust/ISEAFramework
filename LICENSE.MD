@@ -27,7 +27,7 @@ Licenses of other software that is used, can be found in the folder licenses.
 
 
 For commercial use, a different license is available.
-Further information can be requested at post@isea.rwth-aachen.de . 
+Further information can be requested at batteries@isea.rwth-aachen.de . 
 
 
 Institutsleiter / Lehrstuhl für Stromrichtertechnik und Elektrische Antriebe:
