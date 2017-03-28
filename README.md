@@ -109,7 +109,7 @@ License
 =========
 The ISEA-Framework is published under the GNU General Public License version 3.
 For commercial use, a different license is available.
-Further information can be requested at post@isea.rwth-aachen.de .
+Further information can be requested at batteries@isea.rwth-aachen.de .
 
 More information can be found [here](LICENSE.MD).
 
