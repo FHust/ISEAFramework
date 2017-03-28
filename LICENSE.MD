@@ -51,7 +51,7 @@ Univ.-Prof. Dr. rer. nat. Egbert Figgemeier
 
 ISEA RWTH Aachen
 
-post@isea.rwth-aachen.de
+batteries@isea.rwth-aachen.de
 
 Jägerstr. 17/19
 
