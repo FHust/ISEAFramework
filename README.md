@@ -80,7 +80,7 @@ patch eigen as stated above
 + configure once more and generate
 + After generating open project with visual studio and compile project
 
-An longer description can be found [here](doxygen/buildingUnderWindows.md).
+A longer description can be found [here](doxygen/buildingUnderWindows.md).
 
 Documentation
 =========
