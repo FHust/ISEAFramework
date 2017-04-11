@@ -7,21 +7,22 @@
 if(exist('Patch_Areas.csv','file') && exist('Patch_Vertices.csv','file') && exist('Patch_Temperatures.csv','file'))    
     disp('new Simulation results were found')
     movefile('Patch_*','SimulationsErgebnisse\.')
-    disp('Reading in csv-files ...');
-    areas = csvread('SimulationsErgebnisse\Patch_Areas.csv');
-    vertices = csvread('SimulationsErgebnisse\Patch_Vertices.csv');
-    tempVec = csvread('SimulationsErgebnisse\Patch_Temperatures.csv');
 elseif(exist('SimulationsErgebnisse\Patch_Areas.csv','file') && exist('SimulationsErgebnisse\Patch_Vertices.csv','file') && exist('SimulationsErgebnisse\Patch_Temperatures.csv','file'))    
-    disp('no new simulation results were found, using existing ones');
-    disp('Reading in csv-files ...');
-    areas = csvread('SimulationsErgebnisse\Patch_Areas.csv');
-    vertices = csvread('SimulationsErgebnisse\Patch_Vertices.csv');
-    tempVec = csvread('SimulationsErgebnisse\Patch_Temperatures.csv');
+    disp('no new simulation results were found, using existing ones');   
 else
     error('no simulation results were found')
 end
-
-
+disp('Reading in csv-files ...');
+areas = csvread('SimulationsErgebnisse\Patch_Areas.csv');
+vertices = csvread('SimulationsErgebnisse\Patch_Vertices.csv');
+f = fopen('SimulationsErgebnisse\Patch_Temperatures.csv');
+x = fread(f,1);
+if x == '#'
+    tempVec = csvread('SimulationsErgebnisse\Patch_Temperatures.csv',2,0 );
+else
+    tempVec = csvread('SimulationsErgebnisse\Patch_Temperatures.csv' );
+end
+fclose(f);
 
 
 areas(areas==0) = NaN;

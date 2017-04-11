@@ -1,6 +1,6 @@
 % Plot the initialized data
 
-xmlDatei = 'NAME_OF_XML_FILE.xml'
+xmlDatei = 'NAME_OF_XML_FILE.xml';
 disp('QuickVisualize');
 quickVisualizeString = ['QuickVisualize ',xmlDatei];
 [~,b]=system(quickVisualizeString);
@@ -17,7 +17,14 @@ end
 disp('Reading in csv-files ...');
 areas = csvread('Init\Patch_Areas.csv');
 vertices = csvread('Init\Patch_Vertices.csv');
-tempVec = csvread('Init\Patch_Temperatures.csv');
+f = fopen('Init\Patch_Temperatures.csv');
+x = fread(f,1);
+if x == '#'
+    tempVec = csvread('Init\Patch_Temperatures.csv',2,0 );
+else
+    tempVec = csvread('Init\Patch_Temperatures.csv' );
+end
+fclose(f);
 cd('../.')
 
 disp('Plot the init state');

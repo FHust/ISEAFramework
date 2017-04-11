@@ -184,6 +184,7 @@ void QuickVisualizeThermalModel( const boost::shared_ptr< xmlparser::XmlParamete
     {
         printf( "%s", e.what() );
     }
+    thermalVisualizer( 0 );
 #endif
 }
 }
