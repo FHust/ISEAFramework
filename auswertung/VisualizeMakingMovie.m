@@ -6,7 +6,14 @@ function[] = VisualizeMakingMovie()
 disp('Reading in csv-files ...');
 areas = csvread('Patch_Areas.csv');
 vertices = csvread('Patch_Vertices.csv');
-tempVec = csvread('Patch_Temperatures.csv');
+f = fopen('Patch_Temperatures.csv');
+x = fread(f,1);
+if x == '#'
+    tempVec = csvread('Patch_Temperatures.csv',2,0 );
+else
+    tempVec = csvread('Patch_Temperatures.csv' );
+end
+fclose(f);
 tempVecSize = size(tempVec);
 clear frames;
 
@@ -60,7 +67,7 @@ for i = 0:frameCount
         end
     end
     
-    print(handleToFigure, '-djpeg', 'frame.jpg');
+    print(handleToFigure, '-r90', '-djpeg', 'frame.jpg');
     [X, map] = imread('frame.jpg');
     frame = im2frame(X, map);
     writerM4.writeVideo(frame);

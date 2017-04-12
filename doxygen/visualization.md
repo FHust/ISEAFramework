@@ -12,7 +12,7 @@ Sie sind in trunk/auswertung/ zu finden.
 
 Eine Beschreibung der Funktion befindet sich ebenfalls in der Datei, in der die Funktion abgespeichert ist.
 \ifnot RELEASE_DOCU
-- MakePlotsForCellData.m,	stellt die Ausgabe der executable da
+- MakePlotsForCellData.m,	stellt die Ausgabe der executable dar
 
 \endif
 Die folgenden Funktionen benötigen als Inputparameter die Ergebnisse der Simulation, abgespeichert in den folgenden Dateien:<br/>
@@ -28,6 +28,37 @@ Diese werden erzeugt, wenn der ThermalVisualizer-Tag in den [Options](xmloption.
 
 - PlotInit.m,	zeigt den thermischen Initialisierungszustand des Packs an (Skript benötigt die **quickvisualize.exe** im selben Verzeichnis. Diese ist aus dem bin Ordner zu kopieren.)
 - PlotVideo.m,	zeigt ähnlich wie VisualizePlayingVideos.m eine Folge von Matlabplots
+
+
+Matlab XML-Datei Visualisierung
+-------
+In Matlab kann die Visualisierung von XML-Dateien wie folgt erfolgen:
+- Framework bauen und kompilieren [Bauen unter Windows](buildingUnderWindows.md) mit QuickVisualization
+- Kopieren von QuickVisualization.exe in das Verzeichnis auswertung
+![Matlab Dateien](visualization/01_matlab_init.png)
+
+- Starten von Matlab und wechseln in das Verzeichnis auswertung
+- Editieren der Variable "xmlDatei" in PlotInit.m
+- Ausführen der Datei
+- Matlab zeigt das visualisierte Ergebnis an.
+
+![Visualisierung der XML-Datei](visualization/02_init_scaled.png)
+
+Matlab thermische Simulationsdaten visualisieren
+---------------
+In Matlab kann die Visualisierung von Simulationsdaten wie folgt erfolgen:
+- Framework bauen und kompilieren [Bauen unter Windows](buildingUnderWindows.md)
+- In der zu simulierenden XML-Datei für die thermische Simulation den CSV-Filter auswählen
+![Visualisierung der XML-Datei](visualization/03_add_thermal_observer.png)
+
+- Simulation durchführen
+- Kopieren der Patches*.csv ins Auswertungsverzeichnis
+- Starten von Matlab und wechseln in das Verzeichnis auswertung
+- Ausführen der Datei PlotVideo.m
+- Auswählen der Abspielgeschwindigkeit und mit Enter bestätigen
+- Matlab spielt das simulierte Szenario als Video ab
+
+![Videoausgabe](visualization/04_video.gif)
 
 \~English
 
@@ -58,3 +89,39 @@ Those will be generated, if the ThermalVisualizer-tag is available in [Options](
 
 - PlotInit.m,	shows the initial thermal state of the pack (Script needs **quickvisualize.exe** to be in the same folder. This file can be copied from the bin folder.)
 - PlotVideo.m,	shows a series of matlab plots similar to VisualizePlayingVideos.m
+
+
+Matlab XML-file visualization
+-------
+In Matlab the visualization of the XML-files can be achieved as follows:
+- Compile the framework as explained in [Building under Windows](buildingUnderWindows.md) and check the option QuickVisualization during the cmake phase
+- After compilation, copy the QuickVisualization.exe into the directory auswertung
+
+![Matlab files](visualization/01_matlab_init.png)
+
+- Start matlab and change the directory to auswertung
+- Edit the variable "xmlDatei" in PlotInit.m
+- Run the script
+- Matlab displays the results
+
+![Visualization results](visualization/02_init_scaled.png)
+
+
+Matlab visualization of thermal simulation data
+---------------
+
+In Matlab the visualization of the simulationdata can be achieved as follows:
+- Compile the framework as explained in [Building under Windows](buildingUnderWindows.md) and check the option QuickVisualization during the cmake phase.
+- Add the following passage for the thermal observer under the node <Configuration>
+![Visualisierung der XML-Datei](visualization/03_add_thermal_observer.png)
+
+- Start your simulation. The simulation should generate a bunch of CSV-files
+- Copy the CSV-files to the directory auswertung
+- Start matlab and change to the directory auswertung
+- Execute the script PlotVideo.m
+- Choose the playspeed of the video and confirm the input with Return
+- Matlab will display the simulated scenario
+
+![Video output](visualization/04_video.gif)
+
+

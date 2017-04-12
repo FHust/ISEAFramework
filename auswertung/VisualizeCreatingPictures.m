@@ -1,4 +1,4 @@
-%This function creates picture files (.fig, .eps and .png) from the 
+%This function creates picture files (.fig, .eps and .png) from the
 %Patch_*.csv files. The input parameter arrayWithTimes contains all points
 %of time, at which the pictures are to be made.
 function[] = VisualizeCreatingPictures(arrayWithTimes)
@@ -7,7 +7,14 @@ function[] = VisualizeCreatingPictures(arrayWithTimes)
 disp('Reading in csv-files ...');
 areas = csvread('Patch_Areas.csv');
 vertices = csvread('Patch_Vertices.csv');
-tempVec = csvread('Patch_Temperatures.csv');
+f = fopen('Patch_Temperatures.csv');
+x = fread(f,1);
+if x == '#'
+    tempVec = csvread('Patch_Temperatures.csv',2,0 );
+else
+    tempVec = csvread('Patch_Temperatures.csv' );
+end
+fclose(f);
 
 
 %%Fill 0 components of area with NaNs, as needed by patch command
