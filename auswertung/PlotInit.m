@@ -3,9 +3,13 @@
 xmlDatei = 'NAME_OF_XML_FILE.xml';
 disp('QuickVisualize');
 quickVisualizeString = ['QuickVisualize ',xmlDatei];
-[~,b]=system(quickVisualizeString);
-
+[returnValue,b]=system(quickVisualizeString);
 disp(b);
+if returnValue ~= 0
+    error(b)
+end
+
+
 
 if(exist('Patch_Areas.csv','file') && exist('Patch_Vertices.csv','file') && exist('Patch_Temperatures.csv','file'))
     movefile('Patch_*','Init\.')
@@ -25,7 +29,6 @@ else
     tempVec = csvread('Init\Patch_Temperatures.csv' );
 end
 fclose(f);
-cd('../.')
 
 disp('Plot the init state');
 areas(areas==0) = NaN;
