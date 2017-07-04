@@ -15,7 +15,7 @@ along with this program.  If not, see http://www.gnu.org/licenses/.
 /* -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.
 * File Name : dae_sys.cpp
 * Creation Date : 20-03-2013
-* Last Modified : Sa 25 Mär 2017 16:48:08 CET
+* Last Modified : So 04 Jun 2017 23:34:39 CEST
 * Created By : Friedrich Hust
 _._._._._._._._._._._._._._._._._._._._._.*/
 #include "dae_sys.h"
@@ -382,5 +382,7 @@ const char *DifferentialAlgebraicSystem< SparseMatrix< double, RowMajor > >::Get
 }
 #endif /* _EIGEN_ */
 
+
+template class DifferentialAlgebraicSystem< myMatrixType >;
 
 } /* END NAMESPACE */

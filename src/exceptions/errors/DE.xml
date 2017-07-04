@@ -714,5 +714,9 @@
         Error beim Erstellen cooling model %i.
     </ErrorCoolingModel>
 
+    <ArcPolygonizationEdgesLength> 
+        ArcPolygonizationEdgesLength kann maximal die halbe Länge von radiuscell besitzen.
+    </ArcPolygonizationEdgesLength>
+
 </getchildren>
 </mainroot>

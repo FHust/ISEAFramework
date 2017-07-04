@@ -29,7 +29,6 @@ along with this program.  If not, see http://www.gnu.org/licenses/.
 
 class TestFactories;
 
-
 namespace thermal
 {
 using namespace geometry;
@@ -380,32 +379,39 @@ void HexagonalCellBlock< T >::GetSurfaceAreas( const vector< CutCylElement< T > 
                                  UnitVector< T >( 1.0, 0.0, 0.0 ), UnitVector< T >( 0.0, 1.0, 0.0 ) );
     vector< TwoDim< T > > vertices;
     vertices.reserve( 4 );
-    map< size_t, TwoDim< T > > arcs;
+    map< size_t, TwoDim< T > > innerArcs;
 
 
     size_t index = 0;
     vertices.resize( 3 );
-    arcs[1] = TwoDim< T >( 0.0, 0.0 );
+    vertices[0] = TwoDim<>( 0.0, 0.0 );
+
+    innerArcs[1] = TwoDim< T >( 0.0, 0.0 );
     // Construction of surface areas at lower and upper base area of block that are adjacent to cylindric symmetry axis
     // of battery cell
     for ( size_t j = 0; j < mNPhi; ++j )
     {
-        vertices[0] = TwoDim<>( 0.0, 0.0 );
-        vertices[1] = TwoDim<>( mRadiusCellDelta, Angle<>::Rad( mPhiDelta * j ) );
-        vertices[2] = TwoDim<>( mRadiusCellDelta, Angle<>::Rad( mPhiDelta * ( j + 1 ) ) );
+        vertices[1] = TwoDim<>( mRadiusCellDelta, Angle<>::Rad( mPhiDelta * ( j + 1 ) ) );
+        vertices[2] = TwoDim<>( mRadiusCellDelta, Angle<>::Rad( mPhiDelta * j ) );
 
         surfaceAreas.push_back(
          IndexedArea< T >( index, Area< T >( vertices, lowerPlane, mZDelta * 0.5, mCellMaterial->GetConductivity( 2 ),
-                                             BOTTOM, arcs, mArcPolygonEdgesLength ) ) );
+                                             BOTTOM, innerArcs, mArcPolygonEdgesLength ) ) );
+
+        vertices[1] = TwoDim<>( mRadiusCellDelta, Angle<>::Rad( mPhiDelta * j ) );
+        vertices[2] = TwoDim<>( mRadiusCellDelta, Angle<>::Rad( mPhiDelta * ( j + 1 ) ) );
+
         surfaceAreas.push_back( IndexedArea< T >( index + mNZLayer * ( mNZ - 1 ),
                                                   Area< T >( vertices, upperPlane, mZDelta * 0.5, mCellMaterial->GetConductivity( 2 ),
-                                                             TOP, arcs, mArcPolygonEdgesLength ) ) );
+                                                             TOP, innerArcs, mArcPolygonEdgesLength ) ) );
         ++index;
     }
 
     vertices.resize( 4 );
-    arcs.clear();
-    arcs[0] = arcs[2] = TwoDim< T >( 0.0, 0.0 );
+    map< size_t, TwoDim< T > > arcsTop;
+    map< size_t, TwoDim< T > > arcsBottom;
+    arcsBottom[0] = arcsBottom[2] = TwoDim< T >( 0.0, 0.0 );
+    arcsTop[1] = arcsTop[3] = TwoDim< T >( 0.0, 0.0 );
     // Construction of surface areas at lower and upper base area of block that are adjacent to battery cell
     for ( size_t i = 1; i < mNRhoCell; ++i )
     {
@@ -418,18 +424,24 @@ void HexagonalCellBlock< T >::GetSurfaceAreas( const vector< CutCylElement< T > 
 
             surfaceAreas.push_back(
              IndexedArea< T >( index, Area< T >( vertices, lowerPlane, mZDelta * 0.5, mCellMaterial->GetConductivity( 2 ),
-                                                 BOTTOM, arcs, mArcPolygonEdgesLength ) ) );
+                                                 BOTTOM, arcsBottom, mArcPolygonEdgesLength ) ) );
+
+            vertices[1] = TwoDim<>( mRadiusCellDelta * ( i + 1 ), Angle<>::Rad( mPhiDelta * j ) );
+            vertices[3] = TwoDim<>( mRadiusCellDelta * i, Angle<>::Rad( mPhiDelta * ( j + 1 ) ) );
+
             surfaceAreas.push_back(
              IndexedArea< T >( index + mNZLayer * ( mNZ - 1 ),
                                Area< T >( vertices, upperPlane, mZDelta * 0.5, mCellMaterial->GetConductivity( 2 ), TOP,
-                                          arcs, mArcPolygonEdgesLength ) ) );
+                                          arcsTop, mArcPolygonEdgesLength ) ) );
             ++index;
         }
     }
 
     vertices.resize( 4 );
-    arcs.clear();
-    arcs[0] = TwoDim< T >( 0.0, 0.0 );
+    arcsBottom.clear();
+    arcsTop.clear();
+    arcsBottom[0] = TwoDim< T >( 0.0, 0.0 );
+    arcsTop[3] = TwoDim< T >( 0.0, 0.0 );
     // Construction of surface areas at lower and upper base area of block that are not adjacent to battery cell
     for ( size_t j = 0; j < mNPhi; ++j )
     {
@@ -440,10 +452,14 @@ void HexagonalCellBlock< T >::GetSurfaceAreas( const vector< CutCylElement< T > 
 
         surfaceAreas.push_back(
          IndexedArea< T >( index, Area< T >( vertices, lowerPlane, mZDelta * 0.5, mFillMaterial->GetConductivity( 2 ),
-                                             BOTTOM, arcs, mArcPolygonEdgesLength ) ) );
+                                             BOTTOM, arcsBottom, mArcPolygonEdgesLength ) ) );
+
+        vertices[1] = helpElements[j]->GetStraightEdgeVertexStart();
+        vertices[3] = TwoDim<>( mRadiusCell, Angle<>::Rad( mPhiDelta * ( j + 1 ) ) );
+
         surfaceAreas.push_back( IndexedArea< T >( index + mNZLayer * ( mNZ - 1 ),
                                                   Area< T >( vertices, upperPlane, mZDelta * 0.5, mFillMaterial->GetConductivity( 2 ),
-                                                             TOP, arcs, mArcPolygonEdgesLength ) ) );
+                                                             TOP, arcsTop, mArcPolygonEdgesLength ) ) );
         ++index;
     }
 

@@ -115,6 +115,7 @@ ThermalSimulation< Matrix, T, FilterTypeChoice >::ThermalSimulation(
     , mLastUnconstrainedDeltaTime( recommendedDeltaTime )
     , mSimulationDuration( simulationDuration )
     , mThermalStateStopCriterion( 5.0 )
+    , mTolerance(geometry::Tolerance< T >( 0.000001, geometry::Angle<>::Deg( 0.001 ), 0.1 ))
 {
     // Evaluate Options node
     boost::shared_ptr< xmlparser::XmlParameter > optionsNode = rootXmlNode->GetElementChild( "Options" );
@@ -179,7 +180,6 @@ ThermalSimulation< Matrix, T, FilterTypeChoice >::ThermalSimulation(
     }
 
     // Tolerance
-    mTolerance = geometry::Tolerance< T >( 0.000001, geometry::Angle<>::Deg( 0.001 ), 0.1 );
     if ( optionsNode->HasElement( "GeometricalTolerance" ) )
     {
         boost::shared_ptr< xmlparser::XmlParameter > geometricalToleranceNode =

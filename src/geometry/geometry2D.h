@@ -188,8 +188,9 @@ Geometry2D< T >::Geometry2D( const vector< TwoDim< T > > &vertices, const map< s
             // This formula takes care that the polygonized arcs do not change the area value of the polygon
             const T phiVal = fabs( phi.GetRad() );
             const T sinVal = sin( 0.5 * phiVal / n );
-            const T denominator = 2 * cos( 0.5 * phiVal / n ) * sin( 0.5 * phiVal / n ) * ( n - 1 );
-            const T ratio = ( sqrt( sinVal * sinVal + phiVal * denominator ) - sinVal ) / denominator;
+            const T cosVal = cos( 0.5 * phiVal / n );
+            const T tempVal = sinVal / phiVal;
+            const T ratio = 1 / (tempVal + sqrt(tempVal * (tempVal + (2 * (n-1) * cosVal))));
             radius *= fabs( ratio );
             // radius *= sqrt(2 * Angle<T>::pi / static_cast<double>(n) / sin(2 * Angle<T>::pi / static_cast<double>(n))
             // );//doesn't work exactly -> change that!!!

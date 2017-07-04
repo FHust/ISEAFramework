@@ -68,15 +68,15 @@ class Supercap : public ThermalBlock< T >
 
     private:
     ///@param[out] helpElements Used to help constructing thermal elements by granting access to geometrical functions
-    ///of CutCylElement
+    /// of CutCylElement
     void GetThermalElements( vector< shared_ptr< ThermalElement< T > > > &thermalElements,
                              vector< CutCylElement< T > * > &helpElements ) const;
     ///@param[in] helpElements Used to help constructing thermal elements by granting access to geometrical functions of
-    ///CutCylElement
+    /// CutCylElement
     void GetConductivityMatrix( const vector< CutCylElement< T > * > &helpElements,
                                 vector< vector< IndexedValue< T > > > &conductivityMatrix ) const;
     ///@param[in] helpElements Used to help constructing thermal elements by granting access to geometrical functions of
-    ///CutCylElement
+    /// CutCylElement
     void GetSurfaceAreas( const vector< CutCylElement< T > * > &helpElements, vector< IndexedArea< T > > &surfaceAreas ) const;
     void GetBlockGeometry( shared_ptr< BlockGeometry< T > > &blockGeometry ) const;
 
@@ -380,32 +380,40 @@ void Supercap< T >::GetSurfaceAreas( const vector< CutCylElement< T > * > &helpE
                                  UnitVector< T >( 1.0, 0.0, 0.0 ), UnitVector< T >( 0.0, 1.0, 0.0 ) );
     vector< TwoDim< T > > vertices;
     vertices.reserve( 4 );
-    map< size_t, TwoDim< T > > arcs;
+    map< size_t, TwoDim< T > > innerArcs;
 
 
     size_t index = 0;
     vertices.resize( 3 );
-    arcs[1] = TwoDim< T >( 0.0, 0.0 );
+    innerArcs[1] = TwoDim< T >( 0.0, 0.0 );
+
+    vertices[0] = TwoDim<>( 0.0, 0.0 );
+
     // Construction of surface areas at lower and upper base area of inner battery cell
     for ( size_t j = 0; j < mNPhi; ++j )
     {
-        vertices[0] = TwoDim<>( 0.0, 0.0 );
+        vertices[2] = TwoDim<>( mInnerCellRadius, Angle<>::Rad( mPhiDelta * j - Angle<>::pi / 4.0 ) );
+        vertices[1] = TwoDim<>( mInnerCellRadius, Angle<>::Rad( mPhiDelta * ( j + 1 ) - Angle<>::pi / 4.0 ) );
+
+        surfaceAreas.push_back(
+         IndexedArea< T >( index, Area< T >( vertices, lowerPlane, mZDelta * 0.5, mInnerCellMaterial->GetConductivity( 2 ),
+                                             BOTTOM, innerArcs, mArcPolygonEdgesLength ) ) );
+
         vertices[1] = TwoDim<>( mInnerCellRadius, Angle<>::Rad( mPhiDelta * j - Angle<>::pi / 4.0 ) );
         vertices[2] = TwoDim<>( mInnerCellRadius, Angle<>::Rad( mPhiDelta * ( j + 1 ) - Angle<>::pi / 4.0 ) );
 
         surfaceAreas.push_back(
-         IndexedArea< T >( index, Area< T >( vertices, lowerPlane, mZDelta * 0.5, mInnerCellMaterial->GetConductivity( 2 ),
-                                             BOTTOM, arcs, mArcPolygonEdgesLength ) ) );
-        surfaceAreas.push_back(
          IndexedArea< T >( index + mNZLayer * ( mNZ - 1 ),
                            Area< T >( vertices, upperPlane, mZDelta * 0.5, mInnerCellMaterial->GetConductivity( 2 ),
-                                      TOP, arcs, mArcPolygonEdgesLength ) ) );
+                                      TOP, innerArcs, mArcPolygonEdgesLength ) ) );
         ++index;
     }
 
     vertices.resize( 4 );
-    arcs.clear();
-    arcs[0] = arcs[2] = TwoDim< T >( 0.0, 0.0 );
+    map< size_t, TwoDim< T > > arcsTop;
+    map< size_t, TwoDim< T > > arcsBottom;
+    arcsBottom[0] = arcsBottom[2] = TwoDim< T >( 0.0, 0.0 );
+    arcsTop[1] = arcsTop[3] = TwoDim< T >( 0.0, 0.0 );
     // Construction of surface areas at lower and upper base area of outer battery cell
     for ( size_t j = 0; j < mNPhi; ++j )
     {
@@ -416,17 +424,23 @@ void Supercap< T >::GetSurfaceAreas( const vector< CutCylElement< T > * > &helpE
 
         surfaceAreas.push_back(
          IndexedArea< T >( index, Area< T >( vertices, lowerPlane, mZDelta * 0.5, mOuterCellMaterial->GetConductivity( 2 ),
-                                             BOTTOM, arcs, mArcPolygonEdgesLength ) ) );
+                                             BOTTOM, arcsBottom, mArcPolygonEdgesLength ) ) );
+
+        vertices[1] = TwoDim<>( mOuterCellRadius, Angle<>::Rad( mPhiDelta * j - Angle<>::pi / 4.0 ) );
+        vertices[3] = TwoDim<>( mInnerCellRadius, Angle<>::Rad( mPhiDelta * ( j + 1 ) - Angle<>::pi / 4.0 ) );
+
         surfaceAreas.push_back(
          IndexedArea< T >( index + mNZLayer * ( mNZ - 1 ),
                            Area< T >( vertices, upperPlane, mZDelta * 0.5, mOuterCellMaterial->GetConductivity( 2 ),
-                                      TOP, arcs, mArcPolygonEdgesLength ) ) );
+                                      TOP, arcsTop, mArcPolygonEdgesLength ) ) );
         ++index;
     }
 
     vertices.resize( 4 );
-    arcs.clear();
-    arcs[0] = TwoDim< T >( 0.0, 0.0 );
+    arcsBottom.clear();
+    arcsTop.clear();
+    arcsBottom[0] = TwoDim< T >( 0.0, 0.0 );
+    arcsTop[3] = TwoDim< T >( 0.0, 0.0 );
     // Construction of surface areas at lower and upper base area of block that are not adjacent to battery cell
     for ( size_t j = 0; j < mNPhi; ++j )
     {
@@ -437,10 +451,14 @@ void Supercap< T >::GetSurfaceAreas( const vector< CutCylElement< T > * > &helpE
 
         surfaceAreas.push_back(
          IndexedArea< T >( index, Area< T >( vertices, lowerPlane, mZDelta * 0.5, mFillMaterial->GetConductivity( 2 ),
-                                             BOTTOM, arcs, mArcPolygonEdgesLength ) ) );
+                                             BOTTOM, arcsBottom, mArcPolygonEdgesLength ) ) );
+
+        vertices[1] = helpElements[j]->GetStraightEdgeVertexStart();
+        vertices[3] = TwoDim<>( mOuterCellRadius, Angle<>::Rad( mPhiDelta * ( j + 1 ) - Angle<>::pi / 4.0 ) );
+
         surfaceAreas.push_back( IndexedArea< T >( index + mNZLayer * ( mNZ - 1 ),
                                                   Area< T >( vertices, upperPlane, mZDelta * 0.5, mFillMaterial->GetConductivity( 2 ),
-                                                             TOP, arcs, mArcPolygonEdgesLength ) ) );
+                                                             TOP, arcsTop, mArcPolygonEdgesLength ) ) );
         ++index;
     }
 

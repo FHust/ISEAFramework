@@ -200,11 +200,18 @@ void TriangularPrismBlock< T >::GetSurfaceAreas( vector< IndexedArea< T > > &sur
 
     vertices.resize( 3 );
     vertices[0] = mVertex1;
-    vertices[1] = mVertex2;
-    vertices[2] = mVertex3;
+    vertices[1] = mVertex3;
+    vertices[2] = mVertex2;
+
     // Bottom area
     surfaceAreas.push_back( IndexedArea< T >( 0, Area< T >( vertices, Plane< T >( mEmplacementPoint, xAxis, yAxis ),
                                                             mDimZ * 0.5, mMaterial->GetConductivity( 2 ), BOTTOM ) ) );
+    // Umgekehrte Reihenfolge fuer Top Areas:
+
+    vertices[1] = mVertex2;
+    vertices[2] = mVertex3;
+
+
     // Top area
     surfaceAreas.push_back(
      IndexedArea< T >( mNZ - 1, Area< T >( vertices, Plane< T >( Cartesian< T >( 0.0, 0.0, mNZ * mDimZ ) + mEmplacementPoint, xAxis, yAxis ),
@@ -217,6 +224,7 @@ void TriangularPrismBlock< T >::GetSurfaceAreas( vector< IndexedArea< T > > &sur
     vertices[2] = TwoDim< T >( mVertex1.DistanceTo( mVertex2 ), mDimZ );
     vertices[3] = TwoDim< T >( 0.0, mDimZ );
 
+
     vector< TwoDim< T > > vertices2( 4 );
     vertices2[0] = TwoDim< T >( 0.0, 0.0 );
     vertices2[1] = TwoDim< T >( mVertex2.DistanceTo( mVertex3 ), 0.0 );
@@ -228,6 +236,7 @@ void TriangularPrismBlock< T >::GetSurfaceAreas( vector< IndexedArea< T > > &sur
     vertices3[1] = TwoDim< T >( mVertex3.DistanceTo( mVertex1 ), 0.0 );
     vertices3[2] = TwoDim< T >( mVertex3.DistanceTo( mVertex1 ), mDimZ );
     vertices3[3] = TwoDim< T >( 0.0, mDimZ );
+
 
     // Side areas
     for ( size_t k = 0; k < mNZ; ++k )

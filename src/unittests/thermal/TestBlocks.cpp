@@ -75,7 +75,6 @@ void TestBlocks::TestRectangularBlock()
     double zLower, zUpper;
     vector< IndexedArea< double > > surfaceAreas;
 
-
     boost::shared_ptr< BlockGeometry<> > blockGeometryZeroHeat;
     blockZeroHeat.CreateData( blockTester.mThermalElements, blockTester.mConductivityMatrix, surfaceAreas, blockGeometryZeroHeat );
 
@@ -102,7 +101,6 @@ void TestBlocks::TestRectangularBlock()
     geometry2DPtr->Intersection( Geometry2D<>( blockTester.GetBaseVertices() ), intersectionVector );
     TS_ASSERT_EQUALS( intersectionVector.size(), 1 );
     TS_ASSERT_DELTA( intersectionVector.at( 0 ).CalculateAreaValue() / geometry2DPtr->CalculateAreaValue(), 1.0, sDelta );
-
 
     boost::shared_ptr< BlockGeometry<> > blockGeometry;
     block.CreateData( blockTester.mThermalElements, blockTester.mConductivityMatrix, surfaceAreas, blockGeometry );
@@ -195,6 +193,13 @@ void TestBlocks::TestQuadraticCellBlock()
         TS_ASSERT_THROWS_EQUALS( QuadraticCellBlock<> block( "", Cartesian<>( 0.0, 0.0, 0.0 ), 0.1, 0.04, 0.2, 1, 2, 1,
                                                              0.01, 0, 0, 0.0, thermalStates ),
                                  std::runtime_error & e, !strstr( e.what(), "PhiDivision must be divisible by four" ), 0 );
+        TS_ASSERT_THROWS_EQUALS( QuadraticCellBlock<> block( "", Cartesian<>( 0.0, 0.0, 0.0 ), 4.0, 0.04, 0.2, 1, 4, 1,
+                                                             0.025, 0, 0, 0.0, thermalStates ),
+                                 std::runtime_error & e,
+                                 !strstr( e.what(),
+                                          "ArcPolygonizationEdgesLength can be maximum equal to half of the length of radiuscell" ),
+                                 0 );
+
     }
     //#endif
 
@@ -424,15 +429,78 @@ void TestBlocks::TestQuadraticCellBlock()
             vector< Cartesian<> > vertices;
             it->mArea.GetVertices( vertices );
             TS_ASSERT_EQUALS( vertices.size(), 3 );
-            TS_ASSERT( vertices.at( 0 ).Equals( Cartesian<>( 0.0, 0.0, j * 0.2 ) + Cartesian<>( 0.06, 0.07, 0.03 ), sDelta ) );
-            TS_ASSERT( vertices.at( 1 ).Equals( Cartesian<>( 0.02 * cos( ( i * 0.5 - 0.25 ) * Angle<>::pi ),
-                                                             0.02 * sin( ( i * 0.5 - 0.25 ) * Angle<>::pi ), j * 0.2 ) +
-                                                 Cartesian<>( 0.06, 0.07, 0.03 ),
-                                                sDelta ) );
-            TS_ASSERT( vertices.at( 2 ).Equals( Cartesian<>( 0.02 * cos( ( ( i + 1 ) * 0.5 - 0.25 ) * Angle<>::pi ),
-                                                             0.02 * sin( ( ( i + 1 ) * 0.5 - 0.25 ) * Angle<>::pi ), j * 0.2 ) +
-                                                 Cartesian<>( 0.06, 0.07, 0.03 ),
-                                                sDelta ) );
+
+            if ( j == 1 )
+            {
+                TS_ASSERT( vertices.at( 0 ).Equals( Cartesian<>( 0.0, 0.0, j * 0.2 ) + Cartesian<>( 0.06, 0.07, 0.03 ), sDelta ) );
+                TS_ASSERT( vertices.at( 1 ).Equals( Cartesian<>( 0.02 * cos( ( i * 0.5 - 0.25 ) * Angle<>::pi ),
+                                                                 0.02 * sin( ( i * 0.5 - 0.25 ) * Angle<>::pi ), j * 0.2 ) +
+                                                     Cartesian<>( 0.06, 0.07, 0.03 ),
+                                                    sDelta ) );
+                TS_ASSERT( vertices.at( 2 ).Equals( Cartesian<>( 0.02 * cos( ( ( i + 1 ) * 0.5 - 0.25 ) * Angle<>::pi ),
+                                                                 0.02 * sin( ( ( i + 1 ) * 0.5 - 0.25 ) * Angle<>::pi ), j * 0.2 ) +
+                                                     Cartesian<>( 0.06, 0.07, 0.03 ),
+                                                    sDelta ) );
+            }
+            else
+            {
+                TS_ASSERT( vertices.at( 0 ).Equals( Cartesian<>( 0.0, 0.0, j * 0.2 ) + Cartesian<>( 0.06, 0.07, 0.03 ), sDelta ) );
+                TS_ASSERT( vertices.at( 2 ).Equals( Cartesian<>( 0.02 * cos( ( i * 0.5 - 0.25 ) * Angle<>::pi ),
+                                                                 0.02 * sin( ( i * 0.5 - 0.25 ) * Angle<>::pi ), j * 0.2 ) +
+                                                     Cartesian<>( 0.06, 0.07, 0.03 ),
+                                                    sDelta ) );
+                TS_ASSERT( vertices.at( 1 ).Equals( Cartesian<>( 0.02 * cos( ( ( i + 1 ) * 0.5 - 0.25 ) * Angle<>::pi ),
+                                                                 0.02 * sin( ( ( i + 1 ) * 0.5 - 0.25 ) * Angle<>::pi ), j * 0.2 ) +
+                                                     Cartesian<>( 0.06, 0.07, 0.03 ),
+                                                    sDelta ) );
+            }
+            ++it;
+        }
+    for ( size_t i = 0; i < 4; ++i )
+        for ( size_t j = 0; j < 2; ++j )
+        {
+            vector< Cartesian<> > vertices;
+            it->mArea.GetVertices( vertices );
+            TS_ASSERT_EQUALS( vertices.size(), 4 );
+
+            if ( j == 0 )
+            {
+                TS_ASSERT( vertices.at( 0 ).Equals( Cartesian<>( 0.02 * cos( ( i * 0.5 - 0.25 ) * Angle<>::pi ),
+                                                                 0.02 * sin( ( i * 0.5 - 0.25 ) * Angle<>::pi ), j * 0.2 ) +
+                                                     Cartesian<>( 0.06, 0.07, 0.03 ),
+                                                    sDelta ) );
+                TS_ASSERT( vertices.at( 1 ).Equals( Cartesian<>( 0.02 * cos( ( ( i + 1 ) * 0.5 - 0.25 ) * Angle<>::pi ),
+                                                                 0.02 * sin( ( ( i + 1 ) * 0.5 - 0.25 ) * Angle<>::pi ), j * 0.2 ) +
+                                                     Cartesian<>( 0.06, 0.07, 0.03 ),
+                                                    sDelta ) );
+                TS_ASSERT( vertices.at( 2 ).Equals( Cartesian<>( 0.04 * cos( ( ( i + 1 ) * 0.5 - 0.25 ) * Angle<>::pi ),
+                                                                 0.04 * sin( ( ( i + 1 ) * 0.5 - 0.25 ) * Angle<>::pi ), j * 0.2 ) +
+                                                     Cartesian<>( 0.06, 0.07, 0.03 ),
+                                                    sDelta ) );
+                TS_ASSERT( vertices.at( 3 ).Equals( Cartesian<>( 0.04 * cos( ( i * 0.5 - 0.25 ) * Angle<>::pi ),
+                                                                 0.04 * sin( ( i * 0.5 - 0.25 ) * Angle<>::pi ), j * 0.2 ) +
+                                                     Cartesian<>( 0.06, 0.07, 0.03 ),
+                                                    sDelta ) );
+            }
+            else
+            {
+                TS_ASSERT( vertices.at( 0 ).Equals( Cartesian<>( 0.02 * cos( ( i * 0.5 - 0.25 ) * Angle<>::pi ),
+                                                                 0.02 * sin( ( i * 0.5 - 0.25 ) * Angle<>::pi ), j * 0.2 ) +
+                                                     Cartesian<>( 0.06, 0.07, 0.03 ),
+                                                    sDelta ) );
+                TS_ASSERT( vertices.at( 3 ).Equals( Cartesian<>( 0.02 * cos( ( ( i + 1 ) * 0.5 - 0.25 ) * Angle<>::pi ),
+                                                                 0.02 * sin( ( ( i + 1 ) * 0.5 - 0.25 ) * Angle<>::pi ), j * 0.2 ) +
+                                                     Cartesian<>( 0.06, 0.07, 0.03 ),
+                                                    sDelta ) );
+                TS_ASSERT( vertices.at( 2 ).Equals( Cartesian<>( 0.04 * cos( ( ( i + 1 ) * 0.5 - 0.25 ) * Angle<>::pi ),
+                                                                 0.04 * sin( ( ( i + 1 ) * 0.5 - 0.25 ) * Angle<>::pi ), j * 0.2 ) +
+                                                     Cartesian<>( 0.06, 0.07, 0.03 ),
+                                                    sDelta ) );
+                TS_ASSERT( vertices.at( 1 ).Equals( Cartesian<>( 0.04 * cos( ( i * 0.5 - 0.25 ) * Angle<>::pi ),
+                                                                 0.04 * sin( ( i * 0.5 - 0.25 ) * Angle<>::pi ), j * 0.2 ) +
+                                                     Cartesian<>( 0.06, 0.07, 0.03 ),
+                                                    sDelta ) );
+            }
 
             ++it;
         }
@@ -442,48 +510,50 @@ void TestBlocks::TestQuadraticCellBlock()
             vector< Cartesian<> > vertices;
             it->mArea.GetVertices( vertices );
             TS_ASSERT_EQUALS( vertices.size(), 4 );
-            TS_ASSERT( vertices.at( 0 ).Equals( Cartesian<>( 0.02 * cos( ( i * 0.5 - 0.25 ) * Angle<>::pi ),
-                                                             0.02 * sin( ( i * 0.5 - 0.25 ) * Angle<>::pi ), j * 0.2 ) +
-                                                 Cartesian<>( 0.06, 0.07, 0.03 ),
-                                                sDelta ) );
-            TS_ASSERT( vertices.at( 1 ).Equals( Cartesian<>( 0.02 * cos( ( ( i + 1 ) * 0.5 - 0.25 ) * Angle<>::pi ),
-                                                             0.02 * sin( ( ( i + 1 ) * 0.5 - 0.25 ) * Angle<>::pi ), j * 0.2 ) +
-                                                 Cartesian<>( 0.06, 0.07, 0.03 ),
-                                                sDelta ) );
-            TS_ASSERT( vertices.at( 2 ).Equals( Cartesian<>( 0.04 * cos( ( ( i + 1 ) * 0.5 - 0.25 ) * Angle<>::pi ),
-                                                             0.04 * sin( ( ( i + 1 ) * 0.5 - 0.25 ) * Angle<>::pi ), j * 0.2 ) +
-                                                 Cartesian<>( 0.06, 0.07, 0.03 ),
-                                                sDelta ) );
-            TS_ASSERT( vertices.at( 3 ).Equals( Cartesian<>( 0.04 * cos( ( i * 0.5 - 0.25 ) * Angle<>::pi ),
-                                                             0.04 * sin( ( i * 0.5 - 0.25 ) * Angle<>::pi ), j * 0.2 ) +
-                                                 Cartesian<>( 0.06, 0.07, 0.03 ),
-                                                sDelta ) );
 
-            ++it;
-        }
-    for ( size_t i = 0; i < 4; ++i )
-        for ( size_t j = 0; j < 2; ++j )
-        {
-            vector< Cartesian<> > vertices;
-            it->mArea.GetVertices( vertices );
-            TS_ASSERT_EQUALS( vertices.size(), 4 );
-            TS_ASSERT( vertices.at( 0 ).Equals( Cartesian<>( 0.04 * cos( ( i * 0.5 - 0.25 ) * Angle<>::pi ),
-                                                             0.04 * sin( ( i * 0.5 - 0.25 ) * Angle<>::pi ), j * 0.2 ) +
-                                                 Cartesian<>( 0.06, 0.07, 0.03 ),
-                                                sDelta ) );
-            TS_ASSERT( vertices.at( 1 ).Equals( Cartesian<>( 0.04 * cos( ( ( i + 1 ) * 0.5 - 0.25 ) * Angle<>::pi ),
-                                                             0.04 * sin( ( ( i + 1 ) * 0.5 - 0.25 ) * Angle<>::pi ), j * 0.2 ) +
-                                                 Cartesian<>( 0.06, 0.07, 0.03 ),
-                                                sDelta ) );
-            TS_ASSERT( vertices.at( 2 )
-                        .Equals( Cartesian<>( 0.05 * sqrt( 2.0 ) * cos( ( ( i + 1 ) * 0.5 - 0.25 ) * Angle<>::pi ),
-                                              0.05 * sqrt( 2.0 ) * sin( ( ( i + 1 ) * 0.5 - 0.25 ) * Angle<>::pi ), j * 0.2 ) +
-                                  Cartesian<>( 0.06, 0.07, 0.03 ),
-                                 sDelta ) );
-            TS_ASSERT( vertices.at( 3 ).Equals( Cartesian<>( 0.05 * sqrt( 2.0 ) * cos( ( i * 0.5 - 0.25 ) * Angle<>::pi ),
-                                                             0.05 * sqrt( 2.0 ) * sin( ( i * 0.5 - 0.25 ) * Angle<>::pi ), j * 0.2 ) +
-                                                 Cartesian<>( 0.06, 0.07, 0.03 ),
-                                                sDelta ) );
+
+            if ( j == 0 )
+            {
+                TS_ASSERT( vertices.at( 0 ).Equals( Cartesian<>( 0.04 * cos( ( i * 0.5 - 0.25 ) * Angle<>::pi ),
+                                                                 0.04 * sin( ( i * 0.5 - 0.25 ) * Angle<>::pi ), j * 0.2 ) +
+                                                     Cartesian<>( 0.06, 0.07, 0.03 ),
+                                                    sDelta ) );
+                TS_ASSERT( vertices.at( 1 ).Equals( Cartesian<>( 0.04 * cos( ( ( i + 1 ) * 0.5 - 0.25 ) * Angle<>::pi ),
+                                                                 0.04 * sin( ( ( i + 1 ) * 0.5 - 0.25 ) * Angle<>::pi ), j * 0.2 ) +
+                                                     Cartesian<>( 0.06, 0.07, 0.03 ),
+                                                    sDelta ) );
+                TS_ASSERT( vertices.at( 2 )
+                            .Equals( Cartesian<>( 0.05 * sqrt( 2.0 ) * cos( ( ( i + 1 ) * 0.5 - 0.25 ) * Angle<>::pi ),
+                                                  0.05 * sqrt( 2.0 ) * sin( ( ( i + 1 ) * 0.5 - 0.25 ) * Angle<>::pi ), j * 0.2 ) +
+                                      Cartesian<>( 0.06, 0.07, 0.03 ),
+                                     sDelta ) );
+                TS_ASSERT( vertices.at( 3 )
+                            .Equals( Cartesian<>( 0.05 * sqrt( 2.0 ) * cos( ( i * 0.5 - 0.25 ) * Angle<>::pi ),
+                                                  0.05 * sqrt( 2.0 ) * sin( ( i * 0.5 - 0.25 ) * Angle<>::pi ), j * 0.2 ) +
+                                      Cartesian<>( 0.06, 0.07, 0.03 ),
+                                     sDelta ) );
+            }
+            else
+            {
+                TS_ASSERT( vertices.at( 0 ).Equals( Cartesian<>( 0.04 * cos( ( i * 0.5 - 0.25 ) * Angle<>::pi ),
+                                                                 0.04 * sin( ( i * 0.5 - 0.25 ) * Angle<>::pi ), j * 0.2 ) +
+                                                     Cartesian<>( 0.06, 0.07, 0.03 ),
+                                                    sDelta ) );
+                TS_ASSERT( vertices.at( 3 ).Equals( Cartesian<>( 0.04 * cos( ( ( i + 1 ) * 0.5 - 0.25 ) * Angle<>::pi ),
+                                                                 0.04 * sin( ( ( i + 1 ) * 0.5 - 0.25 ) * Angle<>::pi ), j * 0.2 ) +
+                                                     Cartesian<>( 0.06, 0.07, 0.03 ),
+                                                    sDelta ) );
+                TS_ASSERT( vertices.at( 2 )
+                            .Equals( Cartesian<>( 0.05 * sqrt( 2.0 ) * cos( ( ( i + 1 ) * 0.5 - 0.25 ) * Angle<>::pi ),
+                                                  0.05 * sqrt( 2.0 ) * sin( ( ( i + 1 ) * 0.5 - 0.25 ) * Angle<>::pi ), j * 0.2 ) +
+                                      Cartesian<>( 0.06, 0.07, 0.03 ),
+                                     sDelta ) );
+                TS_ASSERT( vertices.at( 1 )
+                            .Equals( Cartesian<>( 0.05 * sqrt( 2.0 ) * cos( ( i * 0.5 - 0.25 ) * Angle<>::pi ),
+                                                  0.05 * sqrt( 2.0 ) * sin( ( i * 0.5 - 0.25 ) * Angle<>::pi ), j * 0.2 ) +
+                                      Cartesian<>( 0.06, 0.07, 0.03 ),
+                                     sDelta ) );
+            }
 
             ++it;
         }
@@ -590,7 +660,6 @@ void TestBlocks::TestQuadraticCellBlockPhiDivisionEight()
         if ( maxIndex < area.mIndex )
             maxIndex = area.mIndex;
     TS_ASSERT_EQUALS( maxIndex, 15 );
-
 
     for ( size_t i = 0; i < 16; ++i )
         TS_ASSERT_EQUALS( thermalElements.at( 0 )->GetTemperature(), 25.0 );
@@ -713,10 +782,10 @@ void TestBlocks::TestQuadraticCellBlockPhiDivisionEight()
         surfaceAreas.at( i * 2 ).mArea.GetVertices( vertices );
         TS_ASSERT_EQUALS( vertices.size(), 3 );
         TS_ASSERT( vertices.at( 0 ).Equals( Cartesian<>( 0.0, 0.0, -0.05 ), sDelta ) );
-        TS_ASSERT( vertices.at( 1 ).Equals( Cartesian<>( 0.04 * cos( ( i * 0.25 - 0.25 ) * Angle<>::pi ),
+        TS_ASSERT( vertices.at( 2 ).Equals( Cartesian<>( 0.04 * cos( ( i * 0.25 - 0.25 ) * Angle<>::pi ),
                                                          0.04 * sin( ( i * 0.25 - 0.25 ) * Angle<>::pi ), -0.05 ),
                                             sDelta ) );
-        TS_ASSERT( vertices.at( 2 ).Equals( Cartesian<>( 0.04 * cos( ( ( i + 1 ) * 0.25 - 0.25 ) * Angle<>::pi ),
+        TS_ASSERT( vertices.at( 1 ).Equals( Cartesian<>( 0.04 * cos( ( ( i + 1 ) * 0.25 - 0.25 ) * Angle<>::pi ),
                                                          0.04 * sin( ( ( i + 1 ) * 0.25 - 0.25 ) * Angle<>::pi ), -0.05 ),
                                             sDelta ) );
     }
@@ -741,12 +810,25 @@ void TestBlocks::TestQuadraticCellBlockPhiDivisionEight()
             surfaceAreas.at( 2 * i + 16 + j ).mArea.GetVertices( vertices );
             double zCoordinate = ( j == 0 ) ? -0.05 : 0.05;
             TS_ASSERT_EQUALS( vertices.size(), 4 );
-            TS_ASSERT( vertices.at( 0 ).Equals( Cartesian<>( 0.04 * cos( ( i * 0.25 - 0.25 ) * Angle<>::pi ),
-                                                             0.04 * sin( ( i * 0.25 - 0.25 ) * Angle<>::pi ), zCoordinate ),
-                                                sDelta ) );
-            TS_ASSERT( vertices.at( 1 ).Equals( Cartesian<>( 0.04 * cos( ( ( i + 1 ) * 0.25 - 0.25 ) * Angle<>::pi ),
-                                                             0.04 * sin( ( ( i + 1 ) * 0.25 - 0.25 ) * Angle<>::pi ), zCoordinate ),
-                                                sDelta ) );
+
+            if ( j == 0 )
+            {
+                TS_ASSERT( vertices.at( 0 ).Equals( Cartesian<>( 0.04 * cos( ( i * 0.25 - 0.25 ) * Angle<>::pi ),
+                                                                 0.04 * sin( ( i * 0.25 - 0.25 ) * Angle<>::pi ), zCoordinate ),
+                                                    sDelta ) );
+                TS_ASSERT( vertices.at( 1 ).Equals( Cartesian<>( 0.04 * cos( ( ( i + 1 ) * 0.25 - 0.25 ) * Angle<>::pi ),
+                                                                 0.04 * sin( ( ( i + 1 ) * 0.25 - 0.25 ) * Angle<>::pi ), zCoordinate ),
+                                                    sDelta ) );
+            }
+            else
+            {
+                TS_ASSERT( vertices.at( 0 ).Equals( Cartesian<>( 0.04 * cos( ( i * 0.25 - 0.25 ) * Angle<>::pi ),
+                                                                 0.04 * sin( ( i * 0.25 - 0.25 ) * Angle<>::pi ), zCoordinate ),
+                                                    sDelta ) );
+                TS_ASSERT( vertices.at( 3 ).Equals( Cartesian<>( 0.04 * cos( ( ( i + 1 ) * 0.25 - 0.25 ) * Angle<>::pi ),
+                                                                 0.04 * sin( ( ( i + 1 ) * 0.25 - 0.25 ) * Angle<>::pi ), zCoordinate ),
+                                                    sDelta ) );
+            }
 
             double xOf2, yOf2, xOf3, yOf3;
             switch ( i )
@@ -801,9 +883,16 @@ void TestBlocks::TestQuadraticCellBlockPhiDivisionEight()
                     break;
             }
 
-
-            TS_ASSERT( vertices.at( 2 ).Equals( Cartesian<>( xOf2, yOf2, zCoordinate ), sDelta ) );
-            TS_ASSERT( vertices.at( 3 ).Equals( Cartesian<>( xOf3, yOf3, zCoordinate ), sDelta ) );
+            if ( j == 0 )
+            {
+                TS_ASSERT( vertices.at( 2 ).Equals( Cartesian<>( xOf2, yOf2, zCoordinate ), sDelta ) );
+                TS_ASSERT( vertices.at( 3 ).Equals( Cartesian<>( xOf3, yOf3, zCoordinate ), sDelta ) );
+            }
+            else
+            {
+                TS_ASSERT( vertices.at( 2 ).Equals( Cartesian<>( xOf2, yOf2, zCoordinate ), sDelta ) );
+                TS_ASSERT( vertices.at( 1 ).Equals( Cartesian<>( xOf3, yOf3, zCoordinate ), sDelta ) );
+            }
         }
     // Seitenflaeche nicht getestet
 }
@@ -1086,16 +1175,31 @@ void TestBlocks::TestSupercap()
             vector< Cartesian<> > vertices;
             it->mArea.GetVertices( vertices );
             TS_ASSERT_EQUALS( vertices.size(), 3 );
-            TS_ASSERT( vertices.at( 0 ).Equals( Cartesian<>( 0.0, 0.0, j * 0.2 ) + Cartesian<>( 0.06, 0.07, 0.03 ), sDelta ) );
-            TS_ASSERT( vertices.at( 1 ).Equals( Cartesian<>( 0.03 * cos( ( i * 0.5 - 0.25 ) * Angle<>::pi ),
-                                                             0.03 * sin( ( i * 0.5 - 0.25 ) * Angle<>::pi ), j * 0.2 ) +
-                                                 Cartesian<>( 0.06, 0.07, 0.03 ),
-                                                sDelta ) );
-            TS_ASSERT( vertices.at( 2 ).Equals( Cartesian<>( 0.03 * cos( ( ( i + 1 ) * 0.5 - 0.25 ) * Angle<>::pi ),
-                                                             0.03 * sin( ( ( i + 1 ) * 0.5 - 0.25 ) * Angle<>::pi ), j * 0.2 ) +
-                                                 Cartesian<>( 0.06, 0.07, 0.03 ),
-                                                sDelta ) );
 
+            if ( j == 1 )
+            {
+                TS_ASSERT( vertices.at( 0 ).Equals( Cartesian<>( 0.0, 0.0, j * 0.2 ) + Cartesian<>( 0.06, 0.07, 0.03 ), sDelta ) );
+                TS_ASSERT( vertices.at( 1 ).Equals( Cartesian<>( 0.03 * cos( ( i * 0.5 - 0.25 ) * Angle<>::pi ),
+                                                                 0.03 * sin( ( i * 0.5 - 0.25 ) * Angle<>::pi ), j * 0.2 ) +
+                                                     Cartesian<>( 0.06, 0.07, 0.03 ),
+                                                    sDelta ) );
+                TS_ASSERT( vertices.at( 2 ).Equals( Cartesian<>( 0.03 * cos( ( ( i + 1 ) * 0.5 - 0.25 ) * Angle<>::pi ),
+                                                                 0.03 * sin( ( ( i + 1 ) * 0.5 - 0.25 ) * Angle<>::pi ), j * 0.2 ) +
+                                                     Cartesian<>( 0.06, 0.07, 0.03 ),
+                                                    sDelta ) );
+            }
+            else
+            {
+                TS_ASSERT( vertices.at( 0 ).Equals( Cartesian<>( 0.0, 0.0, j * 0.2 ) + Cartesian<>( 0.06, 0.07, 0.03 ), sDelta ) );
+                TS_ASSERT( vertices.at( 2 ).Equals( Cartesian<>( 0.03 * cos( ( i * 0.5 - 0.25 ) * Angle<>::pi ),
+                                                                 0.03 * sin( ( i * 0.5 - 0.25 ) * Angle<>::pi ), j * 0.2 ) +
+                                                     Cartesian<>( 0.06, 0.07, 0.03 ),
+                                                    sDelta ) );
+                TS_ASSERT( vertices.at( 1 ).Equals( Cartesian<>( 0.03 * cos( ( ( i + 1 ) * 0.5 - 0.25 ) * Angle<>::pi ),
+                                                                 0.03 * sin( ( ( i + 1 ) * 0.5 - 0.25 ) * Angle<>::pi ), j * 0.2 ) +
+                                                     Cartesian<>( 0.06, 0.07, 0.03 ),
+                                                    sDelta ) );
+            }
             ++it;
         }
     for ( size_t i = 0; i < 4; ++i )
@@ -1104,23 +1208,45 @@ void TestBlocks::TestSupercap()
             vector< Cartesian<> > vertices;
             it->mArea.GetVertices( vertices );
             TS_ASSERT_EQUALS( vertices.size(), 4 );
-            TS_ASSERT( vertices.at( 0 ).Equals( Cartesian<>( 0.03 * cos( ( i * 0.5 - 0.25 ) * Angle<>::pi ),
-                                                             0.03 * sin( ( i * 0.5 - 0.25 ) * Angle<>::pi ), j * 0.2 ) +
-                                                 Cartesian<>( 0.06, 0.07, 0.03 ),
-                                                sDelta ) );
-            TS_ASSERT( vertices.at( 1 ).Equals( Cartesian<>( 0.03 * cos( ( ( i + 1 ) * 0.5 - 0.25 ) * Angle<>::pi ),
-                                                             0.03 * sin( ( ( i + 1 ) * 0.5 - 0.25 ) * Angle<>::pi ), j * 0.2 ) +
-                                                 Cartesian<>( 0.06, 0.07, 0.03 ),
-                                                sDelta ) );
-            TS_ASSERT( vertices.at( 2 ).Equals( Cartesian<>( 0.04 * cos( ( ( i + 1 ) * 0.5 - 0.25 ) * Angle<>::pi ),
-                                                             0.04 * sin( ( ( i + 1 ) * 0.5 - 0.25 ) * Angle<>::pi ), j * 0.2 ) +
-                                                 Cartesian<>( 0.06, 0.07, 0.03 ),
-                                                sDelta ) );
-            TS_ASSERT( vertices.at( 3 ).Equals( Cartesian<>( 0.04 * cos( ( i * 0.5 - 0.25 ) * Angle<>::pi ),
-                                                             0.04 * sin( ( i * 0.5 - 0.25 ) * Angle<>::pi ), j * 0.2 ) +
-                                                 Cartesian<>( 0.06, 0.07, 0.03 ),
-                                                sDelta ) );
 
+            if ( j == 0 )
+            {
+                TS_ASSERT( vertices.at( 0 ).Equals( Cartesian<>( 0.03 * cos( ( i * 0.5 - 0.25 ) * Angle<>::pi ),
+                                                                 0.03 * sin( ( i * 0.5 - 0.25 ) * Angle<>::pi ), j * 0.2 ) +
+                                                     Cartesian<>( 0.06, 0.07, 0.03 ),
+                                                    sDelta ) );
+                TS_ASSERT( vertices.at( 1 ).Equals( Cartesian<>( 0.03 * cos( ( ( i + 1 ) * 0.5 - 0.25 ) * Angle<>::pi ),
+                                                                 0.03 * sin( ( ( i + 1 ) * 0.5 - 0.25 ) * Angle<>::pi ), j * 0.2 ) +
+                                                     Cartesian<>( 0.06, 0.07, 0.03 ),
+                                                    sDelta ) );
+                TS_ASSERT( vertices.at( 2 ).Equals( Cartesian<>( 0.04 * cos( ( ( i + 1 ) * 0.5 - 0.25 ) * Angle<>::pi ),
+                                                                 0.04 * sin( ( ( i + 1 ) * 0.5 - 0.25 ) * Angle<>::pi ), j * 0.2 ) +
+                                                     Cartesian<>( 0.06, 0.07, 0.03 ),
+                                                    sDelta ) );
+                TS_ASSERT( vertices.at( 3 ).Equals( Cartesian<>( 0.04 * cos( ( i * 0.5 - 0.25 ) * Angle<>::pi ),
+                                                                 0.04 * sin( ( i * 0.5 - 0.25 ) * Angle<>::pi ), j * 0.2 ) +
+                                                     Cartesian<>( 0.06, 0.07, 0.03 ),
+                                                    sDelta ) );
+            }
+            else
+            {
+                TS_ASSERT( vertices.at( 0 ).Equals( Cartesian<>( 0.03 * cos( ( i * 0.5 - 0.25 ) * Angle<>::pi ),
+                                                                 0.03 * sin( ( i * 0.5 - 0.25 ) * Angle<>::pi ), j * 0.2 ) +
+                                                     Cartesian<>( 0.06, 0.07, 0.03 ),
+                                                    sDelta ) );
+                TS_ASSERT( vertices.at( 3 ).Equals( Cartesian<>( 0.03 * cos( ( ( i + 1 ) * 0.5 - 0.25 ) * Angle<>::pi ),
+                                                                 0.03 * sin( ( ( i + 1 ) * 0.5 - 0.25 ) * Angle<>::pi ), j * 0.2 ) +
+                                                     Cartesian<>( 0.06, 0.07, 0.03 ),
+                                                    sDelta ) );
+                TS_ASSERT( vertices.at( 2 ).Equals( Cartesian<>( 0.04 * cos( ( ( i + 1 ) * 0.5 - 0.25 ) * Angle<>::pi ),
+                                                                 0.04 * sin( ( ( i + 1 ) * 0.5 - 0.25 ) * Angle<>::pi ), j * 0.2 ) +
+                                                     Cartesian<>( 0.06, 0.07, 0.03 ),
+                                                    sDelta ) );
+                TS_ASSERT( vertices.at( 1 ).Equals( Cartesian<>( 0.04 * cos( ( i * 0.5 - 0.25 ) * Angle<>::pi ),
+                                                                 0.04 * sin( ( i * 0.5 - 0.25 ) * Angle<>::pi ), j * 0.2 ) +
+                                                     Cartesian<>( 0.06, 0.07, 0.03 ),
+                                                    sDelta ) );
+            }
             ++it;
         }
     for ( size_t i = 0; i < 4; ++i )
@@ -1129,24 +1255,49 @@ void TestBlocks::TestSupercap()
             vector< Cartesian<> > vertices;
             it->mArea.GetVertices( vertices );
             TS_ASSERT_EQUALS( vertices.size(), 4 );
-            TS_ASSERT( vertices.at( 0 ).Equals( Cartesian<>( 0.04 * cos( ( i * 0.5 - 0.25 ) * Angle<>::pi ),
-                                                             0.04 * sin( ( i * 0.5 - 0.25 ) * Angle<>::pi ), j * 0.2 ) +
-                                                 Cartesian<>( 0.06, 0.07, 0.03 ),
-                                                sDelta ) );
-            TS_ASSERT( vertices.at( 1 ).Equals( Cartesian<>( 0.04 * cos( ( ( i + 1 ) * 0.5 - 0.25 ) * Angle<>::pi ),
-                                                             0.04 * sin( ( ( i + 1 ) * 0.5 - 0.25 ) * Angle<>::pi ), j * 0.2 ) +
-                                                 Cartesian<>( 0.06, 0.07, 0.03 ),
-                                                sDelta ) );
-            TS_ASSERT( vertices.at( 2 )
-                        .Equals( Cartesian<>( 0.05 * sqrt( 2.0 ) * cos( ( ( i + 1 ) * 0.5 - 0.25 ) * Angle<>::pi ),
-                                              0.05 * sqrt( 2.0 ) * sin( ( ( i + 1 ) * 0.5 - 0.25 ) * Angle<>::pi ), j * 0.2 ) +
-                                  Cartesian<>( 0.06, 0.07, 0.03 ),
-                                 sDelta ) );
-            TS_ASSERT( vertices.at( 3 ).Equals( Cartesian<>( 0.05 * sqrt( 2.0 ) * cos( ( i * 0.5 - 0.25 ) * Angle<>::pi ),
-                                                             0.05 * sqrt( 2.0 ) * sin( ( i * 0.5 - 0.25 ) * Angle<>::pi ), j * 0.2 ) +
-                                                 Cartesian<>( 0.06, 0.07, 0.03 ),
-                                                sDelta ) );
 
+            if ( j == 0 )
+            {
+                TS_ASSERT( vertices.at( 0 ).Equals( Cartesian<>( 0.04 * cos( ( i * 0.5 - 0.25 ) * Angle<>::pi ),
+                                                                 0.04 * sin( ( i * 0.5 - 0.25 ) * Angle<>::pi ), j * 0.2 ) +
+                                                     Cartesian<>( 0.06, 0.07, 0.03 ),
+                                                    sDelta ) );
+                TS_ASSERT( vertices.at( 1 ).Equals( Cartesian<>( 0.04 * cos( ( ( i + 1 ) * 0.5 - 0.25 ) * Angle<>::pi ),
+                                                                 0.04 * sin( ( ( i + 1 ) * 0.5 - 0.25 ) * Angle<>::pi ), j * 0.2 ) +
+                                                     Cartesian<>( 0.06, 0.07, 0.03 ),
+                                                    sDelta ) );
+                TS_ASSERT( vertices.at( 2 )
+                            .Equals( Cartesian<>( 0.05 * sqrt( 2.0 ) * cos( ( ( i + 1 ) * 0.5 - 0.25 ) * Angle<>::pi ),
+                                                  0.05 * sqrt( 2.0 ) * sin( ( ( i + 1 ) * 0.5 - 0.25 ) * Angle<>::pi ), j * 0.2 ) +
+                                      Cartesian<>( 0.06, 0.07, 0.03 ),
+                                     sDelta ) );
+                TS_ASSERT( vertices.at( 3 )
+                            .Equals( Cartesian<>( 0.05 * sqrt( 2.0 ) * cos( ( i * 0.5 - 0.25 ) * Angle<>::pi ),
+                                                  0.05 * sqrt( 2.0 ) * sin( ( i * 0.5 - 0.25 ) * Angle<>::pi ), j * 0.2 ) +
+                                      Cartesian<>( 0.06, 0.07, 0.03 ),
+                                     sDelta ) );
+            }
+            else
+            {
+                TS_ASSERT( vertices.at( 0 ).Equals( Cartesian<>( 0.04 * cos( ( i * 0.5 - 0.25 ) * Angle<>::pi ),
+                                                                 0.04 * sin( ( i * 0.5 - 0.25 ) * Angle<>::pi ), j * 0.2 ) +
+                                                     Cartesian<>( 0.06, 0.07, 0.03 ),
+                                                    sDelta ) );
+                TS_ASSERT( vertices.at( 3 ).Equals( Cartesian<>( 0.04 * cos( ( ( i + 1 ) * 0.5 - 0.25 ) * Angle<>::pi ),
+                                                                 0.04 * sin( ( ( i + 1 ) * 0.5 - 0.25 ) * Angle<>::pi ), j * 0.2 ) +
+                                                     Cartesian<>( 0.06, 0.07, 0.03 ),
+                                                    sDelta ) );
+                TS_ASSERT( vertices.at( 2 )
+                            .Equals( Cartesian<>( 0.05 * sqrt( 2.0 ) * cos( ( ( i + 1 ) * 0.5 - 0.25 ) * Angle<>::pi ),
+                                                  0.05 * sqrt( 2.0 ) * sin( ( ( i + 1 ) * 0.5 - 0.25 ) * Angle<>::pi ), j * 0.2 ) +
+                                      Cartesian<>( 0.06, 0.07, 0.03 ),
+                                     sDelta ) );
+                TS_ASSERT( vertices.at( 1 )
+                            .Equals( Cartesian<>( 0.05 * sqrt( 2.0 ) * cos( ( i * 0.5 - 0.25 ) * Angle<>::pi ),
+                                                  0.05 * sqrt( 2.0 ) * sin( ( i * 0.5 - 0.25 ) * Angle<>::pi ), j * 0.2 ) +
+                                      Cartesian<>( 0.06, 0.07, 0.03 ),
+                                     sDelta ) );
+            }
             ++it;
         }
 
@@ -1445,37 +1596,76 @@ void TestBlocks::TestHexagonalCellBlock()
         vector< Cartesian<> > vertices;
         surfaceAreas.at( i ).mArea.GetVertices( vertices );
         TS_ASSERT_EQUALS( vertices.size(), 3 );
-        TS_ASSERT( vertices.at( 0 ).Equals( Cartesian<>( 0.0, 0.0, i % 2 ) * 0.2 + centerOfBaseArea, sDelta ) );
-        TS_ASSERT( vertices.at( 1 ).Equals( Cartesian<>( 0.06 * cos( ( i / 2 ) * Angle<>::pi / 3.0 ),
-                                                         0.06 * sin( ( i / 2 ) * Angle<>::pi / 3.0 ), 0.2 * ( i % 2 ) ) +
-                                             centerOfBaseArea,
-                                            sDelta ) );
-        TS_ASSERT( vertices.at( 2 ).Equals( Cartesian<>( 0.06 * cos( ( i / 2 + 1 ) * Angle<>::pi / 3.0 ),
-                                                         0.06 * sin( ( i / 2 + 1 ) * Angle<>::pi / 3.0 ), 0.2 * ( i % 2 ) ) +
-                                             centerOfBaseArea,
-                                            sDelta ) );
+
+        if ( i % 2 == 0 )
+        {
+            TS_ASSERT( vertices.at( 0 ).Equals( Cartesian<>( 0.0, 0.0, i % 2 ) * 0.2 + centerOfBaseArea, sDelta ) );
+            TS_ASSERT( vertices.at( 2 ).Equals( Cartesian<>( 0.06 * cos( ( i / 2 ) * Angle<>::pi / 3.0 ),
+                                                             0.06 * sin( ( i / 2 ) * Angle<>::pi / 3.0 ), 0.2 * ( i % 2 ) ) +
+                                                 centerOfBaseArea,
+                                                sDelta ) );
+            TS_ASSERT( vertices.at( 1 ).Equals( Cartesian<>( 0.06 * cos( ( i / 2 + 1 ) * Angle<>::pi / 3.0 ),
+                                                             0.06 * sin( ( i / 2 + 1 ) * Angle<>::pi / 3.0 ), 0.2 * ( i % 2 ) ) +
+                                                 centerOfBaseArea,
+                                                sDelta ) );
+        }
+        else
+        {
+            TS_ASSERT( vertices.at( 0 ).Equals( Cartesian<>( 0.0, 0.0, i % 2 ) * 0.2 + centerOfBaseArea, sDelta ) );
+            TS_ASSERT( vertices.at( 1 ).Equals( Cartesian<>( 0.06 * cos( ( i / 2 ) * Angle<>::pi / 3.0 ),
+                                                             0.06 * sin( ( i / 2 ) * Angle<>::pi / 3.0 ), 0.2 * ( i % 2 ) ) +
+                                                 centerOfBaseArea,
+                                                sDelta ) );
+            TS_ASSERT( vertices.at( 2 ).Equals( Cartesian<>( 0.06 * cos( ( i / 2 + 1 ) * Angle<>::pi / 3.0 ),
+                                                             0.06 * sin( ( i / 2 + 1 ) * Angle<>::pi / 3.0 ), 0.2 * ( i % 2 ) ) +
+                                                 centerOfBaseArea,
+                                                sDelta ) );
+        }
     }
     for ( size_t i = 12; i < 24; ++i )
     {
         vector< Cartesian<> > vertices;
         surfaceAreas.at( i ).mArea.GetVertices( vertices );
         TS_ASSERT_EQUALS( vertices.size(), 4 );
-        TS_ASSERT( vertices.at( 0 ).Equals( Cartesian<>( 0.06 * cos( ( i / 2 ) * Angle<>::pi / 3.0 ),
-                                                         0.06 * sin( ( i / 2 ) * Angle<>::pi / 3.0 ), 0.2 * ( i % 2 ) ) +
-                                             centerOfBaseArea,
-                                            sDelta ) );
-        TS_ASSERT( vertices.at( 1 ).Equals( Cartesian<>( 0.06 * cos( ( i / 2 + 1 ) * Angle<>::pi / 3.0 ),
-                                                         0.06 * sin( ( i / 2 + 1 ) * Angle<>::pi / 3.0 ), 0.2 * ( i % 2 ) ) +
-                                             centerOfBaseArea,
-                                            sDelta ) );
-        TS_ASSERT( vertices.at( 2 ).Equals( Cartesian<>( 0.1 * cos( ( i / 2 + 1 ) * Angle<>::pi / 3.0 ),
-                                                         0.1 * sin( ( i / 2 + 1 ) * Angle<>::pi / 3.0 ), 0.2 * ( i % 2 ) ) +
-                                             centerOfBaseArea,
-                                            sDelta ) );
-        TS_ASSERT( vertices.at( 3 ).Equals( Cartesian<>( 0.1 * cos( ( i / 2 ) * Angle<>::pi / 3.0 ),
-                                                         0.1 * sin( ( i / 2 ) * Angle<>::pi / 3.0 ), 0.2 * ( i % 2 ) ) +
-                                             centerOfBaseArea,
-                                            sDelta ) );
+
+        if ( i % 2 == 0 )
+        {
+            TS_ASSERT( vertices.at( 0 ).Equals( Cartesian<>( 0.06 * cos( ( i / 2 ) * Angle<>::pi / 3.0 ),
+                                                             0.06 * sin( ( i / 2 ) * Angle<>::pi / 3.0 ), 0.2 * ( i % 2 ) ) +
+                                                 centerOfBaseArea,
+                                                sDelta ) );
+            TS_ASSERT( vertices.at( 1 ).Equals( Cartesian<>( 0.06 * cos( ( i / 2 + 1 ) * Angle<>::pi / 3.0 ),
+                                                             0.06 * sin( ( i / 2 + 1 ) * Angle<>::pi / 3.0 ), 0.2 * ( i % 2 ) ) +
+                                                 centerOfBaseArea,
+                                                sDelta ) );
+            TS_ASSERT( vertices.at( 2 ).Equals( Cartesian<>( 0.1 * cos( ( i / 2 + 1 ) * Angle<>::pi / 3.0 ),
+                                                             0.1 * sin( ( i / 2 + 1 ) * Angle<>::pi / 3.0 ), 0.2 * ( i % 2 ) ) +
+                                                 centerOfBaseArea,
+                                                sDelta ) );
+            TS_ASSERT( vertices.at( 3 ).Equals( Cartesian<>( 0.1 * cos( ( i / 2 ) * Angle<>::pi / 3.0 ),
+                                                             0.1 * sin( ( i / 2 ) * Angle<>::pi / 3.0 ), 0.2 * ( i % 2 ) ) +
+                                                 centerOfBaseArea,
+                                                sDelta ) );
+        }
+        else
+        {
+            TS_ASSERT( vertices.at( 0 ).Equals( Cartesian<>( 0.06 * cos( ( i / 2 ) * Angle<>::pi / 3.0 ),
+                                                             0.06 * sin( ( i / 2 ) * Angle<>::pi / 3.0 ), 0.2 * ( i % 2 ) ) +
+                                                 centerOfBaseArea,
+                                                sDelta ) );
+            TS_ASSERT( vertices.at( 3 ).Equals( Cartesian<>( 0.06 * cos( ( i / 2 + 1 ) * Angle<>::pi / 3.0 ),
+                                                             0.06 * sin( ( i / 2 + 1 ) * Angle<>::pi / 3.0 ), 0.2 * ( i % 2 ) ) +
+                                                 centerOfBaseArea,
+                                                sDelta ) );
+            TS_ASSERT( vertices.at( 2 ).Equals( Cartesian<>( 0.1 * cos( ( i / 2 + 1 ) * Angle<>::pi / 3.0 ),
+                                                             0.1 * sin( ( i / 2 + 1 ) * Angle<>::pi / 3.0 ), 0.2 * ( i % 2 ) ) +
+                                                 centerOfBaseArea,
+                                                sDelta ) );
+            TS_ASSERT( vertices.at( 1 ).Equals( Cartesian<>( 0.1 * cos( ( i / 2 ) * Angle<>::pi / 3.0 ),
+                                                             0.1 * sin( ( i / 2 ) * Angle<>::pi / 3.0 ), 0.2 * ( i % 2 ) ) +
+                                                 centerOfBaseArea,
+                                                sDelta ) );
+        }
     }
     for ( size_t j = 0; j < 2; ++j )
         for ( size_t i = 0; i < 6; ++i )
@@ -1603,9 +1793,21 @@ void TestBlocks::TestTriangularPrismBlock()
         vector< Cartesian<> > vertices;
         surfaceAreas.at( i ).mArea.GetVertices( vertices );
         TS_ASSERT_EQUALS( vertices.size(), 3 );
-        TS_ASSERT( vertices.at( 0 ).Equals( Cartesian<>( 1.0, 2.0, 3.0 + 0.2 * i ), sDelta ) );
-        TS_ASSERT( vertices.at( 1 ).Equals( Cartesian<>( 1.0, 2.0, 3.0 + 0.2 * i ) + Cartesian<>( 1.5, 0.0, 0.0 ), sDelta ) );
-        TS_ASSERT( vertices.at( 2 ).Equals( Cartesian<>( 1.0, 2.0, 3.0 + 0.2 * i ) + Cartesian<>( 0.0, 1.5, 0.0 ), sDelta ) );
+
+        // Bottom-areas and Top-areas have different orders for vertices:
+
+        if ( i == 0 )
+        {
+            TS_ASSERT( vertices.at( 0 ).Equals( Cartesian<>( 1.0, 2.0, 3.0 + 0.2 * i ), sDelta ) );
+            TS_ASSERT( vertices.at( 2 ).Equals( Cartesian<>( 1.0, 2.0, 3.0 + 0.2 * i ) + Cartesian<>( 1.5, 0.0, 0.0 ), sDelta ) );
+            TS_ASSERT( vertices.at( 1 ).Equals( Cartesian<>( 1.0, 2.0, 3.0 + 0.2 * i ) + Cartesian<>( 0.0, 1.5, 0.0 ), sDelta ) );
+        }
+        else
+        {
+            TS_ASSERT( vertices.at( 0 ).Equals( Cartesian<>( 1.0, 2.0, 3.0 + 0.2 * i ), sDelta ) );
+            TS_ASSERT( vertices.at( 1 ).Equals( Cartesian<>( 1.0, 2.0, 3.0 + 0.2 * i ) + Cartesian<>( 1.5, 0.0, 0.0 ), sDelta ) );
+            TS_ASSERT( vertices.at( 2 ).Equals( Cartesian<>( 1.0, 2.0, 3.0 + 0.2 * i ) + Cartesian<>( 0.0, 1.5, 0.0 ), sDelta ) );
+        }
     }
     TS_ASSERT_EQUALS( surfaceAreas.at( 0 ).mArea.GetLocation(), BOTTOM );
     TS_ASSERT_EQUALS( surfaceAreas.at( 1 ).mArea.GetLocation(), TOP );
@@ -1632,7 +1834,6 @@ void TestBlocks::TestTriangularPrismBlock()
         TS_ASSERT_EQUALS( surfaceAreas.at( index1 ).mArea.GetLocation(), SIDE );
         TS_ASSERT_EQUALS( surfaceAreas.at( index2 ).mArea.GetLocation(), SIDE );
         TS_ASSERT_EQUALS( surfaceAreas.at( index3 ).mArea.GetLocation(), SIDE );
-
 
         vector< Cartesian<> > vertices;
 
