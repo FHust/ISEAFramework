@@ -15,7 +15,7 @@ along with this program.  If not, see http://www.gnu.org/licenses/.
 /* -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.
 * File Name : twoport_withchild.h
 * Creation Date : 30-10-2012
-* Last Modified : Mi 24 Jun 2015 18:44:10 CEST
+* Last Modified : Di 08 Mär 2016 16:06:13 CET
 * Created By : Friedrich Hust
 _._._._._._._._._._._._._._._._._._._._._.*/
 #ifndef _TWOPORT_WITHCHILD_
@@ -41,7 +41,8 @@ class TwoPortWithChild : public TwoPort< T >
     friend class ::TestDaeSystem;
 
     public:
-    TwoPortWithChild( const bool observable = false );
+    explicit TwoPortWithChild( const bool observable = false,
+                               typename TwoPort< T >::DataType dataValues = typename TwoPort< T >::DataType(new ElectricalDataStruct< ScalarUnit >));
     virtual ~TwoPortWithChild(){};
     virtual void AddChild( TwoPort< T >* newport );
     virtual void AddChild( boost::shared_ptr< TwoPort< T > > newport );
@@ -76,8 +77,8 @@ class TwoPortWithChild : public TwoPort< T >
     std::vector< boost::shared_ptr< TwoPort< T > > > mChildren;
 };
 template < typename T >
-TwoPortWithChild< T >::TwoPortWithChild( const bool observable )
-    : TwoPort< T >( observable )
+TwoPortWithChild< T >::TwoPortWithChild( const bool observable, typename TwoPort< T >::DataType dataValues )
+    : TwoPort< T >( observable, dataValues )
 {
 }
 

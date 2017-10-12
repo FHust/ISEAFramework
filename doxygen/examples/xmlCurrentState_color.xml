@@ -1,0 +1,12 @@
+<div class="fragment">
+<!-- Generator: GNU source-highlight 3.1.8
+by Lorenzo Bettini
+http://www.lorenzobettini.it
+http://www.gnu.org/software/src-highlite -->
+<pre><tt><b><font color="#0000FF">&lt;LookupObj1D</font></b> <font color="#009900">class</font><font color="#990000">=</font><font color="#FF0000">'LookupObj1dWithState'</font><b><font color="#0000FF">&gt;</font></b>\
+    <b><font color="#0000FF">&lt;State</font></b> <font color="#009900">class</font><font color="#990000">=</font><font color="#FF0000">'ElectricalState'</font> <font color="#009900">StateType</font><font color="#990000">=</font><font color="#FF0000">'Current'</font> <b><font color="#0000FF">/&gt;</font></b>\
+    <b><font color="#0000FF">&lt;LookupData&gt;</font></b>1,2,3,4,5,6,7,8,9<b><font color="#0000FF">&lt;/LookupData&gt;</font></b>\
+    <b><font color="#0000FF">&lt;MeasurementPoints&gt;</font></b>1,2,3,4,5,6,7,8,9<b><font color="#0000FF">&lt;/MeasurementPoints&gt;</font></b>\
+<b><font color="#0000FF">&lt;/LookupObj1D&gt;</font></b>
+</tt></pre>
+</div>

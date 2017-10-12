@@ -23,13 +23,16 @@ along with this program.  If not, see http://www.gnu.org/licenses/.
 
 namespace factory
 {
-///Builds a Factory for ::state
-Factory< ::state::Dgl_state, ArgumentTypeState  >* BuildStateFactory()
+/// Builds a Factory for ::state
+Factory< ::state::Dgl_state, ArgumentTypeState > *BuildStateFactory()
 {
-    Factory< ::state::Dgl_state, ArgumentTypeState  > *stateFactory = new Factory< ::state::Dgl_state, ArgumentTypeState >();
-    stateFactory->AddWrapper( new StateClassWrapper< electrical::state::Soc >(stateFactory), "Soc" );
-    stateFactory->AddWrapper( new StateClassWrapper< electrical::state::SurfaceSoc >(stateFactory), "SurfaceSoc" );
-    stateFactory->AddWrapper( new StateClassWrapper< ::state::ThermalState<double> >(stateFactory), "ThermalState" );
+    Factory< ::state::Dgl_state, ArgumentTypeState > *stateFactory = new Factory< ::state::Dgl_state, ArgumentTypeState >();
+    stateFactory->AddWrapper( new StateClassWrapper< electrical::state::Soc >( stateFactory ), "Soc" );
+    stateFactory->AddWrapper( new StateClassWrapper< electrical::state::SurfaceSoc >( stateFactory ), "SurfaceSoc" );
+    stateFactory->AddWrapper( new StateClassWrapper< ::state::ThermalState< double > >( stateFactory ),
+                              "ThermalState" );
+    stateFactory->AddWrapper( new StateClassWrapper< ::state::ValueStateWrapper< double > >( stateFactory ),
+                              "ElectricalState" );
     return stateFactory;
 }
 

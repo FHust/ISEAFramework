@@ -22,14 +22,24 @@ along with this program.  If not, see http://www.gnu.org/licenses/.
 #ifndef STATECLASSWRAPPER_H_
 #define STATECLASSWRAPPER_H_
 
+// STD
+#include <exception>
+#include <algorithm>
+#include <string>
+#include <cctype>
+
+// ETC
+#include "../factory.h"
+#include "../classwrapper.h"
+
+#include "../../electrical/electrical_data_struct.h"
 
 // ETC
 #include "../../states/soc.h"
 #include "../../states/surface_soc.h"
 #include "../../states/thermal_state.h"
+#include "../../states/valueStateWrapper.h"
 
-#include "../factory.h"
-#include "../classwrapper.h"
 
 using namespace ::state;
 
@@ -40,7 +50,9 @@ struct ArgumentTypeState
 {
     ArgumentTypeState()
         : mCellDiscretization( 1 ){};
-    size_t mCellDiscretization;
+    size_t mCellDiscretization = 1;
+    boost::shared_ptr< ElectricalDataStruct< double > > mElectricalDataStruct =
+     boost::shared_ptr< ElectricalDataStruct< double > >( new ElectricalDataStruct< double > );
 };
 
 /// Classwrapper for ::state namespace. This template class has to be specialized in order to create an instance of a
@@ -119,6 +131,47 @@ class StateClassWrapper< electrical::state::SurfaceSoc > : public StateClassWrap
     boost::shared_ptr< Dgl_state > CreateInstance( const xmlparser::XmlParameter* /* param */, const ArgumentTypeState* /* arg */ = 0 )
     {
         return boost::shared_ptr< Dgl_state >( new electrical::state::SurfaceSoc() );
+    }
+};
+
+/// Classwrapper for state::ValueStateWrapper
+
+template <>
+class StateClassWrapper< ::state::ValueStateWrapper< double > > : public StateClassWrapperBase< double >
+{
+    public:
+    StateClassWrapper( Factory< ::state::Dgl_state, ArgumentTypeState >* stateFactory )
+        : StateClassWrapperBase< double >( stateFactory ){};
+    boost::shared_ptr< Dgl_state > CreateInstance( const xmlparser::XmlParameter* param, const ArgumentTypeState* arg = 0 )
+    {
+        if ( !arg )
+        {
+            ErrorFunction< std::runtime_error >( __FUNCTION__, __LINE__, __FILE__, "NoArgumentForStateFactory" );
+        }
+
+        std::string stateType( param->GetElementAttribute( "StateType" ) );
+        std::transform( stateType.begin(), stateType.end(), stateType.begin(), ::tolower );
+
+        if ( stateType.find( "current" ) != std::string::npos )
+        {
+            return boost::shared_ptr< Dgl_state >(
+             new ::state::ValueStateWrapper< double >( &( arg->mElectricalDataStruct->mCurrentValue ) ) );
+        }
+        else if ( stateType.find( "voltage" ) != std::string::npos )
+        {
+            return boost::shared_ptr< Dgl_state >(
+             new ::state::ValueStateWrapper< double >( &( arg->mElectricalDataStruct->mVoltageValue ) ) );
+        }
+        else if ( stateType.find( "power" ) != std::string::npos )
+        {
+            return boost::shared_ptr< Dgl_state >(
+             new ::state::ValueStateWrapper< double >( &( arg->mElectricalDataStruct->mPowerValue ) ) );
+        }
+        // ERROR
+        ErrorFunction< std::runtime_error >( __FUNCTION__, __LINE__, __FILE__, "UndefinedStateType", stateType.c_str() );
+
+        // should never reach here, but for compiler warnings this line is added
+        return boost::shared_ptr< Dgl_state >();
     }
 };
 

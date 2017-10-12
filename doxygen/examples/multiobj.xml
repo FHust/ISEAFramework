@@ -1,0 +1,7 @@
+<Object class="MultiObj" Operation="Add">
+    <Children>
+	<c1 class='ConstObj'> <Value> 10</Value></c1>
+	<c2 class='ConstObj'> <Value> 20</Value></c2>
+	<c3 class='ConstObj'> <Value> 30</Value></c3>
+    </Children>
+</Object>

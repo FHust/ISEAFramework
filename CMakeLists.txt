@@ -5,8 +5,8 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/")
 
 CMAKE_POLICY(SET CMP0009 NEW)
 set (ISEAFrameVERSION_MAJOR 2)
-set (ISEAFrameVERSION_MINOR 0)
-set (ISEAFramePATCH_LEVEL 2)
+set (ISEAFrameVERSION_MINOR 2)
+set (ISEAFramePATCH_LEVEL 0)
 set (ISEAFrameNAME "PublicRelease")
 
 option (USE_DEBUG_GDB "Create everything with debug symbols" OFF)
@@ -15,6 +15,7 @@ option (USE_STRING_AND_STREAMS "Are string and streams available" OFF)
 option (USE_BUILD_BENCHMARKS "Create benchmarks" OFF)
 option (BUILD_VISUALIZER "Build a quick visualizer executable" OFF)
 option (BUILD_ELECTRICAL_SIMULATION "Build commandline tool for electrical Simulation" OFF )
+option (BUILD_DOT_EXPORT "Build Dot-Export" OFF )
 option (BUILD_THERMAL_SIMULATION "Builds a commandline tool for thermal only simulation" OFF)
 option (BUILD_THERMAL_ELECTRICAL_SIMULATION "Build a commandline tool for thermal-electrical simulation" OFF)
 option (BUILD_SVG_EXPORT "Build Standalone SVG export" OFF )
@@ -242,6 +243,12 @@ if (USE_BOOST_THREADS)
     SET(CMAKE_LINK_LIBRARIES ${CMAKE_LINK_LIBRARIES} boost_system boost_thread)
 endif(USE_BOOST_THREADS)
 
+if (USE_BUILD_BENCHMARKS)
+    SET(CMAKE_LINK_LIBRARIES ${CMAKE_LINK_LIBRARIES} boost_serialization)
+endif(USE_BUILD_BENCHMARKS)
+
+
+
 if (USE_BOOST_MPI)
     SET(PATH_TO_MPI "/usr/include/openmpi" CACHE PATH "Path to MPIHeaders" )
     INCLUDE_DIRECTORIES( ${PATH_TO_MPI} )
@@ -369,6 +376,15 @@ if (BUILD_SVG_EXPORT)
     target_link_libraries (SVGExport ${CMAKE_LINK_LIBRARIES} ${ISEALIB})
     target_compile_features(SVGExport PRIVATE ${COMPILE_FEATURES})
 endif (BUILD_SVG_EXPORT)
+
+if (BUILD_DOT_EXPORT)
+    add_executable (DotExport ${PROJECT_SOURCE_DIR}/standalone/dotExport.cpp)
+    add_dependencies(DotExport ${ISEALIB_NAME} )
+    target_link_libraries (DotExport ${CMAKE_LINK_LIBRARIES} ${ISEALIB})
+    target_compile_features(DotExport PRIVATE ${COMPILE_FEATURES})
+endif (BUILD_DOT_EXPORT)
+
+
 
 if ( BUILD_ELECTRICAL_SIMULATION )
     add_executable (electricalSimulation ${PROJECT_SOURCE_DIR}/standalone/electricalSimulation.cpp)

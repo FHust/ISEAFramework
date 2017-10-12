@@ -29,6 +29,7 @@ _._._._._._._._._._._._._._._._._._._._._.*/
 #include <iterator>
 #include <iostream>
 #include <fstream>
+#include <algorithm>
 
 #include "../src/misc/charArrayCmp.h"
 #include "../src/observer/observer.h"
@@ -58,7 +59,8 @@ using namespace threading;
 //######################################################################
 
 template < class MatrixType >
-boost::shared_ptr< electrical::TwoPort< MatrixType > > GenerateNetworkFromFile( const char *fileName )
+boost::shared_ptr< electrical::TwoPort< MatrixType > >
+GenerateNetworkFromFile( const char *fileName, std::vector< boost::shared_ptr< electrical::TwoPort< MatrixType > > > &tp_vec )
 {
     boost::scoped_ptr< factory::Factory< ::state::Dgl_state, factory::ArgumentTypeState > > stateFactory( factory::BuildStateFactory() );
     boost::scoped_ptr< factory::Factory< object::Object< double >, factory::ArgumentTypeObject< double > > > objectFactory(
@@ -71,6 +73,13 @@ boost::shared_ptr< electrical::TwoPort< MatrixType > > GenerateNetworkFromFile( 
 
     boost::shared_ptr< xmlparser::XmlParameter > rootParam( parser->GetRoot()->GetElementChild( "RootElement" ) );
     boost::shared_ptr< electrical::TwoPort< MatrixType > > rootPort( electricalFactory->CreateInstance( rootParam ) );
+    std::vector< boost::shared_ptr< electrical::TwoPort< MatrixType > > > allTp;
+    electricalFactory->GetObjects( tp_vec );
+    tp_vec.erase( std::remove_if( tp_vec.begin(), tp_vec.end(), []( const boost::shared_ptr< electrical::TwoPort< MatrixType > > &o )
+                                  {
+                      return !o->IsObservable();
+                  } ),
+                  tp_vec.end() );
     return rootPort;
 }
 
@@ -82,7 +91,8 @@ void performTest( CommunicatorType *communicator, const char *fileName, size_t c
     ThreadManager< CommunicatorType > tm( communicator );
     systm::StateSystemGroup< MatrixType > stateSystemGroup;
 
-    boost::shared_ptr< electrical::TwoPort< MatrixType > > tmprootPort( GenerateNetworkFromFile< MatrixType >( fileName ) );
+    std::vector< boost::shared_ptr< electrical::TwoPort< MatrixType > > > tp_vec;
+    boost::shared_ptr< electrical::TwoPort< MatrixType > > tmprootPort( GenerateNetworkFromFile< MatrixType >( fileName, tp_vec ) );
 
     daetask::DAETask< CommunicatorType, MatrixType > *myDaeTask =
      new daetask::DAETask< CommunicatorType, MatrixType >( tmprootPort, &stateSystemGroup );
@@ -106,11 +116,14 @@ void performTest( CommunicatorType *communicator, const char *fileName, size_t c
 // Netzwerkausgabe in dot-Datei
 #ifndef __NO_STRING__
     if ( doLogging )
-        visualizer::EsbVisualizer< MatrixType > testVisualizer( rootPort.get() );
+    {
+        std::ofstream ostream( "esb.dot" );
+        visualizer::EsbVisualizer< MatrixType > testVisualizer( rootPort.get(), &ostream );
+    }
 
 
     boost::scoped_ptr< observer::Observer< myMatrixType, electrical::TwoPort > > k(
-     CreateTwoPortObserver< TwoPort_t, MatrixType, true >( rootPort, nullptr ) );
+     CreateTwoPortObserver< std::vector< TwoPort_t >, MatrixType, true >( tp_vec, nullptr ) );
     if ( k )
         AddBenchmarkFilter( k.get() );
 #endif

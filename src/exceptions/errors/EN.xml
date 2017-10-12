@@ -13,17 +13,26 @@
 
     <!--- Framework errors -->
 
-    <ElementsDimensionsNegative used="blocks/rectangular_blocks.h">  
+    <ElementsDimensionsNegative used="blocks/rectangular_blocks.h">
         Every element of Dimensions must be bigger than zero in %s.
     </ElementsDimensionsNegative>
 
-    <DivisibleByElectricalDiscretization used="blocks/rectangular_blocks.h,hexagonal_cell_block.h,quadratic_cell_block.h,supercap.h,triangular_prism_block.h"> 
+    <DivisibleByElectricalDiscretization used="blocks/rectangular_blocks.h,hexagonal_cell_block.h,quadratic_cell_block.h,supercap.h,triangular_prism_block.h">
         Division into finite volumes must be divisible by electrical discretization for every dimension in %s.
     </DivisibleByElectricalDiscretization>
+    
 
     <thermalStatesEqualElectricaldiscretization used="blocks/rectangular_blocks.h,hexagonal_cell_block.h,supercap.h,triangular_prism_block.h">
         Size of thermalStates must be equal to electrical discretization.
     </thermalStatesEqualElectricaldiscretization>
+
+    <NoArgumentForStateFactory >
+        No Argument passed to Statefactory. 
+    </NoArgumentForStateFactory>
+
+    <UndefinedStateType>
+        StateType unknown: %s
+    </UndefinedStateType>
 
     <LengthNegative used="blocks/hexagonal_cell_block.h,quadratic_cell_block.h,supercap.h">
         Length must be bigger than zero in %s.
@@ -233,6 +242,10 @@
         An empty volume occurred.
     </EmptyVolume>
 
+    <UnsupportedOperation>
+        The object type MultiObj does not support this operation.
+    </UnsupportedOperation>
+
     <error56 used="factory/check_positive_int.cpp">
         %s %s.
     </error56>
@@ -272,6 +285,17 @@
     <negativeValue used="factory/electrical/electricalclasswrapper.h(for=NegativeValue)">
         Unexpected negative value %d.
     </negativeValue>
+
+    <SphericalDiffusionCapacity used="factory/electrical/electricalclasswrapper.h">
+        Spherical diffusion with capacity is currently not supported.
+    </SphericalDiffusionCapacity>
+
+
+    <tooLargeValue used="factory/electrical/electricalclasswrapper.h(for=NegativeValue)">
+        Value is too large %d. Maximum is %d.
+    </tooLargeValue>
+
+
 
     <NoChildrenException used="factory/electrical/electricalclasswrapper.h(for=NoChildrenException)">
         An instance of %s has no children.

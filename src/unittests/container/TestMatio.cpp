@@ -37,7 +37,7 @@ void TestMatio::TestMatFileFail()
     }
     catch ( const std::runtime_error &e )
     {
-        TS_ASSERT_EQUALS( e.what(), "Unknown file: unknown_file.mat" );
+        TS_ASSERT_EQUALS( e.what(), "Unknown file: unknown_file.mat\n" );
         hasThrown = true;
     }
     if ( !hasThrown )

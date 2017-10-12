@@ -15,7 +15,7 @@ along with this program.  If not, see http://www.gnu.org/licenses/.
 /* -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.
 * File Name : electricalelement.h
 * Creation Date : 30-10-2012
-* Last Modified : Mi 12 Feb 2014 15:59:14 CET
+* Last Modified : Do 10 Mär 2016 10:40:24 CET
 * Created By : Friedrich Hust
 _._._._._._._._._._._._._._._._._._._._._.*/
 #ifndef _ELECTRICALELEMENT_
@@ -28,6 +28,8 @@ _._._._._._._._._._._._._._._._._._._._._.*/
 #include "twoport.h"
 #include "../object/object.h"
 
+// Friend
+class TestElectricalFactory;
 
 namespace electrical
 {
@@ -36,9 +38,16 @@ namespace electrical
 template < typename T = myMatrixType >
 class ElectricalElement : public TwoPort< T >
 {
+    friend class ::TestElectricalFactory;
+
+
     public:
-    ElectricalElement( boost::shared_ptr< object::Object< double > > obj, const bool observable = false );
-    ElectricalElement( object::Object< double >* obj, const bool observable = false );
+    explicit ElectricalElement(
+     boost::shared_ptr< object::Object< double > > obj, const bool observable = false,
+     typename TwoPort< T >::DataType dataValues = typename TwoPort< T >::DataType(new ElectricalDataStruct< ScalarUnit >));
+    explicit ElectricalElement(
+     object::Object< double >* obj, const bool observable = false,
+     typename TwoPort< T >::DataType dataValues = typename TwoPort< T >::DataType(new ElectricalDataStruct< ScalarUnit >));
     virtual ~ElectricalElement(){};
 
     virtual ScalarUnit GetValue() const;    ///< Get Value of Object
@@ -53,16 +62,16 @@ class ElectricalElement : public TwoPort< T >
 };
 
 template < typename T >
-ElectricalElement< T >::ElectricalElement( boost::shared_ptr< object::Object< double > > obj, const bool observable )
-    : TwoPort< T >( observable )
+ElectricalElement< T >::ElectricalElement( boost::shared_ptr< object::Object< double > > obj, const bool observable,
+                                           typename TwoPort< T >::DataType dataValues )
+    : TwoPort< T >( observable, dataValues )
     , mObject( obj )
 {
 }
 
 template < typename T >
-ElectricalElement< T >::ElectricalElement( object::Object< double >* obj, const bool observable )
-    : TwoPort< T >( observable )
-    , mObject( boost::shared_ptr< object::Object< double > >( obj ) )
+ElectricalElement< T >::ElectricalElement( object::Object< double >* obj, const bool observable, typename TwoPort< T >::DataType dataValues )
+    : ElectricalElement< T >( boost::shared_ptr< object::Object< double > >( obj ), observable, dataValues )
 {
 }
 

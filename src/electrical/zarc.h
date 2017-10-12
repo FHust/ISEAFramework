@@ -15,7 +15,7 @@ along with this program.  If not, see http://www.gnu.org/licenses/.
 /* -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.
 * File Name : zarc.h
 * Creation Date : 11-11-2012
-* Last Modified : 25.02.2016 12:52:26
+* Last Modified : Do 10 Mär 2016 13:01:10 CET
 * Created By : Friedrich Hust
 _._._._._._._._._._._._._._._._._._._._._.*/
 #ifndef _ZARC_
@@ -36,9 +36,11 @@ _._._._._._._._._._._._._._._._._._._._._.*/
 #include "../states/soc.h"
 #include "../states/thermal_state.h"
 
+// friend
 class TestZarc;
 class TestXML;
 class TestFactoryLookUpCellElements;
+class TestElectricalFactory;
 
 namespace electrical
 {
@@ -50,12 +52,14 @@ class Zarc : public TwoPort< T >
     friend class ::TestZarc;
     friend class ::TestXML;
     friend class ::TestFactoryLookUpCellElements;
+    friend class ::TestElectricalFactory;
 
     public:
-    Zarc( boost::shared_ptr< object::Object< double > > lookupRelaxationTime,
-          boost::shared_ptr< object::Object< double > > lookupOhmicResistance,
-          boost::shared_ptr< object::Object< double > > lookupPhi, const double samplingRate = 0.001,
-          const bool observable = false );    ///< The zarc element needs a thermal and an electrical state to be created, and does not take care of these. These  are just beeing utelized for the lookups
+    explicit Zarc( boost::shared_ptr< object::Object< double > > lookupRelaxationTime,
+                   boost::shared_ptr< object::Object< double > > lookupOhmicResistance,
+                   boost::shared_ptr< object::Object< double > > lookupPhi, const double samplingRate = 0.001,
+                   const bool observable = false,
+                   typename TwoPort< T >::DataType dataValues = typename TwoPort< T >::DataType(new ElectricalDataStruct< ScalarUnit >));    ///< The zarc element needs a thermal and an electrical state to be created, and does not take care of these. These  are just beeing utelized for the lookups
 
     virtual ~Zarc(){};
 
@@ -140,8 +144,9 @@ class Zarc : public TwoPort< T >
 template < typename T >
 Zarc< T >::Zarc( boost::shared_ptr< object::Object< double > > lookupRelaxationTime,
                  boost::shared_ptr< object::Object< double > > lookupOhmicResistance,
-                 boost::shared_ptr< object::Object< double > > lookupPhi, const double dtValue, const bool observable )
-    : TwoPort< T >( observable )
+                 boost::shared_ptr< object::Object< double > > lookupPhi, const double dtValue, const bool observable,
+                 typename TwoPort< T >::DataType dataValues )
+    : TwoPort< T >( observable, dataValues )
     , mZarcVoltageValue( T() )
     , mVoltageEquation( T() )
     , mVoltageValues( MAX_RC_ELEMENTS )

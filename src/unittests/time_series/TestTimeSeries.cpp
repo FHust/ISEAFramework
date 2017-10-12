@@ -175,10 +175,10 @@ void TestTimeSeries::TestTimeSeriesCreation()
         vector< double > valuesData;
 
         TS_ASSERT_THROWS_EQUALS( timeSeries.ResetData( timesData, valuesData ), const std::runtime_error &e,
-                                 strcmp( e.what(), "The size of mTimesData and mValuesData must be equal." ), 0 );
+                                 strcmp( e.what(), "The size of mTimesData and mValuesData must be equal.\n" ), 0 );
         timesData.pop_back();
         TS_ASSERT_THROWS_EQUALS( timeSeries.ResetData( timesData, valuesData ), const std::runtime_error &e,
-                                 strcmp( e.what(), "mTimesData must have at least one element." ), 0 );
+                                 strcmp( e.what(), "mTimesData must have at least one element.\n" ), 0 );
 
         timesData.resize( 5 );
         timesData.at( 0 ) = -1.0;
@@ -194,13 +194,13 @@ void TestTimeSeries::TestTimeSeriesCreation()
         valuesData.at( 4 ) = 2.5;
 
         TS_ASSERT_THROWS_EQUALS( timeSeries.ResetData( timesData, valuesData ), const std::runtime_error &e,
-                                 strcmp( e.what(), "First point of time must not be negativ." ), 0 );
+                                 strcmp( e.what(), "First point of time must not be negativ.\n" ), 0 );
         timesData.erase( timesData.begin() );
         valuesData.erase( valuesData.begin() );
         TS_ASSERT_THROWS_EQUALS( timeSeries.ResetData( timesData, valuesData ), const std::runtime_error &e,
                                  strcmp( e.what(),
                                          "Points of time in must be in strictly ascending order: (0)th point of time "
-                                         "smaller than (0+1)th point of time for all 0." ),
+                                         "smaller than (0+1)th point of time for all 0.\n" ),
                                  0 );
         timesData.erase( timesData.begin() );
         valuesData.erase( valuesData.begin() );
@@ -212,13 +212,13 @@ void TestTimeSeries::TestTimeSeriesCreation()
         testStream << 0.0 << ", " << 0.0 << ", "
                    << "\n";
         TS_ASSERT_THROWS_EQUALS( electrical::TimeSeries< double > timeSeries( testStream ), const std::runtime_error &e,
-                                 strcmp( e.what(), "Each line must be of the form: time, value." ), 0 );
+                                 strcmp( e.what(), "Each line must be of the form: time, value.\n" ), 0 );
     }
     {
         std::stringstream testStream;
         testStream << 0.0 << " " << 0.0 << "\n";
         TS_ASSERT_THROWS_EQUALS( electrical::TimeSeries< double > timeSeries( testStream ), const std::runtime_error &e,
-                                 strcmp( e.what(), "Each line must be of the form: time, value." ), 0 );
+                                 strcmp( e.what(), "Each line must be of the form: time, value.\n" ), 0 );
     }
     {
         std::string line( " +1.34 , -.45645 " );
@@ -414,7 +414,7 @@ void TestTimeSeries::TestTimeSeriesScaling()
     electrical::TimeSeries< double, electrical::EvalLinearInterpolation > timeSeries;
     //#if defined(__EXCEPTIONS__)
     TS_ASSERT_THROWS_EQUALS( timeSeries.ResetData( timesData, valuesData, -1.5, 2.5 ), const std::runtime_error &e,
-                             strcmp( e.what(), "timeScalingFactor must be bigger than zero." ), 0 );
+                             strcmp( e.what(), "timeScalingFactor must be bigger than zero.\n" ), 0 );
     //#endif
     timeSeries.ResetData( timesData, valuesData, 1.5, -0.5 );
 
@@ -436,7 +436,7 @@ void TestTimeSeries::TestTimeSeriesScaling()
         testStream << 2.0 << ", " << -2.0 << "\n";
         typedef electrical::TimeSeries< double, electrical::EvalNoInterpolation > CurProf;
         TS_ASSERT_THROWS_EQUALS( CurProf( testStream, -0.5, 2.23 ), const std::runtime_error &e,
-                                 strcmp( e.what(), "timeScalingFactor must be bigger than zero." ), 0 );
+                                 strcmp( e.what(), "timeScalingFactor must be bigger than zero.\n" ), 0 );
     }
     //#endif
     std::stringstream testStream;

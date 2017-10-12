@@ -15,7 +15,7 @@ along with this program.  If not, see http://www.gnu.org/licenses/.
 /* -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.
 * File Name : ohmicresistance.h
 * Creation Date : 30-10-2012
-* Last Modified : Mo 27 Jan 2014 13:39:08 CET
+* Last Modified : Di 08 Mär 2016 16:04:58 CET
 * Created By : Friedrich Hust
 _._._._._._._._._._._._._._._._._._._._._.*/
 #ifndef _OHMICRESISTANCE_
@@ -33,8 +33,10 @@ template < typename T = myMatrixType >
 class OhmicResistance : public ElectricalElement< T >
 {
     public:
-    OhmicResistance( boost::shared_ptr< object::Object< double > > obj, const bool observable = false );
-    OhmicResistance( object::Object< double >* obj, const bool observable = false );
+    explicit OhmicResistance( boost::shared_ptr< object::Object< double > > obj, const bool observable = false,
+                              typename TwoPort< T >::DataType dataValues = typename TwoPort< T >::DataType(new ElectricalDataStruct< ScalarUnit >));
+    explicit OhmicResistance( object::Object< double >* obj, const bool observable = false,
+                              typename TwoPort< T >::DataType dataValues = typename TwoPort< T >::DataType(new ElectricalDataStruct< ScalarUnit >));
     virtual ~OhmicResistance(){};
 
     virtual T* GetVoltage();    ///< Returns i*R
@@ -46,14 +48,17 @@ class OhmicResistance : public ElectricalElement< T >
 };
 
 template < typename T >
-OhmicResistance< T >::OhmicResistance( boost::shared_ptr< object::Object< double > > obj, const bool observable )
-    : ElectricalElement< T >( obj, observable )
+OhmicResistance< T >::OhmicResistance( boost::shared_ptr< object::Object< double > > obj, const bool observable,
+                                       typename TwoPort< T >::DataType dataValues )
+    : ElectricalElement< T >( obj, observable, dataValues )
 {
 }
 
 template < typename T >
-OhmicResistance< T >::OhmicResistance( object::Object< double >* obj, const bool observable )
-    : ElectricalElement< T >( obj, observable )
+OhmicResistance< T >::OhmicResistance( object::Object< double >* obj, const bool observable,
+
+                                       typename TwoPort< T >::DataType dataValues )
+    : OhmicResistance< T >( boost::shared_ptr< object::Object< double > >( obj ), observable, dataValues )
 {
 }
 

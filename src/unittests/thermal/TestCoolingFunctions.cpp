@@ -29,7 +29,7 @@ void TestCoolingFunctions::TestConvectionByFormula()
     //#if defined(__EXCEPTIONS__)
     {
         TS_ASSERT_THROWS_EQUALS( ConvectionByFormula<> top( -0.1 ), std::runtime_error & e,
-                                 strcmp( e.what(), "preFactor must be bigger than zero." ), 0 );
+                                 strcmp( e.what(), "preFactor must be bigger than zero.\n" ), 0 );
     }
     //#endif
 
@@ -201,7 +201,7 @@ void TestCoolingFunctions::TestCoolingHorizontalPlane()
         vertices.at( 0 ) = TwoDim<>( -1.0, 1.0 );
         vertices.at( 1 ) = TwoDim<>( 2.0, 5.0 );
         TS_ASSERT_THROWS_EQUALS( CoolingHorizontalPlane<> coolingBlock( "", vertices, 1.0, cooling ), std::runtime_error & e,
-                                 strcmp( e.what(), "Vertices must have more than two elements to form an area." ), 0 );
+                                 strcmp( e.what(), "Vertices must have more than two elements to form an area.\n" ), 0 );
     }
     //#endif
 
@@ -263,7 +263,7 @@ void TestCoolingFunctions::TestCoolingVerticalPlane()
         vertices.at( 1 ) = TwoDim<>( 2.0, 5.0 );
         vertices.at( 2 ) = TwoDim<>( 3.0, 3.0 );
         TS_ASSERT_THROWS_EQUALS( CoolingVerticalPlane<> coolingBlock( "", vertices, 1.0, 1.0, cooling ), std::runtime_error & e,
-                                 strcmp( e.what(), "UpperZCoordinate must be bigger than LowerZCoordinate." ), 0 );
+                                 strcmp( e.what(), "UpperZCoordinate must be bigger than LowerZCoordinate.\n" ), 0 );
     }
     //#endif
 
@@ -325,15 +325,15 @@ void TestCoolingFunctions::TestCoolingPrismatic()
         vertices.at( 1 ) = TwoDim<>( 1.0, 1.0 );
         vertices.at( 2 ) = TwoDim<>( 2.0, 0.0 );
         TS_ASSERT_THROWS_EQUALS( CoolingPrismatic<> coolingBlock( "", vertices, 1.0, 1.0, cooling ), std::runtime_error & e,
-                                 strcmp( e.what(), "UpperZCoordinate must be bigger than LowerZCoordinate." ), 0 );
+                                 strcmp( e.what(), "UpperZCoordinate must be bigger than LowerZCoordinate.\n" ), 0 );
         vertices.pop_back();
         TS_ASSERT_THROWS_EQUALS( CoolingPrismatic<> coolingBlock( "", vertices, 1.0, 2.0, cooling ), std::runtime_error & e,
-                                 strcmp( e.what(), "Vertices must have more than two elements to form an area." ), 0 );
+                                 strcmp( e.what(), "Vertices must have more than two elements to form an area.\n" ), 0 );
 #if defined( __EXCEPTIONS__ )
         vertices.push_back( TwoDim<>( 0.0, 1.0 ) );
         vertices.push_back( TwoDim<>( 1.0, 0.0 ) );
-        TS_ASSERT_THROWS_EQUALS( CoolingPrismatic<> coolingBlock( "", vertices, 1.0, 2.0, cooling ),
-                                 std::runtime_error & e, strcmp( e.what(), "Vertices create an overlapping polygon." ), 0 );
+        TS_ASSERT_THROWS_EQUALS( CoolingPrismatic<> coolingBlock( "", vertices, 1.0, 2.0, cooling ), std::runtime_error & e,
+                                 strcmp( e.what(), "Vertices create an overlapping polygon.\n" ), 0 );
 #endif
     }
     //#endif

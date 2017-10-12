@@ -15,7 +15,7 @@ along with this program.  If not, see http://www.gnu.org/licenses/.
 /* -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.
 * File Name : capacity.h
 * Creation Date : 30-10-2012
-* Last Modified : Mi 12 Feb 2014 16:20:04 CET
+* Last Modified : Di 08 Mär 2016 15:49:04 CET
 * Created By : Friedrich Hust
 _._._._._._._._._._._._._._._._._._._._._.*/
 #ifndef _CAPACITY_
@@ -41,8 +41,10 @@ class Capacity : public ElectricalElement< T >
     friend class ::TestXML;
 
     public:
-    Capacity( boost::shared_ptr< object::Object< double > > obj, const bool observable = false );
-    Capacity( object::Object< double >* obj, const bool observable = false );
+    explicit Capacity( boost::shared_ptr< object::Object< double > > obj, const bool observable = false,
+                       typename TwoPort< T >::DataType dataValues = typename TwoPort< T >::DataType(new ElectricalDataStruct< ScalarUnit >));
+    explicit Capacity( object::Object< double >* obj, const bool observable = false,
+                       typename TwoPort< T >::DataType dataValues = typename TwoPort< T >::DataType(new ElectricalDataStruct< ScalarUnit >));
 
     virtual ~Capacity(){};
 
@@ -65,8 +67,8 @@ class Capacity : public ElectricalElement< T >
 };
 
 template < typename T >
-Capacity< T >::Capacity( boost::shared_ptr< object::Object< double > > obj, const bool observable )
-    : ElectricalElement< T >( obj, observable )
+Capacity< T >::Capacity( boost::shared_ptr< object::Object< double > > obj, const bool observable, typename TwoPort< T >::DataType dataValues )
+    : ElectricalElement< T >( obj, observable, dataValues )
     , mUID( 0 )
     , mVoltageValue( T() )
     , mVoltageSet( false )
@@ -74,11 +76,8 @@ Capacity< T >::Capacity( boost::shared_ptr< object::Object< double > > obj, cons
 }
 
 template < typename T >
-Capacity< T >::Capacity( object::Object< double >* obj, const bool observable )
-    : ElectricalElement< T >( obj, observable )
-    , mUID( 0 )
-    , mVoltageValue( T() )
-    , mVoltageSet( false )
+Capacity< T >::Capacity( object::Object< double >* obj, const bool observable, typename TwoPort< T >::DataType dataValues )
+    : Capacity< T >( boost::shared_ptr< object::Object< double > >( obj ), observable, dataValues )
 {
 }
 

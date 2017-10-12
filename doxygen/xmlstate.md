@@ -49,6 +49,24 @@ __Objekttyp: "Soc"__
 Definition eines Ladezustandes:
 \htmlinclude socstate_color.xml
 
+Strom, Spannung
+----------
+
+__Object type: "ElectricalState"__
+
+Zusätzliche Attribut:
+
+**StateType='Current'**
+
+oder
+
+**StateType='Voltage'**
+
+Strom und Spannung der elektrischen Komponenten können als weiterer State genutzt werden. Damit kann z.B. das Verhalten der Butler–Volmer Gleichung nachgestellt werden.
+
+\htmlinclude xmlCurrentState_color.xml
+
+
 \~English
 There are two different types of state objects: A thermal state (temperature and heat generation) and a state of charge (SoC).
 The state objects are used in connection with a battery.
@@ -97,3 +115,21 @@ __Object type: "Soc"__
 
 Definition of a state of charge:
 \htmlinclude socstate_color.xml
+
+
+Current, Voltage
+----------
+
+__Object type: "ElectricalState"__
+
+Additional attributes:
+
+**StateType='Current'**
+
+or
+
+**StateType='Voltage'**
+
+The current and voltage of an electric component can be used as an input for lookups. Therefore non-linear behavior e.g. for the Butler–Volmer equation can be approximated. 
+
+\htmlinclude xmlCurrentState_color.xml

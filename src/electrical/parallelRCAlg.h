@@ -15,7 +15,7 @@ along with this program.  If not, see http://www.gnu.org/licenses/.
 /* -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.
 * File Name : parallelru.h
 * Creation Date : 30-10-2012
-* Last Modified : Mi 03 Dez 2014 13:16:09 CET
+* Last Modified : Di 08 Mär 2016 15:51:13 CET
 * Created By : Lee
 _._._._._._._._._._._._._._._._._._._._._.*/
 #ifndef _ParallelRU_
@@ -43,9 +43,11 @@ class ParallelRCAlg : public ElectricalElement< T >
     friend class ::TestFactoryLookUpCellElements;
 
     public:
-    ParallelRCAlg( boost::shared_ptr< object::Object< double > > objR,
-                   boost::shared_ptr< object::Object< double > > objC, const bool observable = false );
-    ParallelRCAlg( object::Object< double >* objR, object::Object< double >* objC, const bool observable = false );
+    explicit ParallelRCAlg( boost::shared_ptr< object::Object< double > > objR,
+                            boost::shared_ptr< object::Object< double > > objC, const bool observable = false,
+                            typename TwoPort< T >::DataType dataValues = typename TwoPort< T >::DataType(new ElectricalDataStruct< ScalarUnit >));
+    explicit ParallelRCAlg( object::Object< double >* objR, object::Object< double >* objC, const bool observable = false,
+                            typename TwoPort< T >::DataType dataValues = typename TwoPort< T >::DataType(new ElectricalDataStruct< ScalarUnit >));
     virtual ~ParallelRCAlg(){};
 
     virtual T* GetVoltage();
@@ -61,16 +63,18 @@ class ParallelRCAlg : public ElectricalElement< T >
 
 template < typename T >
 ParallelRCAlg< T >::ParallelRCAlg( boost::shared_ptr< object::Object< double > > objR,
-                                   boost::shared_ptr< object::Object< double > > objC, const bool observable )
-    : ElectricalElement< T >( objR, observable )
+                                   boost::shared_ptr< object::Object< double > > objC, const bool observable,
+                                   typename TwoPort< T >::DataType dataValues )
+    : ElectricalElement< T >( objR, observable, dataValues )
     , mObjectC( objC )
 {
 }
 
 template < typename T >
-ParallelRCAlg< T >::ParallelRCAlg( object::Object< double >* objR, object::Object< double >* objC, const bool observable )
-    : ElectricalElement< T >( objR, observable )
-    , mObjectC( objC )
+ParallelRCAlg< T >::ParallelRCAlg( object::Object< double >* objR, object::Object< double >* objC,
+                                   const bool observable, typename TwoPort< T >::DataType dataValues )
+    : ParallelRCAlg< T >( boost::shared_ptr< object::Object< double > >( objR ),
+                          boost::shared_ptr< object::Object< double > >( objC ), observable, dataValues )
 {
 }
 

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration>
+    <Options>
+        <SampleRate>1000</SampleRate>
+        <MaxStateSize>1</MaxStateSize>
+        <MaxOutputSize>1</MaxOutputSize>
+    </Options>
+
+    <Observer>
+        <MatlabFilter class="DecimateFilter">
+            <TimeDelay> 0.1 </TimeDelay>
+        </MatlabFilter>
+
+        <MatlabFilter class="MatlabFilter">
+            <Filename> test.mat </Filename>
+        </MatlabFilter>
+    </Observer>
+
+    <CustomDefinitions>
+        <WarburgCotanh1 class = "WarburgCotanh" RCCounter = "10" withCapacity="False" observable="True">
+            <Sigma class="ConstObj">
+                <Value>
+                    0.00037
+                </Value>
+            </Sigma>
+            <Clim class="ConstObj">
+                <Value>
+                    19648.0
+                </Value>
+            </Clim>
+        </WarburgCotanh1>
+    </CustomDefinitions>
+
+    <RootElement class="SerialTwoPort">
+        <Children count="DISC">
+            <Pack ref="WarburgCotanh1"/>
+        </Children>
+    </RootElement>
+</Configuration>

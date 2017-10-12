@@ -15,7 +15,7 @@ along with this program.  If not, see http://www.gnu.org/licenses/.
 /* -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.
 * File Name : serialtwoport.h
 * Creation Date : 30-10-2012
-* Last Modified : Mo 15 Jun 2015 17:28:04 CEST
+* Last Modified : Di 08 Mär 2016 16:05:55 CET
 * Created By : Friedrich Hust
 _._._._._._._._._._._._._._._._._._._._._.*/
 #ifndef _SERIALTWOPORT_
@@ -37,21 +37,19 @@ class SerialTwoPort : public TwoPortWithChild< T >
     friend class ::TestDaeSystem;
 
     public:
-    SerialTwoPort( const bool observable = false );
+    explicit SerialTwoPort( const bool observable = false,
+                            typename TwoPort< T >::DataType dataValues = typename TwoPort< T >::DataType(new ElectricalDataStruct< ScalarUnit >));
     virtual ~SerialTwoPort(){};
 
     virtual T* GetVoltage();
 
     virtual bool IsSerialTwoPort() const;
     virtual const char* GetName() const;
-
-    private:
-    protected:
 };
 
 template < typename T >
-SerialTwoPort< T >::SerialTwoPort( const bool observable )
-    : TwoPortWithChild< T >( observable )
+SerialTwoPort< T >::SerialTwoPort( const bool observable, typename TwoPort< T >::DataType dataValues )
+    : TwoPortWithChild< T >( observable, dataValues )
 {
 }
 

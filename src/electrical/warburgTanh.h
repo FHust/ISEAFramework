@@ -15,7 +15,7 @@ along with this program.  If not, see http://www.gnu.org/licenses/.
 /* -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.
 * File Name : warburgTanh.h
 * Creation Date : 05-02-2014
-* Last Modified : Fr 07 Feb 2014 14:32:40 CET
+* Last Modified : Fr 11 Mär 2016 11:08:10 CET
 * Created By : Friedrich Hust
 _._._._._._._._._._._._._._._._._._._._._.*/
 #ifndef _WARBURGTA_
@@ -29,16 +29,23 @@ _._._._._._._._._._._._._._._._._._._._._.*/
 // ETC
 #include "serialtwoport.h"
 
+class TestElectricalFactory;
 
-/// DESCRIPTION
 namespace electrical
 {
 
+/// The WarburgTanh represents one solution to the Fick's law and is represented by a series of RC elements and an Ohmic
+/// resistance in case the sample rate is too low.
+/// The class itself is inheriting from a SerialTwoPort. Application is only useful if this class is created via the
+/// factory method
 template < typename T = myMatrixType >
 class WarburgTanh : public SerialTwoPort< T >
 {
+    friend class ::TestElectricalFactory;
+
     public:
-    WarburgTanh( const bool observable = false );
+    explicit WarburgTanh( const bool observable = false,
+                          typename TwoPort< T >::DataType dataValues = typename TwoPort< T >::DataType(new ElectricalDataStruct< ScalarUnit >));
     ~WarburgTanh(){};
     virtual const char* GetName() const;
 
@@ -47,8 +54,8 @@ class WarburgTanh : public SerialTwoPort< T >
 };
 
 template < typename T >
-WarburgTanh< T >::WarburgTanh( const bool observable )
-    : SerialTwoPort< T >( observable )
+WarburgTanh< T >::WarburgTanh( const bool observable, typename TwoPort< T >::DataType dataValues )
+    : SerialTwoPort< T >( observable, dataValues )
 {
 }
 

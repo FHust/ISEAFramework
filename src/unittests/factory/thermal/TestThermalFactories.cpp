@@ -769,7 +769,7 @@ void TestFactories::TestThermalFactory()
                                  const std::runtime_error &e,
                                  strcmp( e.what(),
                                          "More thermal states passed than the number of states, which were used while "
-                                         "parsing the electrical model and assigning thermal states." ),
+                                         "parsing the electrical model and assigning thermal states.\n" ),
                                  0 );
         thermalStates.pop_back();
         thermalStates.pop_back();
@@ -778,7 +778,7 @@ void TestFactories::TestThermalFactory()
                                  const std::runtime_error &e,
                                  strcmp( e.what(),
                                          "Less thermal states passed than the number of states, which were used while "
-                                         "parsing the electrical model and assigning thermal states." ),
+                                         "parsing the electrical model and assigning thermal states.\n" ),
                                  0 );
     }
     //#endif

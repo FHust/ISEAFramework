@@ -88,6 +88,18 @@ Definition eines 2D-Parameterobjektes mit Zustandsbindung:
 
 \htmlinclude 2dlookup_color.xml
 
+Multi Parameterobjekt
+--------------------------
+
+__Objekttyp: "MultiObj"__ Attribut: Operation = "Add", "Divide", "Multiply"
+
+<**Children**>: Objekte wie oben beschrieben
+
+Definierung eines Objektes, dass sich zur Laufzeit aus verschiedenen Objekten berechnet
+
+\htmlinclude multiobj_color.xml
+
+
 \~English
 
 Parameter objects are used for the parameterization of electrical objects.
@@ -175,3 +187,14 @@ For further details on LookupType, see [LookupType](xmllookuptype.html)(xmllooku
 Definition of a 2D parameter object with state binding:
 
 \htmlinclude 2dlookup_color.xml
+
+Multi parameter object
+--------------------------
+
+__Objekttyp: "MultiObj"__ Attribut: Operation = "Add", "Divide", "Multiply"
+
+<**Children**>: can be any object as described above
+
+Definition of a multi Object that is calculated during runtime
+
+\htmlinclude multiobj_color.xml

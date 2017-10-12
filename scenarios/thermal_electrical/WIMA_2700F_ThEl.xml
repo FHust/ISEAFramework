@@ -27,8 +27,12 @@
             <Filter1 class="DecimateFilter">
                 <TimeDelay>0.1</TimeDelay>
             </Filter1>
-            <Filter2 class="MatlabFilter">
-                <Filename>WIMA_2700F_ThEl_thermal.mat</Filename>
+            <Filter2 class="CSVFilter">
+                <Filename>Patch_Temperatures.csv</Filename>
+                <VerticesFile>Patch_Vertices.csv</VerticesFile>
+                <VolumesFile>Patch_Volumes.csv</VolumesFile>
+                <VolumesNameFile>Patch_VolumeNames.csv</VolumesNameFile>
+                <AreasFile>Patch_Areas.csv</AreasFile>
             </Filter2>
         </Thermal>
     </Observer>

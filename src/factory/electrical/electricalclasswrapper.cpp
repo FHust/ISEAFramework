@@ -35,10 +35,9 @@ template class ElectricalClassWrapper< myMatrixType, electrical::ParallelRC >;
 template class ElectricalClassWrapper< myMatrixType, electrical::ParallelRCAlg >;
 template class ElectricalClassWrapper< myMatrixType, electrical::Cellelement >;
 template class ElectricalClassWrapper< myMatrixType, electrical::Zarc >;
-//template class ElectricalClassWrapper< myMatrixType, electrical::ZarcAlg >;
+// template class ElectricalClassWrapper< myMatrixType, electrical::ZarcAlg >;
 template class ElectricalClassWrapper< myMatrixType, electrical::ParallelTwoPort >;
 template class ElectricalClassWrapper< myMatrixType, electrical::SerialTwoPort >;
 template class ElectricalClassWrapper< myMatrixType, electrical::WarburgTanh >;
 template class ElectricalClassWrapper< myMatrixType, electrical::WarburgCotanh >;
-
 }

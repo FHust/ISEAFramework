@@ -15,7 +15,7 @@ along with this program.  If not, see http://www.gnu.org/licenses/.
 /* -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.
 * File Name : cpe.h
 * Creation Date : 22-04-2015
-* Last Modified : Di 13 Okt 2015 17:51:29 CEST
+* Last Modified : Di 08 Mär 2016 16:05:20 CET
 * Created By : Friedrich Hust
 _._._._._._._._._._._._._._._._._._._._._.*/
 #ifndef _ConstantPhaseElement_
@@ -29,8 +29,12 @@ template < typename T = myMatrixType >
 class ConstantPhaseElement : public ElectricalElement< T >
 {
     public:
-    ConstantPhaseElement( boost::shared_ptr< object::Object< double > > obj, const bool observable = false );
-    ConstantPhaseElement( object::Object< double >* obj, const bool observable = false );
+    explicit ConstantPhaseElement(
+     boost::shared_ptr< object::Object< double > > obj, const bool observable = false,
+     typename TwoPort< T >::DataType dataValues = typename TwoPort< T >::DataType(new ElectricalDataStruct< ScalarUnit >));
+    explicit ConstantPhaseElement(
+     object::Object< double >* obj, const bool observable = false,
+     typename TwoPort< T >::DataType dataValues = typename TwoPort< T >::DataType(new ElectricalDataStruct< ScalarUnit >));
     virtual ~ConstantPhaseElement(){};
     virtual T* GetVoltage();    ///< Abort the simulation
 
@@ -41,14 +45,16 @@ class ConstantPhaseElement : public ElectricalElement< T >
 };
 
 template < typename T >
-ConstantPhaseElement< T >::ConstantPhaseElement( boost::shared_ptr< object::Object< double > > obj, const bool observable )
-    : ElectricalElement< T >( obj, observable )
+ConstantPhaseElement< T >::ConstantPhaseElement( boost::shared_ptr< object::Object< double > > obj,
+                                                 const bool observable, typename TwoPort< T >::DataType dataValues )
+    : ElectricalElement< T >( obj, observable, dataValues )
 {
 }
 
 template < typename T >
-ConstantPhaseElement< T >::ConstantPhaseElement( object::Object< double >* obj, const bool observable )
-    : ElectricalElement< T >( obj, observable )
+ConstantPhaseElement< T >::ConstantPhaseElement( object::Object< double >* obj, const bool observable,
+                                                 typename TwoPort< T >::DataType dataValues )
+    : ConstantPhaseElement< T >( boost::shared_ptr< object::Object< double > >( obj ), observable, dataValues )
 {
 }
 

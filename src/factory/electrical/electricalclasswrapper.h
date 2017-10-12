@@ -24,6 +24,8 @@ along with this program.  If not, see http://www.gnu.org/licenses/.
 
 // BOOST
 #include <boost/shared_ptr.hpp>
+#include <boost/make_shared.hpp>
+#include <boost/static_assert.hpp>
 
 // ETC
 #include "../factory.h"
@@ -42,10 +44,12 @@ along with this program.  If not, see http://www.gnu.org/licenses/.
 #include "../../electrical/parallelrc.h"
 #include "../../electrical/parallelRCAlg.h"
 #include "../../electrical/paralleltwoport.h"
+#include "../../electrical/rmphn.h"
 #include "../../electrical/serialtwoport.h"
 #include "../../electrical/voltagesource.h"
 #include "../../electrical/warburgTanh.h"
 #include "../../electrical/warburgCotanh.h"
+#include "../../electrical/sphericalDiffusion.h"
 #include "../../electrical/zarc.h"
 #include "../../electrical/zarcalg.h"
 
@@ -60,6 +64,23 @@ along with this program.  If not, see http://www.gnu.org/licenses/.
 #include "../../exceptions/error_proto.h"
 
 using namespace electrical;
+extern template class electrical::TwoPort< myMatrixType >;
+extern template class electrical::OhmicResistance< myMatrixType >;
+extern template class electrical::Capacity< myMatrixType >;
+extern template class electrical::ParallelRC< myMatrixType >;
+extern template class electrical::ParallelTwoPort< myMatrixType >;
+extern template class electrical::SerialTwoPort< myMatrixType >;
+extern template class electrical::Cellelement< myMatrixType >;
+extern template class electrical::Zarc< myMatrixType >;
+extern template class electrical::ZarcAlg< myMatrixType >;
+extern template class electrical::VoltageSource< myMatrixType >;
+extern template class electrical::WarburgTanh< myMatrixType >;
+extern template class electrical::WarburgCotanh< myMatrixType >;
+extern template class electrical::Rmphn< myMatrixType >;
+extern template class electrical::SphericalDiffusion< myMatrixType >;
+extern template class electrical::ConstantPhaseElement< myMatrixType >;
+extern template class electrical::Inductance< myMatrixType >;
+
 
 namespace factory
 {
@@ -93,6 +114,11 @@ class ElectricalClassWrapperBase : public ClassWrapperBase< TwoPort< MatrixT >, 
     }
 
     protected:
+    /// Not very nice implementation as a call might leak
+    typename electrical::TwoPort< MatrixT >::DataType CreateElectricalData()
+    {
+        return boost::make_shared< ElectricalDataStruct< double > >();
+    }
     /// Get an ::electrical::TwoPort Factory.
     Factory< electrical::TwoPort< MatrixT >, ArgumentTypeElectrical > *GetElectricalFactory()
     {
@@ -107,9 +133,11 @@ class ElectricalClassWrapperBase : public ClassWrapperBase< TwoPort< MatrixT >, 
 
     /// Returns ArgumentType for adjusting ::object::Object creation if cell consist of more than one cell element
     ArgumentTypeObject< double > *SetObjectFactorToArg( const ArgumentTypeElectrical *argElectrical, bool multiply,
-                                                        boost::scoped_ptr< ArgumentTypeObject< double > > &argObject )
+                                                        boost::scoped_ptr< ArgumentTypeObject< double > > &argObject,
+                                                        typename electrical::TwoPort< MatrixT >::DataType &dataStruct )
     {
         if ( argElectrical )
+        {
             if ( argElectrical->mCellDiscretization != 1 )
             {
                 if ( !argObject )
@@ -119,6 +147,12 @@ class ElectricalClassWrapperBase : public ClassWrapperBase< TwoPort< MatrixT >, 
                 if ( !multiply )
                     argObject->mObjectFactor = 1.0 / argObject->mObjectFactor;
             }
+        }
+
+        if ( argObject && dataStruct )
+        {
+            argObject->mElectricalDataStruct = dataStruct;
+        }
 
         return argObject.get();
     }
@@ -192,15 +226,19 @@ class ElectricalClassWrapper< MatrixT, Capacity > : public ElectricalClassWrappe
     boost::shared_ptr< TwoPort< MatrixT > >
     CreateInstance( const xmlparser::XmlParameter *param, const ArgumentTypeElectrical *arg = 0 )
     {
+
         const bool observable =
          param->GetElementAttributeBoolValue( "observable" ) || param->GetElementAttributeBoolValue( "SurfaceEffect" );
 
         boost::shared_ptr< xmlparser::XmlParameter > objparam( param->GetElementChild( "Object" ) );
-        boost::scoped_ptr< ArgumentTypeObject< double > > argObject;
-        boost::shared_ptr< object::Object< double > > obj(
-         this->GetObjectFactory()->CreateInstance( objparam, this->SetObjectFactorToArg( arg, false, argObject ) ) );
+        boost::scoped_ptr< ArgumentTypeObject< double > > argObject( new ArgumentTypeObject< double > );
 
-        return boost::shared_ptr< TwoPort< MatrixT > >( new Capacity< MatrixT >( obj, observable ) );
+        auto elecData = this->CreateElectricalData();
+
+        boost::shared_ptr< object::Object< double > > obj(
+         this->GetObjectFactory()->CreateInstance( objparam, this->SetObjectFactorToArg( arg, false, argObject, elecData ) ) );
+
+        return boost::shared_ptr< TwoPort< MatrixT > >( new Capacity< MatrixT >( obj, observable, elecData ) );
     }
 };
 
@@ -219,15 +257,19 @@ class ElectricalClassWrapper< MatrixT, OhmicResistance > : public ElectricalClas
     boost::shared_ptr< TwoPort< MatrixT > >
     CreateInstance( const xmlparser::XmlParameter *param, const ArgumentTypeElectrical *arg = 0 )
     {
+
         const bool observable =
          param->GetElementAttributeBoolValue( "observable" ) || param->GetElementAttributeBoolValue( "SurfaceEffect" );
 
         boost::shared_ptr< xmlparser::XmlParameter > objparam( param->GetElementChild( "Object" ) );
-        boost::scoped_ptr< ArgumentTypeObject< double > > argObject;
-        boost::shared_ptr< object::Object< double > > obj(
-         this->GetObjectFactory()->CreateInstance( objparam, this->SetObjectFactorToArg( arg, true, argObject ) ) );
+        boost::scoped_ptr< ArgumentTypeObject< double > > argObject( new ArgumentTypeObject< double > );
 
-        return boost::shared_ptr< TwoPort< MatrixT > >( new OhmicResistance< MatrixT >( obj, observable ) );
+        auto elecData = this->CreateElectricalData();
+
+        boost::shared_ptr< object::Object< double > > obj(
+         this->GetObjectFactory()->CreateInstance( objparam, this->SetObjectFactorToArg( arg, true, argObject, elecData ) ) );
+
+        return boost::shared_ptr< TwoPort< MatrixT > >( new OhmicResistance< MatrixT >( obj, observable, elecData ) );
     }
 };
 
@@ -246,15 +288,19 @@ class ElectricalClassWrapper< MatrixT, ConstantPhaseElement > : public Electrica
     boost::shared_ptr< TwoPort< MatrixT > >
     CreateInstance( const xmlparser::XmlParameter *param, const ArgumentTypeElectrical *arg = 0 )
     {
+
         const bool observable =
          param->GetElementAttributeBoolValue( "observable" ) || param->GetElementAttributeBoolValue( "SurfaceEffect" );
 
         boost::shared_ptr< xmlparser::XmlParameter > objparam( param->GetElementChild( "Object" ) );
-        boost::scoped_ptr< ArgumentTypeObject< double > > argObject;
-        boost::shared_ptr< object::Object< double > > obj(
-         this->GetObjectFactory()->CreateInstance( objparam, this->SetObjectFactorToArg( arg, true, argObject ) ) );
+        boost::scoped_ptr< ArgumentTypeObject< double > > argObject( new ArgumentTypeObject< double > );
 
-        return boost::shared_ptr< TwoPort< MatrixT > >( new ConstantPhaseElement< MatrixT >( obj, observable ) );
+        auto elecData = this->CreateElectricalData();
+
+        boost::shared_ptr< object::Object< double > > obj(
+         this->GetObjectFactory()->CreateInstance( objparam, this->SetObjectFactorToArg( arg, true, argObject, elecData ) ) );
+
+        return boost::shared_ptr< TwoPort< MatrixT > >( new ConstantPhaseElement< MatrixT >( obj, observable, elecData ) );
     }
 };
 
@@ -273,15 +319,19 @@ class ElectricalClassWrapper< MatrixT, Inductance > : public ElectricalClassWrap
     boost::shared_ptr< TwoPort< MatrixT > >
     CreateInstance( const xmlparser::XmlParameter *param, const ArgumentTypeElectrical *arg = 0 )
     {
+
         const bool observable =
          param->GetElementAttributeBoolValue( "observable" ) || param->GetElementAttributeBoolValue( "SurfaceEffect" );
 
         boost::shared_ptr< xmlparser::XmlParameter > objparam( param->GetElementChild( "Object" ) );
-        boost::scoped_ptr< ArgumentTypeObject< double > > argObject;
-        boost::shared_ptr< object::Object< double > > obj(
-         this->GetObjectFactory()->CreateInstance( objparam, this->SetObjectFactorToArg( arg, true, argObject ) ) );
+        boost::scoped_ptr< ArgumentTypeObject< double > > argObject( new ArgumentTypeObject< double > );
 
-        return boost::shared_ptr< TwoPort< MatrixT > >( new Inductance< MatrixT >( obj, observable ) );
+        auto elecData = this->CreateElectricalData();
+
+        boost::shared_ptr< object::Object< double > > obj(
+         this->GetObjectFactory()->CreateInstance( objparam, this->SetObjectFactorToArg( arg, true, argObject, elecData ) ) );
+
+        return boost::shared_ptr< TwoPort< MatrixT > >( new Inductance< MatrixT >( obj, observable, elecData ) );
     }
 };
 
@@ -301,13 +351,18 @@ class ElectricalClassWrapper< MatrixT, VoltageSource > : public ElectricalClassW
     boost::shared_ptr< TwoPort< MatrixT > >
     CreateInstance( const xmlparser::XmlParameter *param, const ArgumentTypeElectrical * /* arg */ = 0 )
     {
+        auto elecData = this->CreateElectricalData();
+        boost::scoped_ptr< ArgumentTypeObject< double > > argObject( new ArgumentTypeObject< double > );
+
+        argObject->mElectricalDataStruct = elecData;
+
         const bool observable =
          param->GetElementAttributeBoolValue( "observable" ) || param->GetElementAttributeBoolValue( "SurfaceEffect" );
 
         boost::shared_ptr< xmlparser::XmlParameter > objparam( param->GetElementChild( "Object" ) );
-        boost::shared_ptr< object::Object< double > > obj( this->GetObjectFactory()->CreateInstance( objparam ) );
+        boost::shared_ptr< object::Object< double > > obj( this->GetObjectFactory()->CreateInstance( objparam, argObject.get() ) );
 
-        return boost::shared_ptr< TwoPort< MatrixT > >( new VoltageSource< MatrixT >( obj, observable ) );
+        return boost::shared_ptr< TwoPort< MatrixT > >( new VoltageSource< MatrixT >( obj, observable, elecData ) );
     }
 };
 
@@ -330,27 +385,169 @@ class ElectricalClassWrapper< MatrixT, ParallelRC > : public ElectricalClassWrap
          param->GetElementAttributeBoolValue( "observable" ) || param->GetElementAttributeBoolValue( "SurfaceEffect" );
 
         boost::shared_ptr< xmlparser::XmlParameter > robjparam( param->GetElementChild( "LookupOhmicResistance" ) );
-        boost::scoped_ptr< ArgumentTypeObject< double > > argObject;
+        boost::scoped_ptr< ArgumentTypeObject< double > > argObject( new ArgumentTypeObject< double > );
+
+        auto elecData = this->CreateElectricalData();
+
         boost::shared_ptr< object::Object< double > > rObj(
-         this->GetObjectFactory()->CreateInstance( robjparam, this->SetObjectFactorToArg( arg, true, argObject ) ) );
+         this->GetObjectFactory()->CreateInstance( robjparam, this->SetObjectFactorToArg( arg, true, argObject, elecData ) ) );
 
         boost::shared_ptr< xmlparser::XmlParameter > cobjparam( param->GetElementChild( "LookupTau" ) );
-        boost::shared_ptr< object::Object< double > > cObj( this->GetObjectFactory()->CreateInstance( cobjparam ) );
+
+        argObject.reset( new ArgumentTypeObject< double > );
+        argObject->mElectricalDataStruct = elecData;
+
+        boost::shared_ptr< object::Object< double > > cObj( this->GetObjectFactory()->CreateInstance( cobjparam, argObject.get() ) );
 
         double maxRelaxationTime = cObj.get()->GetMaxValueOfLookup();
 
         if ( ElectricalClassWrapperBase< MatrixT >::SimplifyRC( param, maxRelaxationTime ) )
         {
-            return boost::shared_ptr< TwoPort< MatrixT > >( new OhmicResistance< MatrixT >( rObj, observable ) );
+            return boost::shared_ptr< TwoPort< MatrixT > >( new OhmicResistance< MatrixT >( rObj, observable, elecData ) );
         }
-        return boost::shared_ptr< TwoPort< MatrixT > >( new ParallelRC< MatrixT >( rObj, cObj, observable ) );
+        return boost::shared_ptr< TwoPort< MatrixT > >( new ParallelRC< MatrixT >( rObj, cObj, observable, elecData ) );
     }
+};
+
+/// Classwrapper for electrical::Rmphn
+template < typename MatrixT >
+class ElectricalClassWrapper< MatrixT, Rmphn > : public ElectricalClassWrapperBase< MatrixT >
+{
+    public:
+    ElectricalClassWrapper( Factory< electrical::TwoPort< MatrixT >, ArgumentTypeElectrical > *electricalFactory,
+                            Factory< object::Object< double >, ArgumentTypeObject< double > > *objectFactory,
+                            Factory< ::state::Dgl_state, ArgumentTypeState > *stateFactory )
+        : ElectricalClassWrapperBase< MatrixT >( electricalFactory, objectFactory, stateFactory )
+        , mRCCreater( electricalFactory, objectFactory, stateFactory )
+    {
+    }
+
+    boost::shared_ptr< TwoPort< MatrixT > >
+    CreateInstance( const xmlparser::XmlParameter *param, const ArgumentTypeElectrical *arg = 0 )
+    {
+        const bool observable =
+         param->GetElementAttributeBoolValue( "observable" ) || param->GetElementAttributeBoolValue( "SurfaceEffect" );
+
+        boost::shared_ptr< xmlparser::XmlParameter > rmpobjparam( param->GetElementChild( "OhmicResistance_RMP" ) );
+        boost::shared_ptr< xmlparser::XmlParameter > robjparam( param->GetElementChild( "LookupOhmicResistance" ) );
+
+        boost::scoped_ptr< ArgumentTypeObject< double > > argObject( new ArgumentTypeObject< double > );
+
+        auto elecData = this->CreateElectricalData();
+
+        boost::shared_ptr< object::Object< double > > rmpObj(
+         this->GetObjectFactory()->CreateInstance( rmpobjparam, this->SetObjectFactorToArg( arg, true, argObject, elecData ) ) );
+
+        boost::shared_ptr< object::Object< double > > rObj(
+         this->GetObjectFactory()->CreateInstance( robjparam, this->SetObjectFactorToArg( arg, true, argObject, elecData ) ) );
+
+
+        auto rmphn = boost::make_shared< Rmphn< MatrixT > >( rObj, rmpObj, observable, elecData );
+
+        auto rc = mRCCreater.CreateInstance( param, arg );
+        rmphn->AddChild( rc );
+        return rmphn;
+
+        //        auto rmphn = boost::make_sharedTwoPort< MatrixT >(
+
+        //        return boost::shared_ptr< TwoPort< MatrixT > >( new ParallelRC< MatrixT >( rObj, cObj, observable,
+        //        elecData ) );
+    }
+
+    private:
+    ElectricalClassWrapper< MatrixT, electrical::ParallelRC > mRCCreater;
+};
+
+
+/// Classwrapper for electrical::SpericalDiffusion
+template < typename MatrixT >
+class ElectricalClassWrapper< MatrixT, SphericalDiffusion > : public ElectricalClassWrapperBase< MatrixT >
+{
+    BOOST_STATIC_ASSERT( sizeof( double ) >=
+                         sizeof( double * ) );    // This only works if pointers are smaller than doubles
+
+    public:
+    ElectricalClassWrapper( Factory< electrical::TwoPort< MatrixT >, ArgumentTypeElectrical > *electricalFactory,
+                            Factory< object::Object< double >, ArgumentTypeObject< double > > *objectFactory,
+                            Factory< ::state::Dgl_state, ArgumentTypeState > *stateFactory )
+        : ElectricalClassWrapperBase< MatrixT >( electricalFactory, objectFactory, stateFactory )
+    {
+    }
+
+    bool SaneInput( int maxElements ) const
+    {
+        if ( maxElements <= 0 )
+        {
+            ErrorFunction< std::runtime_error >( __FUNCTION__, __LINE__, __FILE__, "negativeValue", maxElements );
+        }
+        if ( maxElements > this->maximumElements )
+        {
+            ErrorFunction< std::out_of_range >( __FUNCTION__, __LINE__, __FILE__, "tooLargeValue", maxElements, this->maximumElements );
+        }
+        return true;
+    }
+
+
+    double ConvertObjectPointer2double( object::Object< double > *objP ) const
+    {
+        double address = 0;
+        memcpy( static_cast< void * >( &address ), static_cast< void * >( &objP ), sizeof( double * ) );
+        return address;
+    }
+
+    boost::shared_ptr< TwoPort< MatrixT > >
+    CreateInstance( const xmlparser::XmlParameter *param, const ArgumentTypeElectrical *arg = 0 )
+    {
+        auto elecData = this->CreateElectricalData();
+
+        const bool observable =
+         param->GetElementAttributeBoolValue( "observable" ) || param->GetElementAttributeBoolValue( "SurfaceEffect" );
+
+        int iMaxElements = param->GetElementAttributeIntValue( "RCCounter", 5 );    // default is 5 RC Elements
+
+        SaneInput( iMaxElements );    // throws
+
+        boost::scoped_ptr< ArgumentTypeObject< double > > argument( new ArgumentTypeObject< double > );
+
+        boost::shared_ptr< xmlparser::XmlParameter > robjparam( param->GetElementChild( "OhmicResistance" ) );
+
+        boost::shared_ptr< xmlparser::XmlParameter > tauobjparam( param->GetElementChild( "Tau" ) );
+        boost::shared_ptr< object::Object< double > > rObj(
+         this->GetObjectFactory()->CreateInstance( robjparam, this->SetObjectFactorToArg( arg, true, argument, elecData ) ) );
+
+        boost::shared_ptr< object::Object< double > > tauObj(
+         this->GetObjectFactory()->CreateInstance( tauobjparam, this->SetObjectFactorToArg( arg, true, argument, elecData ) ) );
+
+
+        const double maxRelaxationTime = tauObj.get()->GetMaxValueOfLookup();
+        size_t rcElementsCount = 0;
+
+        const int withCapacity = static_cast< int >( param->GetElementAttributeBoolValue( "withCapacity", false ) );
+
+        for ( ; rcElementsCount < maximumElements; ++rcElementsCount )
+        {
+            if ( ElectricalClassWrapperBase< MatrixT >::SimplifyRC(
+                  param, maxRelaxationTime * electrical::SphericalDiffusion< myMatrixType >::mTauFactor[rcElementsCount] ) )
+                break;
+        }
+
+        auto tp = boost::make_shared< SphericalDiffusion< MatrixT > >( rObj, tauObj, rcElementsCount, withCapacity,
+                                                                       observable, elecData );
+
+        return tp;
+    }
+
+    private:
+    static const int maximumElements = 29;
 };
 
 /// Classwrapper for electrical::WarburgCotanh
 template < typename MatrixT >
 class ElectricalClassWrapper< MatrixT, WarburgCotanh > : public ElectricalClassWrapperBase< MatrixT >
 {
+    BOOST_STATIC_ASSERT( sizeof( double ) >=
+                         sizeof( double * ) );    // This only works if pointers are smaller than doubles
+
     public:
     ElectricalClassWrapper( Factory< electrical::TwoPort< MatrixT >, ArgumentTypeElectrical > *electricalFactory,
                             Factory< object::Object< double >, ArgumentTypeObject< double > > *objectFactory,
@@ -358,7 +555,6 @@ class ElectricalClassWrapper< MatrixT, WarburgCotanh > : public ElectricalClassW
         : ElectricalClassWrapperBase< MatrixT >( electricalFactory, objectFactory, stateFactory )
     {
         // Nedded for HACK_1
-        assert( sizeof( double ) >= sizeof( double * ) );    // This only works if pointers are smaller than doubles
     }
 
     double CalculateCoefficent( size_t elementNumber ) const
@@ -378,19 +574,20 @@ class ElectricalClassWrapper< MatrixT, WarburgCotanh > : public ElectricalClassW
 
     void AddResidualOhmicResistance( boost::shared_ptr< SerialTwoPort< MatrixT > > tp,
                                      boost::shared_ptr< xmlparser::XmlParameter > cObjParam,
-                                     ArgumentTypeObject< double > *arg, size_t start, size_t end, bool observable )
+                                     ArgumentTypeObject< double > *arg, size_t start, size_t end, bool observable,
+                                     typename electrical::TwoPort< MatrixT >::DataType &elecData )
     {
         double residualOhmicResistance = 0;
 
         for ( ; start < end; ++start )
             residualOhmicResistance += CalculateCoefficent( start + 1 );
 
-        // ArgumentType::iterator it = arg->find("Multiplier");
         arg->mDoubleMap["Multiplier"] = residualOhmicResistance;
+        arg->mElectricalDataStruct = elecData;
 
-        // it->second = residualOhmicResistance;
         boost::shared_ptr< object::Object< double > > rObj( this->GetObjectFactory()->CreateInstance( cObjParam, arg ) );    // R
-        tp->AddChild( new OhmicResistance< MatrixT >( rObj, observable ) );
+        tp->AddChild( new OhmicResistance< MatrixT >( rObj, observable ) );    // OhmicRessitance needs its own state,
+                                                                               // therefore don't pass elecData
     }
 
     double ConvertObjectPointer2double( object::Object< double > *objP )
@@ -403,6 +600,8 @@ class ElectricalClassWrapper< MatrixT, WarburgCotanh > : public ElectricalClassW
     boost::shared_ptr< TwoPort< MatrixT > >
     CreateInstance( const xmlparser::XmlParameter *param, const ArgumentTypeElectrical *arg = 0 )
     {
+        auto elecData = this->CreateElectricalData();
+
         const bool observable =
          param->GetElementAttributeBoolValue( "observable" ) || param->GetElementAttributeBoolValue( "SurfaceEffect" );
         const bool withCapacity = param->GetElementAttributeBoolValue( "withCapacity", true );
@@ -411,16 +610,19 @@ class ElectricalClassWrapper< MatrixT, WarburgCotanh > : public ElectricalClassW
 
         SaneInput( iMaxElements );    // throws
 
-        boost::shared_ptr< WarburgCotanh< MatrixT > > tp( new WarburgCotanh< MatrixT >( observable ) );
+        boost::shared_ptr< WarburgCotanh< MatrixT > > tp( new WarburgCotanh< MatrixT >( observable, elecData ) );
 
         // HACK: GIGANTIC HACK
         // After reading these lines you should feel dirty
 
         boost::scoped_ptr< ArgumentTypeObject< double > > argument( new ArgumentTypeObject< double > );
-        argument->mDoubleMap.insert( std::pair< const char *, double >( "Operator", factory::OBJECT_MULTIPLICATION ) );
+        argument->mElectricalDataStruct = elecData;
 
         boost::shared_ptr< xmlparser::XmlParameter > sigmaObjParam( param->GetElementChild( "Sigma" ) );
-        boost::shared_ptr< object::Object< double > > sigmaObj( this->GetObjectFactory()->CreateInstance( sigmaObjParam ) );
+        boost::shared_ptr< object::Object< double > > sigmaObj(
+         this->GetObjectFactory()->CreateInstance( sigmaObjParam, argument.get() ) );
+
+        argument->mDoubleMap.insert( std::pair< const char *, double >( "Operator", factory::OBJECT_MULTIPLICATION ) );    // Achtung
 
         // From here we are in nomansland where Object are mere bytes and the address of and Obj is represented as a
         // double...
@@ -447,7 +649,7 @@ class ElectricalClassWrapper< MatrixT, WarburgCotanh > : public ElectricalClassW
             argument->mDoubleMap["Operand"] = addressSigmaSquared;
 
             boost::shared_ptr< object::Object< double > > rObj(
-             this->GetObjectFactory()->CreateInstance( cObjParam, this->SetObjectFactorToArg( arg, true, argument ) ) );    // R
+             this->GetObjectFactory()->CreateInstance( cObjParam, this->SetObjectFactorToArg( arg, true, argument, elecData ) ) );    // R
             argument->mObjectFactor = 1.0;
 
             double addressTau = ConvertObjectPointer2double( rObj.get() );
@@ -456,7 +658,7 @@ class ElectricalClassWrapper< MatrixT, WarburgCotanh > : public ElectricalClassW
             argument->mDoubleMap["Multiplier"] = 0.5;
 
             boost::shared_ptr< object::Object< double > > tauObj(
-             this->GetObjectFactory()->CreateInstance( cObjParam, this->SetObjectFactorToArg( arg, false, argument ) ) );    // Tau
+             this->GetObjectFactory()->CreateInstance( cObjParam, this->SetObjectFactorToArg( arg, false, argument, elecData ) ) );    // Tau
             argument->mObjectFactor = 1.0;
 
             double maxRelaxationTime = tauObj.get()->GetMaxValueOfLookup();
@@ -465,20 +667,23 @@ class ElectricalClassWrapper< MatrixT, WarburgCotanh > : public ElectricalClassW
             {
                 argument->mDoubleMap["Operand"] = addressSigmaSquared;
                 argument->mDoubleMap["Multiplier"] = 1.0;
-                AddResidualOhmicResistance( tp, cObjParam, this->SetObjectFactorToArg( arg, true, argument ), counter,
-                                            maxElements, observable );
+                AddResidualOhmicResistance( tp, cObjParam, this->SetObjectFactorToArg( arg, true, argument, elecData ),
+                                            counter, maxElements, observable, elecData );
                 argument->mObjectFactor = 1.0;
                 break;
             }
 
-            tp->AddChild( new ParallelRC< MatrixT >( rObj, tauObj, observable ) );
+            tp->AddChild( new ParallelRC< MatrixT >( rObj, tauObj, observable ) );    // <-- don't pass elecData here as
+                                                                                      // states shoudl be dependent on
+                                                                                      // elecData
         }
 
         if ( withCapacity )
         {
-            boost::scoped_ptr< ArgumentTypeObject< double > > argForCapacity;
+            boost::scoped_ptr< ArgumentTypeObject< double > > argForCapacity( new ArgumentTypeObject< double >() );
+
             boost::shared_ptr< object::Object< double > > cObj(
-             this->GetObjectFactory()->CreateInstance( cObjParam, this->SetObjectFactorToArg( arg, false, argForCapacity ) ) );    // C
+             this->GetObjectFactory()->CreateInstance( cObjParam, this->SetObjectFactorToArg( arg, false, argForCapacity, elecData ) ) );    // C
             tp->AddChild( new Capacity< MatrixT >( cObj, observable ) );
         }
         return tp;
@@ -510,7 +715,8 @@ class ElectricalClassWrapper< MatrixT, WarburgTanh > : public ElectricalClassWra
 
 
     void AddResidualOhmicResistance( boost::shared_ptr< SerialTwoPort< MatrixT > > tp,
-                                     boost::shared_ptr< xmlparser::XmlParameter > robjparam, size_t start, size_t end, bool observable )
+                                     boost::shared_ptr< xmlparser::XmlParameter > robjparam, size_t start, size_t end,
+                                     bool observable, typename electrical::TwoPort< MatrixT >::DataType &elecData )
     {
         double residualOhmicResistance = 0;
         for ( ; start < end; ++start )
@@ -519,6 +725,7 @@ class ElectricalClassWrapper< MatrixT, WarburgTanh > : public ElectricalClassWra
         boost::scoped_ptr< ArgumentTypeObject< double > > argument( new ArgumentTypeObject< double > );
         const char *mapEntry = "Multiplier";
         argument->mDoubleMap.insert( std::pair< const char *, double >( mapEntry, residualOhmicResistance ) );
+        argument->mElectricalDataStruct = elecData;
 
         boost::shared_ptr< object::Object< double > > rObj( this->GetObjectFactory()->CreateInstance( robjparam, argument.get() ) );
 
@@ -528,6 +735,8 @@ class ElectricalClassWrapper< MatrixT, WarburgTanh > : public ElectricalClassWra
     boost::shared_ptr< TwoPort< MatrixT > >
     CreateInstance( const xmlparser::XmlParameter *param, const ArgumentTypeElectrical *arg = 0 )
     {
+        auto elecData = this->CreateElectricalData();
+
         const bool observable =
          param->GetElementAttributeBoolValue( "observable" ) || param->GetElementAttributeBoolValue( "SurfaceEffect" );
         int iMaxElements = param->GetElementAttributeIntValue( "RCCounter", 5 );    // default is 5 RC Elements
@@ -535,11 +744,12 @@ class ElectricalClassWrapper< MatrixT, WarburgTanh > : public ElectricalClassWra
 
         SaneInput( iMaxElements );    // throws
 
-        boost::shared_ptr< WarburgTanh< MatrixT > > tp( new WarburgTanh< MatrixT >( observable ) );
+        boost::shared_ptr< WarburgTanh< MatrixT > > tp( new WarburgTanh< MatrixT >( observable, elecData ) );
 
 
         for ( size_t counter = 0; counter < maxElements; ++counter )
         {
+
             boost::scoped_ptr< ArgumentTypeObject< double > > argument( new ArgumentTypeObject< double > );
             const char *mapEntry = "Multiplier";
             argument->mDoubleMap.insert( std::pair< const char *, double >( mapEntry, 1.0 / CalculateCoefficent( counter + 1 ) ) );
@@ -547,7 +757,7 @@ class ElectricalClassWrapper< MatrixT, WarburgTanh > : public ElectricalClassWra
             boost::shared_ptr< xmlparser::XmlParameter > robjparam( param->GetElementChild( "OhmicResistance" ) );
 
             boost::shared_ptr< object::Object< double > > rObj(
-             this->GetObjectFactory()->CreateInstance( robjparam, this->SetObjectFactorToArg( arg, true, argument ) ) );
+             this->GetObjectFactory()->CreateInstance( robjparam, this->SetObjectFactorToArg( arg, true, argument, elecData ) ) );
             argument->mObjectFactor = 1.0;
 
             boost::shared_ptr< xmlparser::XmlParameter > cobjparam( param->GetElementChild( "Tau" ) );
@@ -558,7 +768,7 @@ class ElectricalClassWrapper< MatrixT, WarburgTanh > : public ElectricalClassWra
 
             if ( ElectricalClassWrapperBase< MatrixT >::SimplifyRC( param, maxRelaxationTime ) )
             {
-                AddResidualOhmicResistance( tp, robjparam, counter, maxElements, observable );
+                AddResidualOhmicResistance( tp, robjparam, counter, maxElements, observable, elecData );
                 break;
             }
 
@@ -583,20 +793,22 @@ class ElectricalClassWrapper< MatrixT, ParallelRCAlg > : public ElectricalClassW
     boost::shared_ptr< TwoPort< MatrixT > >
     CreateInstance( const xmlparser::XmlParameter *param, const ArgumentTypeElectrical *arg = 0 )
     {
+        auto elecData = this->CreateElectricalData();
+
         const bool observable =
          param->GetElementAttributeBoolValue( "observable" ) || param->GetElementAttributeBoolValue( "SurfaceEffect" );
 
         boost::shared_ptr< xmlparser::XmlParameter > robjparam( param->GetElementChild( "RObject" ) );
-        boost::scoped_ptr< ArgumentTypeObject< double > > argObject;
+        boost::scoped_ptr< ArgumentTypeObject< double > > argObject( new ArgumentTypeObject< double > );
         boost::shared_ptr< object::Object< double > > rObj(
-         this->GetObjectFactory()->CreateInstance( robjparam, this->SetObjectFactorToArg( arg, true, argObject ) ) );
+         this->GetObjectFactory()->CreateInstance( robjparam, this->SetObjectFactorToArg( arg, true, argObject, elecData ) ) );
 
         boost::shared_ptr< xmlparser::XmlParameter > cobjparam( param->GetElementChild( "CObject" ) );
-        argObject.reset();
+        argObject.reset( new ArgumentTypeObject< double > );
         boost::shared_ptr< object::Object< double > > cObj(
-         this->GetObjectFactory()->CreateInstance( cobjparam, this->SetObjectFactorToArg( arg, false, argObject ) ) );
+         this->GetObjectFactory()->CreateInstance( cobjparam, this->SetObjectFactorToArg( arg, false, argObject, elecData ) ) );
 
-        return boost::shared_ptr< TwoPort< MatrixT > >( new ParallelRCAlg< MatrixT >( rObj, cObj, observable ) );
+        return boost::shared_ptr< TwoPort< MatrixT > >( new ParallelRCAlg< MatrixT >( rObj, cObj, observable, elecData ) );
     }
 };
 
@@ -623,6 +835,8 @@ class ElectricalClassWrapper< MatrixT, Cellelement > : public ElectricalClassWra
     boost::shared_ptr< TwoPort< MatrixT > >
     CreateInstance( const xmlparser::XmlParameter *param, const ArgumentTypeElectrical * /* arg */ = 0 )
     {
+        auto elecData = this->CreateElectricalData();
+
         typedef ::state::ThermalState< double > ThermalState_t;
         typedef electrical::state::Soc SocState_t;
 
@@ -652,7 +866,7 @@ class ElectricalClassWrapper< MatrixT, Cellelement > : public ElectricalClassWra
             argElectrical.reset( new ArgumentTypeElectrical );
             argElectrical->mCellDiscretization = numberOfCellElements;
         }
-        boost::shared_ptr< ParallelTwoPort< MatrixT > > parallelCellElements( new ParallelTwoPort< MatrixT >( observable ) );
+        boost::shared_ptr< ParallelTwoPort< MatrixT > > parallelCellElements( new ParallelTwoPort< MatrixT >( observable, elecData ) );
 
         for ( size_t i = 0; i < numberOfCellElements; ++i )
         {
@@ -668,7 +882,8 @@ class ElectricalClassWrapper< MatrixT, Cellelement > : public ElectricalClassWra
                 surfaceSoc = CreateSurfaceSoc( param, argState.get() );
             }
 
-            boost::shared_ptr< Cellelement< MatrixT > > cellelement( new Cellelement< MatrixT >( tempObj, socObj, observable ) );
+            boost::shared_ptr< Cellelement< MatrixT > > cellelement(
+             new Cellelement< MatrixT >( tempObj, socObj, observable, elecData ) );
             std::vector< electrical::TwoPort< myMatrixType > * > surfaceEffectedElements;
             for ( size_t i = 0; i < count; ++i )
             {
@@ -722,6 +937,8 @@ class ElectricalClassWrapper< MatrixT, Zarc > : public ElectricalClassWrapperBas
     {
         typedef object::LookupObj2dWithState< double > Obj2D_t;
 
+        auto elecData = this->CreateElectricalData();
+
         const bool observable =
          param->GetElementAttributeBoolValue( "observable" ) || param->GetElementAttributeBoolValue( "SurfaceEffect" );
         double dtValue = 0.001;
@@ -740,15 +957,15 @@ class ElectricalClassWrapper< MatrixT, Zarc > : public ElectricalClassWrapperBas
         boost::shared_ptr< Obj2D_t > tauObj( boost::static_pointer_cast< Obj2D_t >(
          this->GetObjectFactory()->CreateInstance( param->GetElementChild( "LookupTau" ) ) ) );
 
-        boost::scoped_ptr< ArgumentTypeObject< double > > argObject;
+        boost::scoped_ptr< ArgumentTypeObject< double > > argObject( new ArgumentTypeObject< double > );
         boost::shared_ptr< Obj2D_t > ohmObj( boost::static_pointer_cast< Obj2D_t >(
          this->GetObjectFactory()->CreateInstance( param->GetElementChild( "LookupOhmicResistance" ),
-                                                   this->SetObjectFactorToArg( arg, true, argObject ) ) ) );
+                                                   this->SetObjectFactorToArg( arg, true, argObject, elecData ) ) ) );
 
         boost::shared_ptr< Obj2D_t > phiObj( boost::static_pointer_cast< Obj2D_t >(
          this->GetObjectFactory()->CreateInstance( param->GetElementChild( "LookupPhi" ) ) ) );
 
-        return boost::shared_ptr< TwoPort< MatrixT > >( new Zarc< MatrixT >( tauObj, ohmObj, phiObj, dtValue, observable ) );
+        return boost::shared_ptr< TwoPort< MatrixT > >( new Zarc< MatrixT >( tauObj, ohmObj, phiObj, dtValue, observable, elecData ) );
     }
 };
 
@@ -769,6 +986,8 @@ class ElectricalClassWrapper< MatrixT, ZarcAlg > : public ElectricalClassWrapper
     {
         typedef object::LookupObj2dWithState< double > Obj2D_t;
 
+        auto elecData = this->CreateElectricalData();
+
         const bool observable =
          param->GetElementAttributeBoolValue( "observable" ) || param->GetElementAttributeBoolValue( "SurfaceEffect" );
         double sampleRate = 0.001;
@@ -787,15 +1006,16 @@ class ElectricalClassWrapper< MatrixT, ZarcAlg > : public ElectricalClassWrapper
         boost::shared_ptr< Obj2D_t > tauObj( boost::static_pointer_cast< Obj2D_t >(
          this->GetObjectFactory()->CreateInstance( param->GetElementChild( "LookupTau" ) ) ) );
 
-        boost::scoped_ptr< ArgumentTypeObject< double > > argObject;
+        boost::scoped_ptr< ArgumentTypeObject< double > > argObject( new ArgumentTypeObject< double > );
         boost::shared_ptr< Obj2D_t > ohmObj( boost::static_pointer_cast< Obj2D_t >(
          this->GetObjectFactory()->CreateInstance( param->GetElementChild( "LookupOhmicResistance" ),
-                                                   this->SetObjectFactorToArg( arg, true, argObject ) ) ) );
+                                                   this->SetObjectFactorToArg( arg, true, argObject, elecData ) ) ) );
 
         boost::shared_ptr< Obj2D_t > phiObj( boost::static_pointer_cast< Obj2D_t >(
          this->GetObjectFactory()->CreateInstance( param->GetElementChild( "LookupPhi" ) ) ) );
 
-        return boost::shared_ptr< TwoPort< MatrixT > >( new ZarcAlg< MatrixT >( tauObj, ohmObj, phiObj, sampleRate, observable ) );
+        return boost::shared_ptr< TwoPort< MatrixT > >(
+         new ZarcAlg< MatrixT >( tauObj, ohmObj, phiObj, sampleRate, observable, elecData ) );
     }
 };
 

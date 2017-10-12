@@ -18,7 +18,7 @@
     </Observer>
 
     <CustomDefinitions>
-        <RC1 class="ParallelRC">
+        <RC1 class="ParallelRC" observable="True">
             <LookupOhmicResistance class="ConstObj">
                 <Value>
                     10

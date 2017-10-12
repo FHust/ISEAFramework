@@ -40,14 +40,13 @@ template < typename matType >
 class EsbVisualizer : public BaseExport< matType >
 {
     public:
-    EsbVisualizer( const electrical::TwoPort< matType > *rootTwoport, const char *filename = "esb.dot" );
+    EsbVisualizer( const electrical::TwoPort< matType > *rootTwoport, std::ostream *of );
     virtual ~EsbVisualizer(){};
 
     private:
-    EsbVisualizer() { abort(); };
+    EsbVisualizer() = delete;
 
-    const char *mFileName;
-    std::ofstream mOutputfile;
+    std::ostream &mOutputfile;
     size_t mCounter, mCSVCounter;
     std::map< const electrical::TwoPort< matType > *, std::string > mTwoPort2Name;
     typedef typename std::map< const electrical::TwoPort< matType > *, std::string >::iterator iterator;
@@ -60,8 +59,8 @@ class EsbVisualizer : public BaseExport< matType >
     virtual void WriteEnding();
 
     int CheckForMatchInObservableElements( const electrical::TwoPort< matType > *twoPort );    //< This only works if
-                                                                                               //every node is only
-                                                                                               //visted once!
+    // every node is only
+    // visted once!
 
     std::string MergeNameAndNumber2String( std::string name, int number );
     std::string FindAndReturnTwoPortName( const electrical::TwoPort< matType > *twoPortWithChild );
@@ -70,10 +69,9 @@ class EsbVisualizer : public BaseExport< matType >
 };
 
 template < typename matType >
-EsbVisualizer< matType >::EsbVisualizer( const electrical::TwoPort< matType > *rootTwoport, const char *filename )
+EsbVisualizer< matType >::EsbVisualizer( const electrical::TwoPort< matType > *rootTwoport, std::ostream *of )
     : BaseExport< matType >( rootTwoport )
-    , mFileName( filename )
-    , mOutputfile( mFileName )
+    , mOutputfile( *of )
     , mCounter( 0 )
     , mCSVCounter( 0 )
 {

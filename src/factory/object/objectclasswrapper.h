@@ -24,6 +24,7 @@ along with this program.  If not, see http://www.gnu.org/licenses/.
 
 // BOOST
 #include <boost/static_assert.hpp>
+#include <boost/make_shared.hpp>
 
 // STD
 #include <stdexcept>
@@ -31,8 +32,10 @@ along with this program.  If not, see http://www.gnu.org/licenses/.
 
 // ETC
 #include "../factory.h"
-
+#include "../check_positive_int.h"
 #include "../classwrapper.h"
+
+#include "../../electrical/electrical_data_struct.h"
 
 #include "../../states/soc.h"
 #include "../../states/thermal_state.h"
@@ -42,6 +45,7 @@ along with this program.  If not, see http://www.gnu.org/licenses/.
 #include "../../object/lookup_obj2d.h"
 #include "../../object/lookup_obj1d_with_state.h"
 #include "../../object/lookup_obj2d_with_state.h"
+#include "../../object/multi_obj.h"
 #include "../../object/function_obj1d.h"
 
 #include "../../operators/vectorOperator.h"
@@ -59,10 +63,11 @@ namespace factory
 template < typename ValueT >
 struct ArgumentTypeObject
 {
-    ArgumentTypeObject()
-        : mObjectFactor( 1.0 ){};
+    ArgumentTypeObject( ValueT objectFactor = 1.0 )
+        : mObjectFactor( objectFactor ){};
     std::map< misc::StrCont, double, misc::cmp_str > mDoubleMap;
-    ValueT mObjectFactor;
+    ValueT mObjectFactor = 1.0;
+    boost::shared_ptr< ElectricalDataStruct< ValueT > > mElectricalDataStruct = boost::shared_ptr< ElectricalDataStruct< ValueT > >( new ElectricalDataStruct< ValueT >);
 };
 
 // DIRTY DIRTY HACK!
@@ -83,14 +88,17 @@ class ObjectClassWrapperBase : public ClassWrapperBase< Object< ValueT >, Argume
      * The factory is supplied via parameter and is used for other instances ctor parameters.
      * @param stateFactory A Factory for class in the ::state namespace
      */
-    ObjectClassWrapperBase( Factory< ::state::Dgl_state, ArgumentTypeState >* stateFactory )
+    ObjectClassWrapperBase( Factory< ::state::Dgl_state, ArgumentTypeState >* stateFactory,
+                            Factory< object::Object< ValueT >, ArgumentTypeObject< ValueT > >* objectFactory )
         : mStateFactory( stateFactory )
+        , mObjectFactory( objectFactory )
     {
     }
 
     protected:
     /// Get a ::state::Dgl_state Factory.
     Factory< ::state::Dgl_state, ArgumentTypeState >* GetStateFactory() { return mStateFactory; }
+    Factory< object::Object< ValueT >, ArgumentTypeObject< ValueT > >* GetObjectFactory() { return mObjectFactory; }
 
     void ConvertDouble2ObjectPointer( double address, Object< ValueT >* obj )
     {
@@ -175,6 +183,7 @@ class ObjectClassWrapperBase : public ClassWrapperBase< Object< ValueT >, Argume
 
     private:
     Factory< ::state::Dgl_state, ArgumentTypeState >* const mStateFactory;
+    Factory< object::Object< ValueT >, ArgumentTypeObject< ValueT > >* const mObjectFactory;
 };
 
 /// Classwrapper for ::object namespace. This template class has to be specialized in order to create an instance of a
@@ -183,8 +192,9 @@ template < typename ValueT, template < typename > class TConcrete >
 class ObjectClassWrapper : public ObjectClassWrapperBase< ValueT >
 {
     public:
-    ObjectClassWrapper( Factory< ::state::Dgl_state, ArgumentTypeState >* stateFactory )
-        : ObjectClassWrapperBase< ValueT >( stateFactory )
+    ObjectClassWrapper( Factory< ::state::Dgl_state, ArgumentTypeState >* stateFactory,
+                        Factory< object::Object< ValueT >, ArgumentTypeObject< ValueT > >* objectFactory )
+        : ObjectClassWrapperBase< ValueT >( stateFactory, objectFactory )
     {
     }
 };
@@ -194,8 +204,9 @@ template < typename ValueT >
 class ObjectClassWrapper< ValueT, ConstObj > : public ObjectClassWrapperBase< ValueT >
 {
     public:
-    ObjectClassWrapper( Factory< ::state::Dgl_state, ArgumentTypeState >* stateFactory )
-        : ObjectClassWrapperBase< ValueT >( stateFactory )
+    ObjectClassWrapper( Factory< ::state::Dgl_state, ArgumentTypeState >* stateFactory,
+                        Factory< object::Object< ValueT >, ArgumentTypeObject< ValueT > >* objectFactory )
+        : ObjectClassWrapperBase< ValueT >( stateFactory, objectFactory )
     {
     }
 
@@ -218,22 +229,98 @@ class ObjectClassWrapper< ValueT, ConstObj > : public ObjectClassWrapperBase< Va
                 DoubleMapConstIterator it = arg->mDoubleMap.find( "Operand" );
                 double add = it->second;
                 memcpy( static_cast< void* >( &cObj ), static_cast< void* >( &add ), sizeof( double* ) );
-                return boost::shared_ptr< Object< ValueT > >(
-                 new ConstObj< ValueT >( value, static_cast< ConstObj< ValueT >* >( cObj ) ) );
+                return boost::make_shared< ConstObj< ValueT > >( value, static_cast< ConstObj< ValueT >* >( cObj ) );
             }
         }
 
-        return boost::shared_ptr< Object< ValueT > >( new ConstObj< ValueT >( value ) );
+        return boost::make_shared< ConstObj< ValueT > >( value );
     }
 };
+
+/// Classwrapper for object::MultiObj
+template < typename ValueT >
+class ObjectClassWrapper< ValueT, MultiObj > : public ObjectClassWrapperBase< ValueT >
+{
+    public:
+    ObjectClassWrapper( Factory< ::state::Dgl_state, ArgumentTypeState >* stateFactory,
+                        Factory< object::Object< ValueT >, ArgumentTypeObject< ValueT > >* objectFactory )
+        : ObjectClassWrapperBase< ValueT >( stateFactory, objectFactory )
+    {
+    }
+
+    boost::shared_ptr< Object< ValueT > >
+    CreateInstance( const xmlparser::XmlParameter* param, const ArgumentTypeObject< ValueT >* arg = 0 )
+    {
+        if ( arg != nullptr && this->GetOperator( arg ) == factory::OBJECT_MULTIPLICATION )
+        {
+            ErrorFunction< std::runtime_error >( __FUNCTION__, __LINE__, __FILE__, "UnsupportedOperation" );
+        }
+        std::vector< boost::shared_ptr< xmlparser::XmlParameter > > children = param->GetElementChildren( "Children" );
+        if ( children.empty() )
+        {
+            ErrorFunction< factory::NoChildrenException >( __FUNCTION__, __LINE__, __FILE__, "NoChildrenException",
+                                                           "MultiObj" );
+        }
+
+        std::vector< boost::shared_ptr< Object< ValueT > > > tmpVec;
+        for ( std::vector< boost::shared_ptr< xmlparser::XmlParameter > >::iterator it = children.begin();
+              it != children.end(); ++it )
+        {
+            tmpVec.push_back( this->GetObjectFactory()->CreateInstance( it->get() ) );
+        }
+
+        if ( !param->HasElementAttribute( "Operation" ) )
+        {
+            ErrorFunction< std::runtime_error >( __FUNCTION__, __LINE__, __FILE__, "UnsupportedOperation" );
+        }
+
+        const char* operationType = param->GetElementAttribute( "Operation" );
+        misc::equal_str operationTypeCompareObject;
+        boost::shared_ptr< Object< ValueT > > returnElement;
+
+        if ( operationTypeCompareObject( operationType, "Add" ) )
+            returnElement = boost::make_shared< object::AdderObj< ValueT > >( tmpVec );
+        else if ( operationTypeCompareObject( operationType, "Multiply" ) )
+            returnElement = boost::make_shared< object::MultiplyObj< ValueT > >( tmpVec );
+        else if ( operationTypeCompareObject( operationType, "Divide" ) )
+            returnElement = boost::make_shared< object::DivideObj< ValueT > >( tmpVec );
+        else
+        {
+            ErrorFunction< std::runtime_error >( __FUNCTION__, __LINE__, __FILE__, "UnsupportedOperation" );
+        }
+
+        if ( arg != 0 && arg->mObjectFactor != 1.0 )
+        {
+            std::vector< boost::shared_ptr< Object< ValueT > > > productVec{returnElement, CreateProduct( arg )};
+            returnElement = boost::make_shared< object::MultiplyObj< ValueT > >( productVec );
+        }
+
+
+        return returnElement;
+    }
+
+    /// This function shall only be called with arg != 0
+    boost::shared_ptr< Object< ValueT > > CreateProduct( const ArgumentTypeObject< ValueT >* arg )
+    {
+        if ( arg != 0 && arg->mObjectFactor != 1.0 )
+        {
+            return boost::make_shared< ConstObj< ValueT > >( arg->mObjectFactor );
+        }
+
+        ErrorFunction< std::runtime_error >( __FUNCTION__, __LINE__, __FILE__, "ArgumentIsZero" );
+        return boost::make_shared< ConstObj< ValueT > >( 1.0 );
+    }
+};
+
 
 /// Classwrapper for object::LookupObj1D
 template < typename ValueT >
 class ObjectClassWrapper< ValueT, LookupObj1D > : public ObjectClassWrapperBase< ValueT >
 {
     public:
-    ObjectClassWrapper( Factory< ::state::Dgl_state, ArgumentTypeState >* stateFactory )
-        : ObjectClassWrapperBase< ValueT >( stateFactory )
+    ObjectClassWrapper( Factory< ::state::Dgl_state, ArgumentTypeState >* stateFactory,
+                        Factory< object::Object< ValueT >, ArgumentTypeObject< ValueT > >* objectFactory )
+        : ObjectClassWrapperBase< ValueT >( stateFactory, objectFactory )
     {
     }
 
@@ -257,13 +344,13 @@ class ObjectClassWrapper< ValueT, LookupObj1D > : public ObjectClassWrapperBase<
                 DoubleMapConstIterator it = arg->mDoubleMap.find( "Operand" );
                 double add = it->second;
                 memcpy( static_cast< void* >( &cObj ), static_cast< void* >( &add ), sizeof( double* ) );
-                return boost::shared_ptr< Object< ValueT > >(
-                 new LookupObj1D< ValueT >( lookupData, measurementPoints, static_cast< LookupObj1D< ValueT >* >( cObj ),
-                                            lookup::LookupType( this->GetLookupType( param ) ) ) );
+                return boost::make_shared< LookupObj1D< ValueT > >( lookupData, measurementPoints,
+                                                                    static_cast< LookupObj1D< ValueT >* >( cObj ),
+                                                                    lookup::LookupType( this->GetLookupType( param ) ) );
             }
         }
-        return boost::shared_ptr< Object< ValueT > >(
-         new LookupObj1D< ValueT >( lookupData, measurementPoints, lookup::LookupType( this->GetLookupType( param ) ) ) );
+        return boost::make_shared< LookupObj1D< ValueT > >( lookupData, measurementPoints,
+                                                            lookup::LookupType( this->GetLookupType( param ) ) );
     }
 };
 
@@ -272,17 +359,25 @@ template < typename ValueT >
 class ObjectClassWrapper< ValueT, LookupObj1dWithState > : public ObjectClassWrapperBase< ValueT >
 {
     public:
-    ObjectClassWrapper( Factory< ::state::Dgl_state, ArgumentTypeState >* stateFactory )
-        : ObjectClassWrapperBase< ValueT >( stateFactory )
+    ObjectClassWrapper( Factory< ::state::Dgl_state, ArgumentTypeState >* stateFactory,
+                        Factory< object::Object< ValueT >, ArgumentTypeObject< ValueT > >* objectFactory )
+        : ObjectClassWrapperBase< ValueT >( stateFactory, objectFactory )
     {
     }
+
 
     boost::shared_ptr< Object< ValueT > >
     CreateInstance( const xmlparser::XmlParameter* param, const ArgumentTypeObject< ValueT >* arg = 0 )
     {
-        ObjectClassWrapperBase< ValueT >::CheckStateIsCacherefed( param->GetElementChild( "State" ).get() );
+        /* TODO cacheref entfernen?
+        this->CheckStateIsCacherefed( param->GetElementChild( "State" ).get() );
+        */
+
+        ArgumentTypeState stateArg;
+        if ( arg )
+            stateArg.mElectricalDataStruct = arg->mElectricalDataStruct;
         boost::shared_ptr< ::state::Dgl_state > state(
-         this->GetStateFactory()->CreateInstance( param->GetElementChild( "State" ) ) );
+         this->GetStateFactory()->CreateInstance( param->GetElementChild( "State" ), &stateArg ) );
         std::vector< ValueT > lookupData = param->GetElementDoubleVecValue( "LookupData" );
         std::vector< ValueT > measurementPoints = param->GetElementDoubleVecValue( "MeasurementPoints" );
 
@@ -299,15 +394,13 @@ class ObjectClassWrapper< ValueT, LookupObj1dWithState > : public ObjectClassWra
                 DoubleMapConstIterator it = arg->mDoubleMap.find( "Operand" );
                 double add = it->second;
                 memcpy( static_cast< void* >( &cObj ), static_cast< void* >( &add ), sizeof( double* ) );
-                return boost::shared_ptr< Object< ValueT > >(
-                 new LookupObj1dWithState< ValueT >( lookupData, measurementPoints, state,
-                                                     static_cast< LookupObj1dWithState< ValueT >* >( cObj ),
-                                                     lookup::LookupType( this->GetLookupType( param ) ) ) );
+                return boost::make_shared< LookupObj1dWithState< ValueT > >( lookupData, measurementPoints, state,
+                                                                             static_cast< LookupObj1dWithState< ValueT >* >( cObj ),
+                                                                             lookup::LookupType( this->GetLookupType( param ) ) );
             }
         }
-        return boost::shared_ptr< Object< ValueT > >(
-         new LookupObj1dWithState< ValueT >( lookupData, measurementPoints, state,
-                                             lookup::LookupType( this->GetLookupType( param ) ) ) );
+        return boost::make_shared< LookupObj1dWithState< ValueT > >( lookupData, measurementPoints, state,
+                                                                     lookup::LookupType( this->GetLookupType( param ) ) );
     }
 };
 
@@ -316,10 +409,12 @@ template < typename ValueT >
 class ObjectClassWrapper< ValueT, LookupObj2D > : public ObjectClassWrapperBase< ValueT >
 {
     public:
-    ObjectClassWrapper( Factory< ::state::Dgl_state, ArgumentTypeState >* stateFactory )
-        : ObjectClassWrapperBase< ValueT >( stateFactory )
+    ObjectClassWrapper( Factory< ::state::Dgl_state, ArgumentTypeState >* stateFactory,
+                        Factory< object::Object< ValueT >, ArgumentTypeObject< ValueT > >* objectFactory )
+        : ObjectClassWrapperBase< ValueT >( stateFactory, objectFactory )
     {
     }
+
 
     boost::shared_ptr< Object< ValueT > >
     CreateInstance( const xmlparser::XmlParameter* param, const ArgumentTypeObject< ValueT >* arg = 0 )
@@ -341,16 +436,14 @@ class ObjectClassWrapper< ValueT, LookupObj2D > : public ObjectClassWrapperBase<
                 DoubleMapConstIterator it = arg->mDoubleMap.find( "Operand" );
                 double add = it->second;
                 memcpy( static_cast< void* >( &cObj ), static_cast< void* >( &add ), sizeof( double* ) );
-                return boost::shared_ptr< Object< ValueT > >(
-                 new LookupObj2D< ValueT >( lookupData, measurementPointsRow, measurementPointsColumn,
-                                            static_cast< LookupObj2D< ValueT >* >( cObj ),
-                                            lookup::LookupType( this->GetLookupType( param ) ) ) );
+                return boost::make_shared< LookupObj2D< ValueT > >( lookupData, measurementPointsRow, measurementPointsColumn,
+                                                                    static_cast< LookupObj2D< ValueT >* >( cObj ),
+                                                                    lookup::LookupType( this->GetLookupType( param ) ) );
             }
         }
 
-        return boost::shared_ptr< Object< ValueT > >(
-         new LookupObj2D< ValueT >( lookupData, measurementPointsRow, measurementPointsColumn,
-                                    lookup::LookupType( this->GetLookupType( param ) ) ) );
+        return boost::make_shared< LookupObj2D< ValueT > >( lookupData, measurementPointsRow, measurementPointsColumn,
+                                                            lookup::LookupType( this->GetLookupType( param ) ) );
     }
 };
 
@@ -359,20 +452,27 @@ template < typename ValueT >
 class ObjectClassWrapper< ValueT, LookupObj2dWithState > : public ObjectClassWrapperBase< ValueT >
 {
     public:
-    ObjectClassWrapper( Factory< ::state::Dgl_state, ArgumentTypeState >* stateFactory )
-        : ObjectClassWrapperBase< ValueT >( stateFactory )
+    ObjectClassWrapper( Factory< ::state::Dgl_state, ArgumentTypeState >* stateFactory,
+                        Factory< object::Object< ValueT >, ArgumentTypeObject< ValueT > >* objectFactory )
+        : ObjectClassWrapperBase< ValueT >( stateFactory, objectFactory )
     {
     }
 
     boost::shared_ptr< Object< ValueT > >
     CreateInstance( const xmlparser::XmlParameter* param, const ArgumentTypeObject< ValueT >* arg = 0 )
     {
-        ObjectClassWrapperBase< ValueT >::CheckStateIsCacherefed( param->GetElementChild( "RowState" ).get() );
-        ObjectClassWrapperBase< ValueT >::CheckStateIsCacherefed( param->GetElementChild( "ColState" ).get() );
+        ArgumentTypeState stateArg;
+        if ( arg )
+            stateArg.mElectricalDataStruct = arg->mElectricalDataStruct;
+
+        /* TODO cacheref entfernen?
+        this->CheckStateIsCacherefed( param->GetElementChild( "RowState" ).get() );
+        this->CheckStateIsCacherefed( param->GetElementChild( "ColState" ).get() );
+        */
         boost::shared_ptr< ::state::Dgl_state > rowstate(
-         this->GetStateFactory()->CreateInstance( param->GetElementChild( "RowState" ) ) );
+         this->GetStateFactory()->CreateInstance( param->GetElementChild( "RowState" ), &stateArg ) );
         boost::shared_ptr< ::state::Dgl_state > colstate(
-         this->GetStateFactory()->CreateInstance( param->GetElementChild( "ColState" ) ) );
+         this->GetStateFactory()->CreateInstance( param->GetElementChild( "ColState" ), &stateArg ) );
         std::vector< std::vector< ValueT > > lookupData = param->GetElementDoubleVecVecValue( "LookupData" );
         std::vector< ValueT > measurementPointsRow = param->GetElementDoubleVecValue( "MeasurementPointsRow" );
         std::vector< ValueT > measurementPointsColumn = param->GetElementDoubleVecValue( "MeasurementPointsColumn" );
@@ -392,16 +492,16 @@ class ObjectClassWrapper< ValueT, LookupObj2dWithState > : public ObjectClassWra
                 double add = it->second;
                 memcpy( static_cast< void* >( &cObj ), static_cast< void* >( &add ), sizeof( double* ) );
 
-                return boost::shared_ptr< Object< ValueT > >(
-                 new LookupObj2dWithState< ValueT >( lookupData, measurementPointsRow, measurementPointsColumn, rowstate,
-                                                     colstate, static_cast< LookupObj2dWithState< ValueT >* >( cObj ),
-                                                     lookup::LookupType( this->GetLookupType( param ) ) ) );
+                return boost::make_shared< LookupObj2dWithState< ValueT > >( lookupData, measurementPointsRow,
+                                                                             measurementPointsColumn, rowstate, colstate,
+                                                                             static_cast< LookupObj2dWithState< ValueT >* >( cObj ),
+                                                                             lookup::LookupType( this->GetLookupType( param ) ) );
             }
         }
 
-        return boost::shared_ptr< Object< ValueT > >(
-         new LookupObj2dWithState< ValueT >( lookupData, measurementPointsRow, measurementPointsColumn, rowstate,
-                                             colstate, lookup::LookupType( this->GetLookupType( param ) ) ) );
+        return boost::make_shared< LookupObj2dWithState< ValueT > >( lookupData, measurementPointsRow,
+                                                                     measurementPointsColumn, rowstate, colstate,
+                                                                     lookup::LookupType( this->GetLookupType( param ) ) );
     }
 };
 

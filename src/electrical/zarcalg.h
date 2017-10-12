@@ -56,7 +56,8 @@ class ZarcAlg : public TwoPort< T >
     ZarcAlg( boost::shared_ptr< object::Object< double > > lookupRelaxationTime,
              boost::shared_ptr< object::Object< double > > lookupOhmicResistance,
              boost::shared_ptr< object::Object< double > > lookupPhi, const double samplingRate = 0.001,
-             const bool observable = false );    ///< The ZarcAlg element needs a thermal and an electrical state to be created, and does not take care of these. These  are just beeing utelized for the lookups
+             const bool observable = false,
+             typename TwoPort< T >::DataType dataValues = typename TwoPort< T >::DataType(new ElectricalDataStruct< ScalarUnit >));    ///< The ZarcAlg element needs a thermal and an electrical state to be created, and does not take care of these. These  are just beeing utelized for the lookups
 
     virtual ~ZarcAlg(){};
 
@@ -105,8 +106,9 @@ class ZarcAlg : public TwoPort< T >
 template < typename T >
 ZarcAlg< T >::ZarcAlg( boost::shared_ptr< object::Object< double > > lookupRelaxationTime,
                        boost::shared_ptr< object::Object< double > > lookupOhmicResistance,
-                       boost::shared_ptr< object::Object< double > > lookupPhi, const double samplingRate, const bool observable )
-    : TwoPort< T >( observable )
+                       boost::shared_ptr< object::Object< double > > lookupPhi, const double samplingRate,
+                       const bool observable, typename TwoPort< T >::DataType dataValues )
+    : TwoPort< T >( observable, dataValues )
     , mLookupOhmicResistance( lookupOhmicResistance )
     , mLookupRelaxationTime( lookupRelaxationTime )
     , mLookupPhi( lookupPhi )

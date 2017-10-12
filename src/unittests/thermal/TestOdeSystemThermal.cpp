@@ -60,7 +60,7 @@ void TestOdeSystemThermal::TestOdeSystem2RectangularBlocks()
                                  std::runtime_error & e,
                                  strcmp( e.what(),
                                          "size() of thermalElements, a_th_Conductivity, coolingDataVector and "
-                                         "dirchletDataVector must be equal." ),
+                                         "dirchletDataVector must be equal.\n" ),
                                  0 );
         /*
                 TS_ASSERT_THROWS_EQUALS(OdeSystemThermal<> system(thermalElements, conductivityMatrix,
@@ -77,7 +77,7 @@ void TestOdeSystemThermal::TestOdeSystem2RectangularBlocks()
                                  std::runtime_error & e,
                                  strcmp( e.what(),
                                          "size() of thermalElements, a_th_Conductivity, coolingDataVector and "
-                                         "dirchletDataVector must be equal." ),
+                                         "dirchletDataVector must be equal.\n" ),
                                  0 );
         /*
                 TS_ASSERT_THROWS_EQUALS(OdeSystemThermal<> system(thermalElements, conductivityMatrix,
@@ -94,7 +94,7 @@ void TestOdeSystemThermal::TestOdeSystem2RectangularBlocks()
                                  std::runtime_error & e,
                                  strcmp( e.what(),
                                          "size() of thermalElements, a_th_Conductivity, coolingDataVector and "
-                                         "dirchletDataVector must be equal." ),
+                                         "dirchletDataVector must be equal.\n" ),
                                  0 );
         /*
                 TS_ASSERT_THROWS_EQUALS(OdeSystemThermal<> system(thermalElements, conductivityMatrix,

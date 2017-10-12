@@ -15,7 +15,7 @@ along with this program.  If not, see http://www.gnu.org/licenses/.
 /* -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.
 * File Name : inductance.h
 * Creation Date : 22-04-2015
-* Last Modified : Di 13 Okt 2015 17:51:04 CEST
+* Last Modified : Di 08 Mär 2016 15:49:47 CET
 * Created By : Friedrich Hust
 _._._._._._._._._._._._._._._._._._._._._.*/
 #ifndef _INDUCTANCE_
@@ -29,8 +29,10 @@ template < typename T = myMatrixType >
 class Inductance : public ElectricalElement< T >
 {
     public:
-    Inductance( boost::shared_ptr< object::Object< double > > obj, const bool observable = false );
-    Inductance( object::Object< double >* obj, const bool observable = false );
+    explicit Inductance( boost::shared_ptr< object::Object< double > > obj, const bool observable = false,
+                         typename TwoPort< T >::DataType dataValues = typename TwoPort< T >::DataType(new ElectricalDataStruct< ScalarUnit >));
+    explicit Inductance( object::Object< double >* obj, const bool observable = false,
+                         typename TwoPort< T >::DataType dataValues = typename TwoPort< T >::DataType(new ElectricalDataStruct< ScalarUnit >));
     virtual ~Inductance(){};
     virtual T* GetVoltage();    ///< Abort the simulation
 
@@ -41,14 +43,15 @@ class Inductance : public ElectricalElement< T >
 };
 
 template < typename T >
-Inductance< T >::Inductance( boost::shared_ptr< object::Object< double > > obj, const bool observable )
-    : ElectricalElement< T >( obj, observable )
+Inductance< T >::Inductance( boost::shared_ptr< object::Object< double > > obj, const bool observable,
+                             typename TwoPort< T >::DataType dataValues )
+    : ElectricalElement< T >( obj, observable, dataValues )
 {
 }
 
 template < typename T >
-Inductance< T >::Inductance( object::Object< double >* obj, const bool observable )
-    : ElectricalElement< T >( obj, observable )
+Inductance< T >::Inductance( object::Object< double >* obj, const bool observable, typename TwoPort< T >::DataType dataValues )
+    : Inductance< T >( boost::shared_ptr< object::Object< double > >( obj ), observable, dataValues )
 {
 }
 

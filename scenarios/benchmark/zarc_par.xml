@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration>
+    <Options>
+        <SampleRate>1000</SampleRate>
+        <MaxStateSize>1</MaxStateSize>
+        <MaxOutputSize>1</MaxOutputSize>
+    </Options>
+
+    <Observer>
+        <MatlabFilter class="DecimateFilter">
+            <TimeDelay> 0.1 </TimeDelay>
+        </MatlabFilter>
+
+        <MatlabFilter class="MatlabFilter">
+            <Filename> test.mat </Filename>
+        </MatlabFilter>
+    </Observer>
+
+    <CustomDefinitions>
+        <RC1 class="ZarcElement" observable="True">
+            <LookupOhmicResistance class="ConstObj">
+                <Value>
+                    10
+                </Value>
+            </LookupOhmicResistance>
+            <LookupTau class="ConstObj">
+                <Value>
+                    15
+                </Value>
+            </LookupTau>
+            <LookupPhi class="ConstObj">
+                <Value>
+                    0.8
+                </Value>
+            </LookupPhi>
+        </RC1>
+    </CustomDefinitions>
+
+    <RootElement class="SerialTwoPort">
+        <Children count="DISC">
+            <Pack ref="RC1"/>
+        </Children>
+    </RootElement>
+</Configuration>

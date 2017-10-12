@@ -104,7 +104,7 @@ void TestAreaClasses::TestComplicatedPlane()
     //#if defined(__EXCEPTIONS__)
     {
         TS_ASSERT_THROWS_EQUALS( Plane<>( Cartesian<>( 0.0, 0.0, 0.0 ), UnitVector<>( 1.0, 2.0, 0.0 ), UnitVector<>( 2.0, 1.0, 0.0 ) ),
-                                 const std::runtime_error &e, strcmp( e.what(), "Not yet implemented." ), 0 );
+                                 const std::runtime_error &e, strcmp( e.what(), "Not yet implemented.\n" ), 0 );
     }
     //#endif
 
@@ -140,7 +140,7 @@ void TestAreaClasses::TestGeometry2D()
         vertices.at( 3 ) = TwoDim<>( 4.0, 4.0 );
 #ifdef USING_BOOST_GEOMETRY
         TS_ASSERT_THROWS_EQUALS( Geometry2D<> geometry1( vertices ), const std::runtime_error &e,
-                                 strcmp( e.what(), "mPolygon is not not allowed to be self intersecting." ), 0 );
+                                 strcmp( e.what(), "mPolygon is not not allowed to be self intersecting.\n" ), 0 );
 #endif
 
         vertices.pop_back();
@@ -148,7 +148,7 @@ void TestAreaClasses::TestGeometry2D()
         vertices.pop_back();
         TS_ASSERT_THROWS_EQUALS( Geometry2D<> geometry2( vertices ), const std::runtime_error &e,
                                  strcmp( e.what(),
-                                         "Vertices must have at least two elements to form an area or a line." ),
+                                         "Vertices must have at least two elements to form an area or a line.\n" ),
                                  0 );
     }
     //#endif
@@ -409,13 +409,13 @@ void TestAreaClasses::TestGeometry2DWithArcs()
         vertices.at( 2 ) = TwoDim<>( 2.05, 0.0 );
         TS_ASSERT_THROWS_EQUALS( Geometry2D<> geometry1( vertices, arcs, 0.0 ), const std::runtime_error &e,
                                  strcmp( e.what(),
-                                         "If there are arcs, arcPolygonEdgesLength must be bigger than zero." ),
+                                         "If there are arcs, arcPolygonEdgesLength must be bigger than zero.\n" ),
                                  0 );
 
         arcs[3] = TwoDim<>( 0.0, 0.0 );
         TS_ASSERT_THROWS_EQUALS(
          Geometry2D<> geometry2( vertices, arcs, 1.0 ), const std::runtime_error &e,
-         strcmp( e.what(), "If there are arcs, every key of arcs must be assignable to an element of vertices." ), 0 );
+         strcmp( e.what(), "If there are arcs, every key of arcs must be assignable to an element of vertices.\n" ), 0 );
     }
     //#endif
 
@@ -495,13 +495,13 @@ void TestAreaClasses::TestArea()
                                                                   UnitVector<>( 0.0, 1.0, 0.0 ) ),
                                                -0.1, 0.2, TOP ),
                                  const std::runtime_error &e,
-                                 strcmp( e.what(), "distanceToGridVertex must be zero or bigger than zero." ), 0 );
+                                 strcmp( e.what(), "distanceToGridVertex must be zero or bigger than zero.\n" ), 0 );
 
         TS_ASSERT_THROWS_EQUALS( Area<> area2( vertices, Plane<>( Cartesian<>( 0.0, 0.0, 0.0 ), UnitVector<>( 1.0, 0.0, 0.0 ),
                                                                   UnitVector<>( 0.0, 1.0, 0.0 ) ),
                                                0.1, -0.2, BOTTOM ),
                                  const std::runtime_error &e,
-                                 strcmp( e.what(), "Conductivity must be zero or bigger than zero." ), 0 );
+                                 strcmp( e.what(), "Conductivity must be zero or bigger than zero.\n" ), 0 );
     }
     //#endif
 
@@ -561,10 +561,10 @@ void TestAreaClasses::TestArea()
     //#if defined(__EXCEPTIONS__)
     TS_ASSERT_THROWS_EQUALS(
      area.TransformToThisCoordinateSystem( areaNotCoplanar, vertices, tolerance ), const std::runtime_error &e,
-     strcmp( e.what(), "No transformation is possible, because this instance and rhsArea are not coplanar." ), 0 );
+     strcmp( e.what(), "No transformation is possible, because this instance and rhsArea are not coplanar.\n" ), 0 );
     TS_ASSERT_THROWS_EQUALS(
      area.TransformToThisCoordinateSystem( areaNoOverlap, vertices, tolerance ), const std::runtime_error &e,
-     strcmp( e.what(), "No transformation is possible, because this instance and rhsArea are not coplanar." ), 0 );
+     strcmp( e.what(), "No transformation is possible, because this instance and rhsArea are not coplanar.\n" ), 0 );
     //#endif
 
 
@@ -634,7 +634,7 @@ void TestAreaClasses::TestBlockGeometry()
         vertices.at( 3 ) = TwoDim<>( 1.0, 0.0 );
         TS_ASSERT_THROWS_EQUALS( BlockGeometry<> blockGeometry( Geometry2D<>( vertices ), 1.0, 0.99, "" ),
                                  const std::runtime_error &e,
-                                 strcmp( e.what(), "zLower must not be bigger than zUpper." ), 0 );
+                                 strcmp( e.what(), "zLower must not be bigger than zUpper.\n" ), 0 );
 
         TS_ASSERT_THROWS_NOTHING( BlockGeometry<> blockGeometry( Geometry2D<>( vertices ), 1.0, 1.0, "" ) );
     }

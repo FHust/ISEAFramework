@@ -15,7 +15,7 @@ along with this program.  If not, see http://www.gnu.org/licenses/.
 /* -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.
 * File Name : parallelrc.h
 * Creation Date : 10-11-2012
-* Last Modified : Mo 15 Jun 2015 16:10:36 CEST
+* Last Modified : Do 10 Mär 2016 12:36:32 CET
 * Created By : Friedrich Hust
 _._._._._._._._._._._._._._._._._._._._._.*/
 #ifndef _PARALLELRC_
@@ -30,7 +30,9 @@ _._._._._._._._._._._._._._._._._._._._._.*/
 // ETC
 #include "electricalelement.h"
 
+// friend
 class TestElectricalElement;
+class TestElectricalFactory;
 class TestXML;
 
 namespace electrical
@@ -42,11 +44,14 @@ class ParallelRC : public ElectricalElement< T >
 {
     friend class ::TestElectricalElement;
     friend class ::TestXML;
+    friend class ::TestElectricalFactory;
 
     public:
-    ParallelRC( boost::shared_ptr< object::Object< double > > objR, boost::shared_ptr< object::Object< double > > objC,
-                const bool observable = false );
-    ParallelRC( object::Object< double >* objR, object::Object< double >* objC, const bool observable = false );
+    explicit ParallelRC( boost::shared_ptr< object::Object< double > > objR,
+                         boost::shared_ptr< object::Object< double > > objC, const bool observable = false,
+                         typename TwoPort< T >::DataType dataValues = typename TwoPort< T >::DataType(new ElectricalDataStruct< ScalarUnit >));
+    explicit ParallelRC( object::Object< double >* objR, object::Object< double >* objC, const bool observable = false,
+                         typename TwoPort< T >::DataType dataValues = typename TwoPort< T >::DataType(new ElectricalDataStruct< ScalarUnit >));
 
     virtual ~ParallelRC(){};
 
@@ -78,9 +83,9 @@ class ParallelRC : public ElectricalElement< T >
 
 
 template < typename T >
-ParallelRC< T >::ParallelRC( boost::shared_ptr< object::Object< double > > objR,
-                             boost::shared_ptr< object::Object< double > > objC, const bool observable )
-    : ElectricalElement< T >( objR, observable )
+ParallelRC< T >::ParallelRC( boost::shared_ptr< object::Object< double > > objR, boost::shared_ptr< object::Object< double > > objC,
+                             const bool observable, typename TwoPort< T >::DataType dataValues )
+    : ElectricalElement< T >( objR, observable, dataValues )
     , mUID( 0 )
     , mObjectTau( objC )
     , mConstVoltageVector( T() )
@@ -89,11 +94,10 @@ ParallelRC< T >::ParallelRC( boost::shared_ptr< object::Object< double > > objR,
 }
 
 template < typename T >
-ParallelRC< T >::ParallelRC( object::Object< double >* objR, object::Object< double >* objC, const bool observable )
-    : ElectricalElement< T >( objR, observable )
-    , mUID( 0 )
-    , mObjectTau( boost::shared_ptr< object::Object< double > >( objC ) )
-    , mConstVoltageVector( T() )
+ParallelRC< T >::ParallelRC( object::Object< double >* objR, object::Object< double >* objC, const bool observable,
+                             typename TwoPort< T >::DataType dataValues )
+    : ParallelRC< T >( boost::shared_ptr< object::Object< double > >( objR ),
+                       boost::shared_ptr< object::Object< double > >( objC ), observable, dataValues )
 {
 }
 

@@ -25,12 +25,12 @@ void TestThermalElements::TestThermalElement()
 {
     ThermalElement<> elem;
 
-    TS_ASSERT_THROWS_EQUALS( elem.SetElement( 25.0, 0, Cartesian<>( 0.0, 0.0, 0.0 ), 0.0, 0, 0.0 ),
-                             std::runtime_error & e, strcmp( e.what(), "ThermalStateFactor must be part of (0, 1]." ), 0 );
-    TS_ASSERT_THROWS_EQUALS( elem.SetElement( 25.0, 0, Cartesian<>( 0.0, 0.0, 0.0 ), 0.0, 0, 1.1 ),
-                             std::runtime_error & e, strcmp( e.what(), "ThermalStateFactor must be part of (0, 1]." ), 0 );
+    TS_ASSERT_THROWS_EQUALS( elem.SetElement( 25.0, 0, Cartesian<>( 0.0, 0.0, 0.0 ), 0.0, 0, 0.0 ), std::runtime_error & e,
+                             strcmp( e.what(), "ThermalStateFactor must be part of (0, 1].\n" ), 0 );
+    TS_ASSERT_THROWS_EQUALS( elem.SetElement( 25.0, 0, Cartesian<>( 0.0, 0.0, 0.0 ), 0.0, 0, 1.1 ), std::runtime_error & e,
+                             strcmp( e.what(), "ThermalStateFactor must be part of (0, 1].\n" ), 0 );
     TS_ASSERT_THROWS_EQUALS( elem.SetElement( 25.0, 0, Cartesian<>( 0.0, 0.0, 0.0 ), -0.1, 0 ), std::runtime_error & e,
-                             strcmp( e.what(), "Volume must be zero or bigger than zero." ), 0 );
+                             strcmp( e.what(), "Volume must be zero or bigger than zero.\n" ), 0 );
 
     boost::shared_ptr< ::state::ThermalState<> > thermalState( new ::state::ThermalState<> );
     thermalState->AddPowerDissipation( 970.0, 0.0 );
@@ -125,18 +125,19 @@ void TestThermalElements::TestCylindricElement()
         TS_ASSERT_THROWS_EQUALS( CylindricElement<> elem( Cartesian<>( 0.0, 0.0, 0.0 ), Cylindric<>( 0.0, Angle<>::Rad( 0.0 ), 0.0 ),
                                                           Cylindric<>( 0.0, Angle<>::Deg( 180.02 ), 0.0 ), 25.5, 0, 0 ),
                                  std::runtime_error & e,
-                                 strcmp( e.what(), "deltaPhi must be 180 deg or smaller than 180 deg." ), 0 );
+                                 strcmp( e.what(), "deltaPhi must be 180 deg or smaller than 180 deg.\n" ), 0 );
 
         TS_ASSERT_THROWS_EQUALS( CylindricElement<> elem( Cartesian<>( 0.0, 0.0, 0.0 ), Cylindric<>( -1.0, Angle<>::Rad( 0.0 ), 0.0 ),
                                                           Cylindric<>( 1.5, Angle<>::Deg( 90.0 ), 0.0 ), 25.5, 0, 0 ),
                                  std::runtime_error & e,
-                                 strcmp( e.what(), "mRho of startVector must be zero or bigger than zero." ), 0 );
+                                 strcmp( e.what(), "mRho of startVector must be zero or bigger than zero.\n" ), 0 );
 
-        TS_ASSERT_THROWS_EQUALS(
-         CylindricElement<> elem( Cartesian<>( 0.0, 0.0, 0.0 ), Cylindric<>( 1.0, Angle<>::Rad( 0.0 ), 0.0 ),
-                                  Cylindric<>( -1.5, Angle<>::Deg( 90.0 ), 0.0 ), 25.5, 0, 0 ),
-         std::runtime_error & e,
-         strcmp( e.what(), "Difference between mRho of startVector and deltaVector must be zero or bigger than zero." ), 0 );
+        TS_ASSERT_THROWS_EQUALS( CylindricElement<> elem( Cartesian<>( 0.0, 0.0, 0.0 ), Cylindric<>( 1.0, Angle<>::Rad( 0.0 ), 0.0 ),
+                                                          Cylindric<>( -1.5, Angle<>::Deg( 90.0 ), 0.0 ), 25.5, 0, 0 ),
+                                 std::runtime_error & e, strcmp( e.what(),
+                                                                 "Difference between mRho of startVector and "
+                                                                 "deltaVector must be zero or bigger than zero.\n" ),
+                                 0 );
 
         /*
                 TS_ASSERT_THROWS_EQUALS(CylindricElement<> elem(Cartesian<>(0.0, 0.0, 0.0), Cylindric<>(0.0,
@@ -200,27 +201,27 @@ void TestThermalElements::TestCutCylElement()
                                                         Cylindric<>( 1.5, Angle<>::Deg( 22.5 ), 1.0 ), Angle<>::Deg( 90.1 ),
                                                         2.4, TwoDim<>( 3.0, 2.0 ), TwoDim<>( 2.0, -2.0 ), 27.0, 0 ),
                                  std::runtime_error & e,
-                                 strcmp( e.what(), "deltaPhi must be 90 deg or smaller than 90 deg." ), 0 );
+                                 strcmp( e.what(), "deltaPhi must be 90 deg or smaller than 90 deg.\n" ), 0 );
         TS_ASSERT_THROWS_EQUALS( CutCylElement<> elem1( Cartesian<>( 1.0, 1.5, 5.0 ),
                                                         Cylindric<>( -1.5, Angle<>::Deg( 22.5 ), 1.0 ), Angle<>::Deg( 90.0 ),
                                                         2.4, TwoDim<>( 3.0, 2.0 ), TwoDim<>( 2.0, -2.0 ), 27.0, 0 ),
                                  std::runtime_error & e,
-                                 strcmp( e.what(), "mRho of startVector must be zero or bigger than zero." ), 0 );
+                                 strcmp( e.what(), "mRho of startVector must be zero or bigger than zero.\n" ), 0 );
         TS_ASSERT_THROWS_EQUALS(
          CutCylElement<> elem1( Cartesian<>( 1.0, 1.5, 5.0 ), Cylindric<>( 1.5, Angle<>::Deg( 22.5 ), 1.0 ),
                                 Angle<>::Deg( 90.0 ), 2.4, TwoDim<>( 3.0, 2.0 ), TwoDim<>( 0.0, 0.0 ), 27.0, 0 ),
          std::runtime_error & e,
-         strcmp( e.what(), "cutLineDirection: Get1() and Get2() are zero, thus there is no direction." ), 0 );
-        TS_ASSERT_THROWS_EQUALS( CutCylElement<> elem2( Cartesian<>( 1.0, 1.5, 5.0 ),
-                                                        Cylindric<>( 1.5, Angle<>::Deg( 22.5 ), 1.0 ), Angle<>::Deg( 45.0 ),
-                                                        2.4, TwoDim<>( -3.0, -3.0 ), TwoDim<>( 2.0, -2.0 ), 27.0, 0 ),
-                                 std::runtime_error & e,
-                                 strcmp( e.what(), "cutLine does not cut element to three straight and one arc line." ), 0 );
-        TS_ASSERT_THROWS_EQUALS( CutCylElement<> elem3( Cartesian<>( 1.0, 1.5, 5.0 ),
-                                                        Cylindric<>( 1.5, Angle<>::Deg( 22.5 ), 1.0 ), Angle<>::Deg( 45.0 ),
-                                                        2.4, TwoDim<>( 2.0, 0.0 ), TwoDim<>( 2.0, -2.0 ), 27.0, 0 ),
-                                 std::runtime_error & e,
-                                 strcmp( e.what(), "cutLine does not cut element to three straight and one arc line." ), 0 );
+         strcmp( e.what(), "cutLineDirection: Get1() and Get2() are zero, thus there is no direction.\n" ), 0 );
+        TS_ASSERT_THROWS_EQUALS(
+         CutCylElement<> elem2( Cartesian<>( 1.0, 1.5, 5.0 ), Cylindric<>( 1.5, Angle<>::Deg( 22.5 ), 1.0 ),
+                                Angle<>::Deg( 45.0 ), 2.4, TwoDim<>( -3.0, -3.0 ), TwoDim<>( 2.0, -2.0 ), 27.0, 0 ),
+         std::runtime_error & e,
+         strcmp( e.what(), "cutLine does not cut element to three straight and one arc line.\n" ), 0 );
+        TS_ASSERT_THROWS_EQUALS(
+         CutCylElement<> elem3( Cartesian<>( 1.0, 1.5, 5.0 ), Cylindric<>( 1.5, Angle<>::Deg( 22.5 ), 1.0 ),
+                                Angle<>::Deg( 45.0 ), 2.4, TwoDim<>( 2.0, 0.0 ), TwoDim<>( 2.0, -2.0 ), 27.0, 0 ),
+         std::runtime_error & e,
+         strcmp( e.what(), "cutLine does not cut element to three straight and one arc line.\n" ), 0 );
 
 
         /*
@@ -324,11 +325,11 @@ void TestThermalElements::TestTriangularElement()
         TS_ASSERT_THROWS_EQUALS( TriangularElement<> elemZeroHeat( Cartesian<>( 0.0, 0.0, 0.0 ), TwoDim<>( 0.0, 0.0 ),
                                                                    TwoDim<>( 2.0, 2.0 ), TwoDim<>( 1.0, 1.0 ), 0.0, 0.0, 0 ),
                                  std::runtime_error & e,
-                                 strcmp( e.what(), "vertices 1, 2 and 3 form a line or a point and not an area." ), 0 );
+                                 strcmp( e.what(), "vertices 1, 2 and 3 form a line or a point and not an area.\n" ), 0 );
         TS_ASSERT_THROWS_EQUALS( TriangularElement<> elemZeroHeat( Cartesian<>( 0.0, 0.0, 0.0 ), TwoDim<>( 0.0, 0.0 ),
                                                                    TwoDim<>( 2.0, 2.0 ), TwoDim<>( 2.0, 2.0 ), 0.0, 0.0, 0 ),
                                  std::runtime_error & e,
-                                 strcmp( e.what(), "vertices 1, 2 and 3 form a line or a point and not an area." ), 0 );
+                                 strcmp( e.what(), "vertices 1, 2 and 3 form a line or a point and not an area.\n" ), 0 );
 
 
         /*

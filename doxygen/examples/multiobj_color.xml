@@ -1,0 +1,14 @@
+<div class="fragment">
+<!-- Generator: GNU source-highlight 3.1.8
+by Lorenzo Bettini
+http://www.lorenzobettini.it
+http://www.gnu.org/software/src-highlite -->
+<pre><tt><b><font color="#0000FF">&lt;Object</font></b> <font color="#009900">class</font><font color="#990000">=</font><font color="#FF0000">"MultiObj"</font> <font color="#009900">Operation</font><font color="#990000">=</font><font color="#FF0000">"Add"</font><b><font color="#0000FF">&gt;</font></b>
+    <b><font color="#0000FF">&lt;Children&gt;</font></b>
+	<b><font color="#0000FF">&lt;c1</font></b> <font color="#009900">class</font><font color="#990000">=</font><font color="#FF0000">'ConstObj'</font><b><font color="#0000FF">&gt;</font></b> <b><font color="#0000FF">&lt;Value&gt;</font></b> 10<b><font color="#0000FF">&lt;/Value&gt;&lt;/c1&gt;</font></b>
+	<b><font color="#0000FF">&lt;c2</font></b> <font color="#009900">class</font><font color="#990000">=</font><font color="#FF0000">'ConstObj'</font><b><font color="#0000FF">&gt;</font></b> <b><font color="#0000FF">&lt;Value&gt;</font></b> 20<b><font color="#0000FF">&lt;/Value&gt;&lt;/c2&gt;</font></b>
+	<b><font color="#0000FF">&lt;c3</font></b> <font color="#009900">class</font><font color="#990000">=</font><font color="#FF0000">'ConstObj'</font><b><font color="#0000FF">&gt;</font></b> <b><font color="#0000FF">&lt;Value&gt;</font></b> 30<b><font color="#0000FF">&lt;/Value&gt;&lt;/c3&gt;</font></b>
+    <b><font color="#0000FF">&lt;/Children&gt;</font></b>
+<b><font color="#0000FF">&lt;/Object&gt;</font></b>
+</tt></pre>
+</div>

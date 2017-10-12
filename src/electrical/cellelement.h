@@ -15,7 +15,7 @@ along with this program.  If not, see http://www.gnu.org/licenses/.
 /* -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.
 * File Name : cellelement.h
 * Creation Date : 10-11-2012
-* Last Modified : Mi 02 Jul 2014 13:18:07 CEST
+* Last Modified : Di 08 Mär 2016 15:48:34 CET
 * Created By : Friedrich Hust
 _._._._._._._._._._._._._._._._._._._._._.*/
 #ifndef _CELLELEMENT_
@@ -44,8 +44,9 @@ template < typename T = myMatrixType >
 class Cellelement : public SerialTwoPort< T >
 {
     public:
-    Cellelement( boost::shared_ptr< ::state::ThermalState< double > > thermalState,
-                 boost::shared_ptr< electrical::state::Soc > socState, const bool observable = false );
+    explicit Cellelement( boost::shared_ptr< ::state::ThermalState< double > > &thermalState,
+                          boost::shared_ptr< electrical::state::Soc > &socState, const bool observable = false,
+                          typename TwoPort< T >::DataType dataValues = typename TwoPort< T >::DataType(new ElectricalDataStruct< ScalarUnit >));
     virtual ~Cellelement(){};
     virtual bool IsCellelement() const;    ///< Is this element a cellelement?
     virtual void SetCurrentFromActiveBalancer( ScalarUnit current );    ///< This function gives the chance to actively balance a battery with a current
@@ -70,7 +71,6 @@ class Cellelement : public SerialTwoPort< T >
 
     const boost::shared_ptr< state::Soc > &GetSoc() const { return mSoc; }
     const boost::shared_ptr< ::state::ThermalState< double > > &GetThermalState() const { return mThermalState; }
-
     bool mSurfaceSocSet;
 
     protected:
@@ -81,9 +81,10 @@ class Cellelement : public SerialTwoPort< T >
 };
 
 template < typename T >
-Cellelement< T >::Cellelement( boost::shared_ptr< ::state::ThermalState< double > > thermalState,
-                               boost::shared_ptr< electrical::state::Soc > socState, const bool observable )
-    : SerialTwoPort< T >( observable )
+Cellelement< T >::Cellelement( boost::shared_ptr< ::state::ThermalState< double > > &thermalState,
+                               boost::shared_ptr< electrical::state::Soc > &socState, const bool observable,
+                               typename TwoPort< T >::DataType dataValues )
+    : SerialTwoPort< T >( observable, dataValues )
     , mSurfaceSocSet( false )
     , mThermalState( thermalState )
     , mSoc( socState )

@@ -2,8 +2,17 @@
 
 BENCHMARKFOLDER=$1
 BENCHMARK=$2
-CURRENTPROFILE=$3 
+CURRENTPROFILE=$3
+CYCLE=$4
+RUNS=$5
 VISIUALIZE_COMMAND=""
+if [[ ! $RUNS ]]; then
+    RUNS=10
+fi
+
+if [[ ! $CYCLE ]]; then
+    CYCLE=100
+fi
 
 function PrintErrorMessage
 {
@@ -28,7 +37,7 @@ function GetVisualiserCommand
     else
         command -v octave >/dev/null 2>&1
         if [ $? -ne 1 ]; then
-            echo "octave --eval"
+            echo "octave-cli --no-gui -W --eval"
         else
             PrintErrorMessage "Couldn't find matlab nor octave"
             exit 1
@@ -42,13 +51,13 @@ function main
     #echo ${VISIUALIZE_COMMAND}
 
     TESTSUITS=`ls ${BENCHMARKFOLDER}`
-    for i in $TESTSUITS; do 
-        #echo "Running ${BENCHMARKFOLDER}/${i}"
-        ./benchmarkmakerSingleTest.sh ${BENCHMARK} ${BENCHMARKFOLDER}/${i} ${CURRENTPROFILE} 10 10 > /dev/null
+    for i in $TESTSUITS; do
+        echo "Running ${BENCHMARKFOLDER}/${i} ${CYCLE} ${RUNS}"
+        ./benchmarkmakerSingleTest.sh ${BENCHMARK} ${BENCHMARKFOLDER}/${i} ${CURRENTPROFILE} ${CYCLE} ${RUNS} > /dev/null
         filename=$(basename "$i")
         filename="${filename%.*}"
 
-        ${VISIUALIZE_COMMAND} "x=dlmread('benchmarkResults', ';'); plot(x(:,3), x(:,1)); print -djpg image.jpg1"
+        ${VISIUALIZE_COMMAND} " x=dlmread('benchmarkResults', ';'); plot(x(:,3), x(:,1)); print -djpg ${filename}.jpg"
         mv benchmarkResults ${filename}.csv
     done
 }

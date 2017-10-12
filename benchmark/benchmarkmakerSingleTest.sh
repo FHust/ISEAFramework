@@ -39,6 +39,7 @@ for ((worker=1;worker<=$maxworker;worker++)) ; do
   meantime=`    echo "$summary" | grep Mittelwert | cut -d ":" -f 2`
   cycle=`       echo "$summary" | grep Cycles | cut -d ":" -f 2`
   obEle=`       echo "$summary" | grep Observed | cut -d ":" -f 2`
+  echo "DAS IST DER SIMOUT: $simout" >> blobb
 
   echo "$meantime;$cycle;$obEle" >> benchmarkResults
 done

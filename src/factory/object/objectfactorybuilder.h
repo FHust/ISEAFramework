@@ -34,13 +34,18 @@ BuildObjectFactory( Factory< ::state::Dgl_state, ArgumentTypeState > *stateFacto
     Factory< object::Object< ValueT >, ArgumentTypeObject< ValueT > > *objectFactory =
      new Factory< object::Object< ValueT >, ArgumentTypeObject< ValueT > >();
 
-    objectFactory->AddWrapper( new ObjectClassWrapper< ValueT, object::ConstObj >( stateFactory ), "ConstObj" );
-    objectFactory->AddWrapper( new ObjectClassWrapper< ValueT, object::LookupObj1D >( stateFactory ), "LookupObj1D" );
-    objectFactory->AddWrapper( new ObjectClassWrapper< ValueT, object::LookupObj2D >( stateFactory ), "LookupObj2D" );
-    objectFactory->AddWrapper( new ObjectClassWrapper< ValueT, object::LookupObj1dWithState >( stateFactory ),
+    objectFactory->AddWrapper( new ObjectClassWrapper< ValueT, object::ConstObj >( stateFactory, objectFactory ),
+                               "ConstObj" );
+    objectFactory->AddWrapper( new ObjectClassWrapper< ValueT, object::LookupObj1D >( stateFactory, objectFactory ),
+                               "LookupObj1D" );
+    objectFactory->AddWrapper( new ObjectClassWrapper< ValueT, object::LookupObj2D >( stateFactory, objectFactory ),
+                               "LookupObj2D" );
+    objectFactory->AddWrapper( new ObjectClassWrapper< ValueT, object::LookupObj1dWithState >( stateFactory, objectFactory ),
                                "LookupObj1dWithState" );
-    objectFactory->AddWrapper( new ObjectClassWrapper< ValueT, object::LookupObj2dWithState >( stateFactory ),
+    objectFactory->AddWrapper( new ObjectClassWrapper< ValueT, object::LookupObj2dWithState >( stateFactory, objectFactory ),
                                "LookupObj2dWithState" );
+    objectFactory->AddWrapper( new ObjectClassWrapper< ValueT, object::MultiObj >( stateFactory, objectFactory ),
+                               "MultiObj" );
     return objectFactory;
 }
 

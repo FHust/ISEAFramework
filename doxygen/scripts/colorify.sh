@@ -16,7 +16,7 @@ COLORED_FILENAME="$DIRNAME/${FILENAME}_color.$EXTENSION"
 #echo $EXTENSION
 #echo $COLORED_FILENAME
 
-COLORED_OUTPUT=`/usr/bin/source-highlight --input $1 -o STDOUT`
+COLORED_OUTPUT=`/usr/bin/source-highlight -s xml --input $1 -o STDOUT`
 COLORED_OUTPUT='<div class="fragment">\n'${COLORED_OUTPUT}'\n</div>'
 echo -e "$COLORED_OUTPUT" > $COLORED_FILENAME
 

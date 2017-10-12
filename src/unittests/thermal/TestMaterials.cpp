@@ -23,15 +23,15 @@ void TestMaterials::TestMaterial()
     //#if defined(__EXCEPTIONS__)
     {
         TS_ASSERT_THROWS_EQUALS( Material<> kupfer( -8920.0, 385.0, 400.0, 300.0, 200.0 ), std::runtime_error & e,
-                                 strcmp( e.what(), "Density must be bigger than zero." ), 0 );
+                                 strcmp( e.what(), "Density must be bigger than zero.\n" ), 0 );
         TS_ASSERT_THROWS_EQUALS( Material<> kupfer( 8920.0, -385.0, 400.0, 300.0, 200.0 ), std::runtime_error & e,
-                                 strcmp( e.what(), "SpecificCapacity must be bigger than zero." ), 0 );
+                                 strcmp( e.what(), "SpecificCapacity must be bigger than zero.\n" ), 0 );
         TS_ASSERT_THROWS_EQUALS( Material<> kupfer( 8920.0, 385.0, 0.0, 300.0, 200.0 ), std::runtime_error & e,
-                                 strcmp( e.what(), "Conductivities must be bigger than zero." ), 0 );
+                                 strcmp( e.what(), "Conductivities must be bigger than zero.\n" ), 0 );
         TS_ASSERT_THROWS_EQUALS( Material<> kupfer( 8920.0, 385.0, 400.0, -300.0, 200.0 ), std::runtime_error & e,
-                                 strcmp( e.what(), "Conductivities must be bigger than zero." ), 0 );
+                                 strcmp( e.what(), "Conductivities must be bigger than zero.\n" ), 0 );
         TS_ASSERT_THROWS_EQUALS( Material<> kupfer( 8920.0, 385.0, 400.0, 300.0, -200.0 ), std::runtime_error & e,
-                                 strcmp( e.what(), "Conductivities must be bigger than zero." ), 0 );
+                                 strcmp( e.what(), "Conductivities must be bigger than zero.\n" ), 0 );
     }
     //#endif
 

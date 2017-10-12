@@ -48,7 +48,8 @@ void ErrorFunction( const char *fct, const int line, const char *file, const cha
     parser.ReadFromMem( XML_ERRORS.c_str() );
     boost::shared_ptr< xmlparser::XmlParameter > param( parser.GetRoot() );
 
-    std::string tempErrorMessageXML = param->GetElementChild( "getchildren" )->GetElementStringValue( XML_FEHLER_ID );
+    std::string tempErrorMessageXML =
+     param->GetElementChild( "getchildren" )->GetElementStringValue( XML_FEHLER_ID ) + "\n";
 
     boost::scoped_array< char > errorMessageXML( new char[tempErrorMessageXML.size() + 1] );
     memset( errorMessageXML.get(), 0, sizeof( char ) * ( tempErrorMessageXML.size() + 1 ) );

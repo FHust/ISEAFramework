@@ -15,12 +15,14 @@ along with this program.  If not, see http://www.gnu.org/licenses/.
 /* -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.
 * File Name : twoport.h
 * Creation Date : 30-10-2012
-* Last Modified : Di 13 Okt 2015 17:31:21 CEST
+* Last Modified : Do 10 Mär 2016 10:38:24 CET
 * Created By : Friedrich Hust
 _._._._._._._._._._._._._._._._._._._._._.*/
 #ifndef _TWOPORT_
 #define _TWOPORT_
 
+// ETC
+#include "electrical_data_struct.h"
 #include "../system/stateSystemGroup.h"
 #include "../exceptions/error_proto.h"
 
@@ -28,14 +30,19 @@ _._._._._._._._._._._._._._._._._._._._._.*/
 #include <vector>
 #ifdef __EXCEPTIONS__
 #include <stdexcept>
-#include <string>
 #endif /* __EXCEPTIONS__ */
 
+// BOOST
+#include <boost/shared_ptr.hpp>
 
 // Friend
+class TestRmphn;
 class TestDaeSystem;
 class TestStateSystem;
 class TestLinearSystem;
+class TestElectricalFactory;
+
+class TestVoltageCurrentPowerInjection;
 
 namespace electrical
 {
@@ -51,12 +58,17 @@ typedef symbolic::Symbolic ScalarUnit;
 template < typename T = myMatrixType >
 class TwoPort
 {
+
+    friend class ::TestRmphn;
     friend class ::TestDaeSystem;
     friend class ::TestStateSystem;
     friend class ::TestLinearSystem;
+    friend class ::TestVoltageCurrentPowerInjection;
+    friend class ::TestElectricalFactory;
 
     public:
-    TwoPort( const bool observable = false );
+    typedef boost::shared_ptr< ElectricalDataStruct< ScalarUnit > > DataType;
+    explicit TwoPort( const bool observable = false, DataType dataValues = DataType(new ElectricalDataStruct< ScalarUnit >));
     virtual ~TwoPort(){};
 
     virtual void SetCurrent( const T current );    ///< Sets the current
@@ -104,12 +116,14 @@ class TwoPort
     /// Calculate the voltage of the previous simulation step.
     void CalculateVoltageValue();
 
+    DataType mDataStruct = 0;
+
     size_t mID;
     T mCurrent;
     T mVoltage;
-    ScalarUnit mCurrentValue;
-    ScalarUnit mVoltageValue;
-    ScalarUnit mPowerValue;
+    ScalarUnit& mCurrentValue;
+    ScalarUnit& mVoltageValue;
+    ScalarUnit& mPowerValue;
 
     systm::StateSystemGroup< T >* mStateSystemGroup;
 
@@ -195,13 +209,14 @@ void TwoPort< T >::CalculateVoltageValue()
 }
 
 template < typename T >
-TwoPort< T >::TwoPort( const bool observable )
-    : mID( 0 )
+TwoPort< T >::TwoPort( const bool observable, DataType dataValues )
+    : mDataStruct( dataValues )
+    , mID( 0 )
     , mCurrent( T() )
     , mVoltage( T() )
-    , mCurrentValue( 0 )
-    , mVoltageValue( 0 )
-    , mPowerValue( 0 )
+    , mCurrentValue( mDataStruct->mCurrentValue )
+    , mVoltageValue( mDataStruct->mVoltageValue )
+    , mPowerValue( mDataStruct->mPowerValue )
     , mStateSystemGroup( 0 )
     , mObservable( observable )
 {

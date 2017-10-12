@@ -21,6 +21,7 @@ _._._._._._._._._._._._._._._._._._._._._.*/
 #include "twoport.h"
 namespace electrical
 {
+template class electrical::TwoPort< myMatrixType >;
 #ifdef _EIGEN_
 template <>
 double ReturnFirstElement( Eigen::SparseMatrix< double, RowMajor > &mat )

@@ -67,7 +67,9 @@ void TestThermalModels::TestThermalModel()
         shared_ptr< BlockGeometry<> > blockGeometry;
         TS_ASSERT_THROWS_EQUALS( thermalModel.AddBlock( thermalElements, conductivityMatrix, surfaceAreas, blockGeometry ),
                                  std::runtime_error & e,
-                                 strcmp( e.what(), "size() of thermalElements and conductivityMatrix must be equal." ), 0 );
+                                 strcmp( e.what(),
+                                         "size() of thermalElements and conductivityMatrix must be equal.\n" ),
+                                 0 );
         conductivityMatrix.pop_back();
         surfaceAreas.push_back(
          IndexedArea< double >( 2, Area<>( vector< TwoDim<> >( 2 ),
@@ -75,7 +77,7 @@ void TestThermalModels::TestThermalModel()
                                            0.0, 0.0, TOP ) ) );
         TS_ASSERT_THROWS_EQUALS(
          thermalModel.AddBlock( thermalElements, conductivityMatrix, surfaceAreas, blockGeometry ), std::out_of_range & e,
-         strcmp( e.what(), "Biggest mIndex in surfaceAreas must be smaller than size() of thermalElements." ), 0 );
+         strcmp( e.what(), "Biggest mIndex in surfaceAreas must be smaller than size() of thermalElements.\n" ), 0 );
 
 
         vector< vector< TaylorData< double > > > dataVector;
@@ -90,9 +92,10 @@ void TestThermalModels::TestThermalModel()
         thermalModel2.mBlocks.push_back( ThermalModel<>::BlockData() );
         thermalModel2.mBlocks.back().mBlockGeometry = blockGeometry;
 
-        TS_ASSERT_THROWS_EQUALS( thermalModel2.CreateDataByFusingBlocks( thermalElements, conductivityMatrix, dataVector, dirichletDataVector ),
-                                 std::runtime_error & e,
-                                 strcmp( e.what(), "Dimension of thermal block is smaller than tolerance in Block1." ), 0 );
+        TS_ASSERT_THROWS_EQUALS(
+         thermalModel2.CreateDataByFusingBlocks( thermalElements, conductivityMatrix, dataVector, dirichletDataVector ),
+         std::runtime_error & e,
+         strcmp( e.what(), "Dimension of thermal block is smaller than tolerance in Block1.\n" ), 0 );
 
 
         ThermalModel<> thermalModel3( Tolerance<>( 0.001, Angle<>::Deg( 0.1 ), 1.0 ), ThermalModel<>::AGGREGATE_BY_PLANE_AND_BLOCKS );
@@ -106,9 +109,10 @@ void TestThermalModels::TestThermalModel()
         thermalModel3.mBlocks.push_back( ThermalModel<>::BlockData() );
         thermalModel3.mBlocks.back().mBlockGeometry = blockGeometry;
 
-        TS_ASSERT_THROWS_EQUALS( thermalModel3.CreateDataByFusingBlocks( thermalElements, conductivityMatrix, dataVector, dirichletDataVector ),
-                                 std::runtime_error & e,
-                                 strcmp( e.what(), "Collision between thermal block Block2 and thermal block Block2." ), 0 );
+        TS_ASSERT_THROWS_EQUALS(
+         thermalModel3.CreateDataByFusingBlocks( thermalElements, conductivityMatrix, dataVector, dirichletDataVector ),
+         std::runtime_error & e,
+         strcmp( e.what(), "Collision between thermal block Block2 and thermal block Block2.\n" ), 0 );
     }
     //#endif
 

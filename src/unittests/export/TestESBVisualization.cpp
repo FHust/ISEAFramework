@@ -20,15 +20,19 @@ along with this program.  If not, see http://www.gnu.org/licenses/.
 _._._._._._._._._._._._._._._._._._._._._.*/
 #include "TestESBVisualization.h"
 
-#include "../../misc/matrixInclude.h"
+// STD
+#include <fstream>
 
-//BOOST
+// BOOST
 #include <boost/shared_ptr.hpp>
 #include <boost/scoped_ptr.hpp>
+
+// ETC
 
 #include "../../factory/electrical/electricalfactorybuilder.h"
 #include "../../factory/object/objectfactorybuilder.h"
 #include "../../factory/state/statefactorybuilder.h"
+
 
 #include "../../export/esbVisualizer.h"
 #include "../../xmlparser/tinyxml2/xmlparserimpl.h"
@@ -37,18 +41,19 @@ void TestESBVisualization::testXmlNetwork()
 {
 #ifndef __NO_STRING__
     boost::scoped_ptr< factory::Factory< ::state::Dgl_state, factory::ArgumentTypeState > > stateFactory( factory::BuildStateFactory() );
-    boost::scoped_ptr< factory::Factory<object::Object<double>, factory::ArgumentTypeObject< double > > > objectFactory( factory::BuildObjectFactory<double>( stateFactory.get() ) );
-    boost::scoped_ptr< factory::Factory<electrical::TwoPort< myMatrixType >, factory::ArgumentTypeElectrical > > electricalFactory( factory::BuildElectricalFactory< myMatrixType , double>( objectFactory.get(), stateFactory.get() ) );
+    boost::scoped_ptr< factory::Factory< object::Object< double >, factory::ArgumentTypeObject< double > > > objectFactory(
+     factory::BuildObjectFactory< double >( stateFactory.get() ) );
+    boost::scoped_ptr< factory::Factory< electrical::TwoPort< myMatrixType >, factory::ArgumentTypeElectrical > > electricalFactory(
+     factory::BuildElectricalFactory< myMatrixType, double >( objectFactory.get(), stateFactory.get() ) );
 
 
-    boost::scoped_ptr<xmlparser::XmlParser> parser(new xmlparser::tinyxml2::XmlParserImpl());
-    parser->ReadFromFile("./testconfig.xml");
+    boost::scoped_ptr< xmlparser::XmlParser > parser( new xmlparser::tinyxml2::XmlParserImpl() );
+    parser->ReadFromFile( "./testconfig.xml" );
 
-    boost::shared_ptr<xmlparser::XmlParameter> rootparam( parser->GetRoot()->GetElementChild("RootElement") );
-    boost::shared_ptr< electrical::TwoPort< myMatrixType > > rootport( electricalFactory->CreateInstance(rootparam) );
+    boost::shared_ptr< xmlparser::XmlParameter > rootparam( parser->GetRoot()->GetElementChild( "RootElement" ) );
+    boost::shared_ptr< electrical::TwoPort< myMatrixType > > rootport( electricalFactory->CreateInstance( rootparam ) );
 
-    visualizer::EsbVisualizer< myMatrixType > testVisualizer(rootport.get());
+    std::ofstream of( "esb.dot" );
+    visualizer::EsbVisualizer< myMatrixType > testVisualizer( rootport.get(), &of );
 #endif /* __NO_STRING__ */
 }
-
-

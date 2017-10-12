@@ -15,7 +15,7 @@ along with this program.  If not, see http://www.gnu.org/licenses/.
 /* -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.
 * File Name : paralleltwoport.h
 * Creation Date : 30-10-2012
-* Last Modified : Mi 24 Jun 2015 18:32:27 CEST
+* Last Modified : Di 08 Mär 2016 15:48:42 CET
 * Created By : Friedrich Hust
 _._._._._._._._._._._._._._._._._._._._._.*/
 #ifndef _PARALLELTWOPORT_
@@ -41,20 +41,19 @@ class ParallelTwoPort : public TwoPortWithChild< T >
     friend class ::TestTwoPortsWithChildren;
 
     public:
-    ParallelTwoPort( const bool observable = false );
+    explicit ParallelTwoPort( const bool observable = false,
+                              typename TwoPort< T >::DataType dataValues = typename TwoPort< T >::DataType(new ElectricalDataStruct< ScalarUnit >));
     virtual ~ParallelTwoPort(){};
 
     virtual void SetCurrent( const T current );                ///< Set current for all the children. For "n" branchee in the parallel circuit we need "n-1" Variables to represent the current
     virtual void SetCurrent( const ScalarUnit currentval );    ///< Sets the current value
 
-    virtual void AddChild( TwoPort< T >* newport );    ///< For every child above 1 Increase the count of parallel UIDs
-    virtual void AddChild( boost::shared_ptr< TwoPort< T > > newport );    ///< For every child above 1 Increase the count of parallel UIDs
-
     size_t GetParallelChildren() const;    ///< Count the children of this TwoPort
 
     virtual T* GetVoltage();
 
-    virtual void SetSystem( systm::StateSystemGroup< T >* stateSystemGroup );
+    virtual void SetSystem( systm::StateSystemGroup< T >* stateSystemGroup );    ///< For every child above 1 Increase the count of parallel UIDs
+
     virtual const char* GetName() const;
 
     private:
@@ -63,8 +62,8 @@ class ParallelTwoPort : public TwoPortWithChild< T >
 };
 
 template < typename T >
-ParallelTwoPort< T >::ParallelTwoPort( const bool observable )
-    : TwoPortWithChild< T >( observable )
+ParallelTwoPort< T >::ParallelTwoPort( const bool observable, typename TwoPort< T >::DataType dataValues )
+    : TwoPortWithChild< T >( observable, dataValues )
 {
 }
 
@@ -106,12 +105,6 @@ size_t ParallelTwoPort< T >::GetParallelChildren() const
 }
 
 template < typename T >
-void ParallelTwoPort< T >::AddChild( TwoPort< T >* newport )
-{
-    TwoPortWithChild< T >::AddChild( newport );
-}
-
-template < typename T >
 void ParallelTwoPort< T >::SetSystem( systm::StateSystemGroup< T >* stateSystemGroup )
 {
     for ( size_t i = 0; i < this->mChildren.size(); ++i )
@@ -121,12 +114,6 @@ void ParallelTwoPort< T >::SetSystem( systm::StateSystemGroup< T >* stateSystemG
         this->mChildren[i]->SetSystem( stateSystemGroup );
     }
     TwoPort< T >::SetSystem( stateSystemGroup );
-}
-
-template < typename T >
-void ParallelTwoPort< T >::AddChild( boost::shared_ptr< TwoPort< T > > newport )
-{
-    TwoPortWithChild< T >::AddChild( newport );
 }
 
 template < typename T >

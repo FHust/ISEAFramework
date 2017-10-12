@@ -21,9 +21,18 @@
         Aufteilungen in endliche Mengen müssen durch die elektrische Diskretisierung für jede Dimension teilbar sein (in %s).
     </DivisibleByElectricalDiscretization>
 
+
     <thermalStatesEqualElectricaldiscretization used="blocks/rectangular_blocks.h,hexagonal_cell_block.h,supercap.h,triangular_prism_block.h">
         Größe von thermalStates muss gleich der elektrischen Diskretisierung sein.
     </thermalStatesEqualElectricaldiscretization>
+
+    <NoArgumentForStateFactory>
+        No Argument passed to Statefactory. 
+    </NoArgumentForStateFactory>
+
+    <UndefinedStateType>
+        StateType unknown: %s
+    </UndefinedStateType>
 
     <LengthNegative used="blocks/hexagonal_cell_block.h,quadratic_cell_block.h,supercap.h">
         Länge muss größer als Null sein (in %s).
@@ -87,7 +96,7 @@
 
     <errorDifferenceRhoDeltavector used="blocks/elements/cylindric_element.h">
         Die Differenz zwischen mRho von startVector und deltaVector muss Null oder größer als Null sein.
-    </errorDifferenceRhoDeltavector> 
+    </errorDifferenceRhoDeltavector>
 
     <VerticesDoesNotFormArea used="blocks/elements/triangular_element.h">
         Die Vertices 1, 2 und 3 bilden eine Linie oder einen Punkt und nicht eine Fläche.
@@ -104,7 +113,7 @@
     <polygonOverlap  used="boundaryConditions/cooling_block.h">
         Eckpunkte bilden ein überlappendes Polygon.
     </polygonOverlap>
- 
+
     <preFactorNegative used="boundaryConditions/default_convection.h">
         preFactor muss größer als Null sein.
     </preFactorNegative>
@@ -183,7 +192,7 @@
 
     <SelfConductivityPositive used="thermal/thermal_model.h">
         Self conductivity ist nicht negativ.
-    </SelfConductivityPositive> 
+    </SelfConductivityPositive>
 
     <NegativeConductivity used="thermal/thermal_model.h">
         Negative conductivity wurde detektiert.
@@ -226,12 +235,16 @@
     </EmptyArea>
 
     <volumeNamesVecNonEqualVolumesVec used="thermal/thermal_visualizer.h">
-        Größe des Vektor volumeNames entspricht nicht der Größe vom Vektor volumes 
+        Größe des Vektor volumeNames entspricht nicht der Größe vom Vektor volumes
     </volumeNamesVecNonEqualVolumesVec>
 
     <EmptyVolume used="thermal/thermal_visualizer.h">
         Ein leeres Volumen ist vorhanden.
     </EmptyVolume>
+
+    <UnsupportedOperation>
+       Das genutzte Objekt MultiObj erlaubt diese Operation nicht.
+    </UnsupportedOperation>
 
     <error56 used="factory/check_positive_int.cpp">
         %s %s.
@@ -272,6 +285,16 @@
     <negativeValue  used="factory/electrical/electricalclasswrapper.h(for=NegativeValue)">
         Unerwarteter negativer Wert %d.
     </negativeValue>
+
+    <SphericalDiffusionCapacity used="factory/electrical/electricalclasswrapper.h">
+        Kugeldiffusion mit Kapazität wird zur Zeit noch nicht unterstüzt.
+    </SphericalDiffusionCapacity>
+
+    <tooLargeValue used="factory/electrical/electricalclasswrapper.h(for=NegativeValue)">
+        Wert ist zu groß %d. Maximum ist %d.
+    </tooLargeValue>
+
+
 
     <NoChildrenException used="factory/electrical/electricalclasswrapper.h(for=NoChildrenException)">
         Eine Instanz %s hat keine Kinder.

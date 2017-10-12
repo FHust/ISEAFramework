@@ -384,7 +384,7 @@ void TestSimulation::TestErrorHandlingAtConstruction()
         TS_ASSERT_EQUALS( strcmp( e.what(),
                                   "Collision between thermal block PouchBagThermal of class RectangularBlock at "
                                   "(0.000000,0.000000,0.000000) in xml-file line 211 and thermal block PouchBagThermal "
-                                  "of class RectangularBlock at (0.000000,0.040000,0.000000) in xml-file line 211." ),
+                                  "of class RectangularBlock at (0.000000,0.040000,0.000000) in xml-file line 211.\n" ),
                           0 );
         exceptionCaught = true;
     }

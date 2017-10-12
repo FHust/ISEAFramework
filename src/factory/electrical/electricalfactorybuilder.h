@@ -66,6 +66,15 @@ BuildElectricalFactory( Factory< object::Object< ValueT >, ArgumentTypeObject< V
     electricalFactory->AddWrapper( new ElectricalClassWrapper< MatrixT, electrical::WarburgCotanh >( electricalFactory, objectFactory,
                                                                                                      stateFactory ),
                                    "WarburgCotanh" );
+
+    electricalFactory->AddWrapper( new ElectricalClassWrapper< MatrixT, electrical::SphericalDiffusion >( electricalFactory, objectFactory,
+                                                                                                          stateFactory ),
+                                   "SphericalDiffusion" );
+    electricalFactory->AddWrapper( new ElectricalClassWrapper< MatrixT, electrical::Rmphn >( electricalFactory, objectFactory, stateFactory ),
+                                   "Rmphn" );
+
+
+    // UNSUPPORTED
     electricalFactory->AddWrapper( new ElectricalClassWrapper< MatrixT, electrical::ConstantPhaseElement >( electricalFactory, objectFactory,
                                                                                                             stateFactory ),
                                    "ConstantPhaseElement" );

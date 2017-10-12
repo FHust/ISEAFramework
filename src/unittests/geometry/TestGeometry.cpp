@@ -123,7 +123,7 @@ void TestGeometry::TestUnitVector()
     //#if defined(__EXCEPTIONS__)
     {
         TS_ASSERT_THROWS_EQUALS( UnitVector<> unitVector( 0.0, 0.0, 0.0 ), const std::runtime_error &e,
-                                 strcmp( e.what(), "(X,Y,Z) == (0,0,0), i.e. unit vector has no direction." ), 0 );
+                                 strcmp( e.what(), "(X,Y,Z) == (0,0,0), i.e. unit vector has no direction.\n" ), 0 );
     }
     //#endif
 
@@ -217,11 +217,11 @@ void TestGeometry::TestTolerance()
     //#if defined(__EXCEPTIONS__)
     {
         TS_ASSERT_THROWS_EQUALS( Tolerance<> tolerance( -0.1, Angle<>::Rad( 0.2 ), 0.3 ), const std::runtime_error &e,
-                                 strcmp( e.what(), "Length must be zero or bigger than zero." ), 0 );
+                                 strcmp( e.what(), "Length must be zero or bigger than zero.\n" ), 0 );
         TS_ASSERT_THROWS_EQUALS( Tolerance<> tolerance( 0.1, Angle<>::Rad( -0.2 ), 0.3 ), const std::runtime_error &e,
-                                 strcmp( e.what(), "Angle must be zero or bigger than zero." ), 0 );
+                                 strcmp( e.what(), "Angle must be zero or bigger than zero.\n" ), 0 );
         TS_ASSERT_THROWS_EQUALS( Tolerance<> tolerance( 0.1, Angle<>::Rad( 0.2 ), -0.3 ), const std::runtime_error &e,
-                                 strcmp( e.what(), "percentOfQuantity must be zero or bigger than zero." ), 0 );
+                                 strcmp( e.what(), "percentOfQuantity must be zero or bigger than zero.\n" ), 0 );
     }
     //#endif
 
