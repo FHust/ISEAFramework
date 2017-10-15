@@ -5,3 +5,9 @@ Version 2.2
 - Added plugin for paraview
 - Added support for multiobjects. Several Objects can now be used as if they were a single object
 - Added an executable for generating dot files
+
+Version 2.2.1
+===========
+- Fixed missing root port for observer
+- Added temperature to electrical matlab filter
+

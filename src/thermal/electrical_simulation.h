@@ -244,6 +244,8 @@ ElectricalSimulation< Matrix, T, matlabFilterOutput >::ElectricalSimulation(
     if ( cells )
     {
         *cells = electricalFactory->GetObjectsOfClass( "Cellelement" );
+		if ( ! mRootTwoPort->IsCellelement() )
+			cells->push_back(mRootTwoPort);
         mObserver.reset( CreateTwoPortObserver< std::vector< boost::shared_ptr< ::electrical::TwoPort< Matrix > > >,
                                                 Matrix, matlabFilterOutput >( *cells, rootXmlNode.get() ) );
     }

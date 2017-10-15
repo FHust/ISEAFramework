@@ -92,12 +92,13 @@ class MatlabFilterBase< T, electrical::TwoPort, PreparationType > : public Matla
 
     virtual ~MatlabFilterBase()
     {
-        if ( mCurrent.empty() || mVoltage.empty() || mPower.empty() || mSoc.empty() )
+        if ( mCurrent.empty() || mVoltage.empty() || mPower.empty() || mSoc.empty() || mTemperature.empty() )
             return;
         this->mMatFile << matlab::MatioData( mCurrent, "diga.daten.Strom" );
         this->mMatFile << matlab::MatioData( mVoltage, "diga.daten.Spannung" );
         this->mMatFile << matlab::MatioData( mPower, "diga.daten.ThermischLeistung" );
         this->mMatFile << matlab::MatioData( mSoc, "diga.daten.SOC" );
+        this->mMatFile << matlab::MatioData( mTemperature, "diga.daten.Temperatur" );
     }
 
     virtual void PrepareFilter( PreparationType &prePareData ) { InitializeVectors( prePareData.mNumberOfElements ); };
@@ -116,9 +117,13 @@ class MatlabFilterBase< T, electrical::TwoPort, PreparationType > : public Matla
             {
                 electrical::Cellelement< T > *cell = static_cast< electrical::Cellelement< T > * >( port );
                 mSoc[i].push_back( cell->GetSocStateValue() );
+                mTemperature[i].push_back( cell->GetThermalState()->GetValue() );
             }
             else
+            {
                 mSoc[i].push_back( -1.0 );
+                mTemperature[i].push_back( -274 );
+            }
         }
         MatlabFilter< T, electrical::TwoPort, PreparationType >::ProcessData( data, t );
     }
@@ -130,12 +135,14 @@ class MatlabFilterBase< T, electrical::TwoPort, PreparationType > : public Matla
         mVoltage.resize( vectorSizes );
         mSoc.resize( vectorSizes );
         mPower.resize( vectorSizes );
+        mTemperature.resize( vectorSizes );
     };
 
     std::vector< std::vector< double > > mCurrent;
     std::vector< std::vector< double > > mVoltage;
     std::vector< std::vector< double > > mSoc;
     std::vector< std::vector< double > > mPower;
+    std::vector< std::vector< double > > mTemperature;
 
     protected:
 };
