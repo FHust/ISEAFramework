@@ -35,12 +35,13 @@ _._._._._._._._._._._._._._._._._._._._._.*/
 namespace observer
 {
 
-template < typename T, template < typename > class TConcrete, typename ArgumentType = PreparationType >
+template < typename T, template < typename > class TConcrete, typename ArgumentType = PreparationType< T > >
 class StdoutFilter : public Filter< T, TConcrete, ArgumentType >
 {
     public:
     typedef Filter< T, TConcrete, ArgumentType > FilterT;
-    StdoutFilter(){};
+    StdoutFilter()
+        : FilterT(){};
     virtual ~StdoutFilter(){};
 
     virtual void ProcessData( const typename FilterT::Data_t& data, const double t )
@@ -66,22 +67,27 @@ class StdoutFilterBase : public StdoutFilter< T, TConcrete, ArgumentType >
 
 
 template < typename T >
-class StdoutFilterBase< T, electrical::TwoPort, PreparationType > : public StdoutFilter< T, electrical::TwoPort, PreparationType >
+class StdoutFilterBase< T, electrical::TwoPort, PreparationType< T > >
+ : public StdoutFilter< T, electrical::TwoPort, PreparationType< T > >
 {
+    private:
+    electrical::TwoPort< T >* mRootPort;
+
     public:
     StdoutFilterBase()
-        : StdoutFilter< T, electrical::TwoPort, PreparationType >(){};
+        : StdoutFilter< T, electrical::TwoPort, PreparationType< T > >(){};
 
-    typedef Filter< T, electrical::TwoPort, PreparationType > FilterT;
+    typedef Filter< T, electrical::TwoPort, PreparationType< T > > FilterT;
+
+    virtual void PrepareFilter( PreparationType< T >& prePareData ) { mRootPort = prePareData.mRootPort; }
 
     virtual void ProcessData( const typename FilterT::Data_t& data, const double t )
     {
         std::cout << "Time: " << t << "\n";
-        for ( size_t i = 0; i < data.size(); ++i )
-        {
-            std::cout << " Element " << i + 1;
 
-            electrical::TwoPort< T >* port = data[i];
+        if ( mRootPort )
+        {
+            electrical::TwoPort< T >* port = mRootPort;
             std::cout << " Voltage: " << port->GetVoltageValue();
             std::cout << " Current: " << port->GetCurrentValue();
             std::cout << " Power: " << port->GetPowerValue();
@@ -91,11 +97,31 @@ class StdoutFilterBase< T, electrical::TwoPort, PreparationType > : public Stdou
                 electrical::Cellelement< T >* cell = static_cast< electrical::Cellelement< T >* >( port );
                 std::cout << " Soc: " << cell->GetSocStateValue();
             }
-
             std::cout << "\n";
         }
+        else
+        {
 
-        std::cout << "\n\n\n";
+            for ( size_t i = 0; i < data.size(); ++i )
+            {
+                std::cout << " Element " << i + 1;
+
+                electrical::TwoPort< T >* port = data[i];
+                std::cout << " Voltage: " << port->GetVoltageValue();
+                std::cout << " Current: " << port->GetCurrentValue();
+                std::cout << " Power: " << port->GetPowerValue();
+
+                if ( port->IsCellelement() )
+                {
+                    electrical::Cellelement< T >* cell = static_cast< electrical::Cellelement< T >* >( port );
+                    std::cout << " Soc: " << cell->GetSocStateValue();
+                }
+
+                std::cout << "\n";
+            }
+        }
+
+        std::cout << std::endl;
 
         FilterT::ProcessData( data, t );
     }
@@ -103,7 +129,7 @@ class StdoutFilterBase< T, electrical::TwoPort, PreparationType > : public Stdou
 
 
 template < typename T >
-using StdoutFilterTwoPort = StdoutFilterBase< T, electrical::TwoPort, PreparationType >;
+using StdoutFilterTwoPort = StdoutFilterBase< T, electrical::TwoPort, PreparationType< T > >;
 
 
 } /* END NAMESPACE */

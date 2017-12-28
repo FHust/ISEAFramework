@@ -34,19 +34,20 @@ _._._._._._._._._._._._._._._._._._._._._.*/
 
 template < class containerType, typename matrixType, bool FilterTypeChoice >
 observer::TwoPortObserver< matrixType >*
-CreateTwoPortObserver( containerType& observablePorts, const xmlparser::XmlParameter* rootparam,
-                       real_T* voltageOutputVec = 0, real_T * currentOutputVec = 0, real_T * powerOutputVec = 0,
-                       real_T * socOutputVec = 0, real_T * socSurfaceOutputVec = 0 )
+CreateTwoPortObserver( containerType& observablePorts, const xmlparser::XmlParameter* rootparam, real_T* voltageOutputVec = 0,
+                       real_T * currentOutputVec = 0, real_T * powerOutputVec = 0, real_T * socOutputVec = 0,
+                       real_T * socSurfaceOutputVec = 0, electrical::TwoPort< matrixType > * twoPortRoot = 0 )
 {
 
-    std::auto_ptr< observer::TwoPortObserver< matrixType > > obs( new observer::TwoPortObserver< matrixType >( observablePorts ) );
+    std::auto_ptr< observer::TwoPortObserver< matrixType > > obs(
+     new observer::TwoPortObserver< matrixType >( observablePorts, twoPortRoot ) );
     observer::TwoPortObserver< matrixType >* obs_ptr = obs.get();
 
     if ( FilterTypeChoice )
     {
         if ( rootparam )
         {
-            boost::scoped_ptr< factory::Factory< observer::Filter< matrixType, electrical::TwoPort, observer::PreparationType >, factory::ArgumentTypeObserver > > fct(
+            boost::scoped_ptr< factory::Factory< observer::Filter< matrixType, electrical::TwoPort, observer::PreparationType< matrixType > >, factory::ArgumentTypeObserver > > fct(
              factory::BuildObserverFactoryTwoPort< matrixType, FilterTypeChoice >() );
 
             if ( rootparam->HasElement( "Observer" ) &&

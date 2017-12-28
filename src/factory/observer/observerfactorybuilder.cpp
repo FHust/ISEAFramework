@@ -34,7 +34,7 @@ void AddExternalFilterThermal< double, false >(
 
 template <>
 void AddExternalFilterTwoPort< myMatrixType, false >(
- Factory< observer::Filter< myMatrixType, electrical::TwoPort, observer::PreparationType >, ArgumentTypeObserver >* fct )
+ Factory< observer::Filter< myMatrixType, electrical::TwoPort, observer::PreparationType< myMatrixType > >, ArgumentTypeObserver >* fct )
 {
     UNUSED( fct );
 };

@@ -24,7 +24,7 @@ _._._._._._._._._._._._._._._._._._._._._.*/
 namespace observer
 {
 #ifndef __NO_STRING__
-template class BenchmarkFilter< myMatrixType, electrical::TwoPort, PreparationType >;
+template class BenchmarkFilter< myMatrixType, electrical::TwoPort, PreparationType< myMatrixType > >;
 template class BenchmarkFilter< double, thermal::ThermalElement, ThermalPreperation >;
 #endif /* __NO_STRING__ */
 } /*namespace*/

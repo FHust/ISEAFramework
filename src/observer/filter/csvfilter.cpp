@@ -25,7 +25,7 @@ _._._._._._._._._._._._._._._._._._._._._.*/
 namespace observer
 {
 #ifndef __NO_STRING__
-template class CsvFilterBase< myMatrixType, electrical::TwoPort, PreparationType >;
+template class CsvFilterBase< myMatrixType, electrical::TwoPort, PreparationType< myMatrixType > >;
 template class CsvFilterBase< double, thermal::ThermalElement, ThermalPreperation >;
 #endif /* __NO_STRING__ */
 } /*namespace*/

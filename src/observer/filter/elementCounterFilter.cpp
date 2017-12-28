@@ -24,7 +24,7 @@ _._._._._._._._._._._._._._._._._._._._._.*/
 namespace observer
 {
 #ifndef __NO_STRING__
-template class ElementCounterFilter< myMatrixType, electrical::TwoPort, PreparationType >;
+template class ElementCounterFilter< myMatrixType, electrical::TwoPort, PreparationType< myMatrixType > >;
 template class ElementCounterFilter< double, thermal::ThermalElement, ThermalPreperation >;
 #endif /* __NO_STRING__ */
 } /*namespace*/

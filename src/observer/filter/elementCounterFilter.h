@@ -37,7 +37,7 @@ _._._._._._._._._._._._._._._._._._._._._.*/
 namespace observer
 {
 /// ElementCounterFilterBase counts the number of observed elements
-template < typename T, template < typename > class TConcrete, typename ArgumentType = PreparationType >
+template < typename T, template < typename > class TConcrete, typename ArgumentType = PreparationType< T > >
 class ElementCounterFilterBase : public Filter< T, TConcrete, ArgumentType >
 {
     typedef Filter< T, TConcrete, ArgumentType > FilterT;
@@ -53,7 +53,7 @@ class ElementCounterFilterBase : public Filter< T, TConcrete, ArgumentType >
 };
 
 /// Empty class, needs to be filled by template class specialization
-template < typename T, template < typename > class TConcrete, typename ArgumentType = PreparationType >
+template < typename T, template < typename > class TConcrete, typename ArgumentType = PreparationType< T > >
 class ElementCounterFilter : public ElementCounterFilterBase< T, TConcrete, ArgumentType >
 {
 };
@@ -74,21 +74,24 @@ class ElementCounterFilter< T, thermal::ThermalElement, ThermalPreperation >
 
 /// Class specialization for electrical::TwoPort
 template < typename T >
-class ElementCounterFilter< T, electrical::TwoPort, PreparationType >
- : public ElementCounterFilterBase< T, electrical::TwoPort, PreparationType >
+class ElementCounterFilter< T, electrical::TwoPort, PreparationType< T > >
+ : public ElementCounterFilterBase< T, electrical::TwoPort, PreparationType< T > >
 {
-    typedef ElementCounterFilterBase< T, electrical::TwoPort, PreparationType > FilterT;
+    typedef ElementCounterFilterBase< T, electrical::TwoPort, PreparationType< T > > FilterT;
 
     public:
     ElementCounterFilter()
         : FilterT(){};
-    virtual void PrepareFilter( PreparationType& prepData ) { this->mObservedElements = prepData.mNumberOfElements; };
+    virtual void PrepareFilter( PreparationType< T >& prepData )
+    {
+        this->mObservedElements = prepData.mNumberOfElements;
+    };
     virtual ~ElementCounterFilter(){};
 };
 
 
 template < typename T >
-using ElementCounterFilterTwoPort = ElementCounterFilter< T, electrical::TwoPort, PreparationType >;
+using ElementCounterFilterTwoPort = ElementCounterFilter< T, electrical::TwoPort, PreparationType< T > >;
 
 template < typename T >
 using ElementCounterFilterThermal = ElementCounterFilter< T, thermal::ThermalElement, ThermalPreperation >;

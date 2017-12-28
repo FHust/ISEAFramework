@@ -24,9 +24,9 @@ _._._._._._._._._._._._._._._._._._._._._.*/
 #include "../../../xmlparser/tinyxml2/xmlparserimpl.h"
 
 using namespace factory;
-typedef Factory< observer::Filter< myMatrixType, electrical::TwoPort, observer::PreparationType >, ArgumentTypeObserver > fac_ob;
+typedef Factory< observer::Filter< myMatrixType, electrical::TwoPort, observer::PreparationType< myMatrixType > >, ArgumentTypeObserver > fac_ob;
 
-typedef observer::Filter< myMatrixType, electrical::TwoPort, observer::PreparationType > FilterT;
+typedef observer::Filter< myMatrixType, electrical::TwoPort, observer::PreparationType< myMatrixType > > FilterT;
 
 void TestObserverFactories::TestObserverFactoryCSVCreation()
 {

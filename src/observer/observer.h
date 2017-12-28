@@ -35,7 +35,7 @@ namespace observer
 {
 
 /// This is the Generic observer class and should be specialized for further use.
-template < typename T, template < typename > class TConcrete, typename ArgumentType = PreparationType >
+template < typename T, template < typename > class TConcrete, typename ArgumentType = PreparationType< T > >
 class Observer
 {
     public:

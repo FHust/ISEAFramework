@@ -95,7 +95,7 @@ int main( int argc, char *argv[] )
     }
 
     // Parameter 3
-    double stepTime = 5.0;
+    double stepTime = 0.5;
 
     boost::scoped_ptr< simulation::ElectricalSimulation< myMatrixType, double > > electricalSimulation;
 

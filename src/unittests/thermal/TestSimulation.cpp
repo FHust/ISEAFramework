@@ -19,7 +19,6 @@ along with this program.  If not, see http://www.gnu.org/licenses/.
 #include "../../misc/StrCont.h"
 #include "../../misc/matrixInclude.h"
 #include "../../thermal/electrical_simulation.h"
-#include "../../thermal/block_observer.h"
 #include "exception_tester.h"
 #include <fstream>
 
@@ -34,7 +33,6 @@ void TestSimulation::RunScenario( double electricalStopCriterion, double thermal
     boost::scoped_ptr< simulation::ElectricalSimulation< myMatrixType, double > > electricalSimulation;
     boost::scoped_ptr< simulation::ThermalSimulation< myMatrixType, double, true > > thermalSimulation;
     boost::scoped_ptr< observer::TwoPortObserver< myMatrixType > > electricalObserver;
-    boost::scoped_ptr< thermal::BlockObserver< myMatrixType, double > > blockObserver;
     boost::scoped_ptr< observer::ThermalObserver< double > > thermalVisualizer;
 
     try
@@ -57,7 +55,6 @@ void TestSimulation::RunScenario( double electricalStopCriterion, double thermal
          new simulation::ThermalSimulation< myMatrixType, double, true >( rootXmlNode, 10.0, 100.0, thermalStopCriterion,
                                                                           &thermalVisualizer, &electricalSimulation->mThermalStates,
                                                                           &thermalStatesOfCellBlocks ) );
-        blockObserver.reset( new thermal::BlockObserver< myMatrixType, double >( cells, thermalStatesOfCellBlocks ) );
     }
     catch ( std::exception &e )
     {
@@ -102,12 +99,10 @@ void TestSimulation::RunScenario( double electricalStopCriterion, double thermal
 
     thermalSimulation->UpdateAllThermalStatesTemperatures();
     electricalSimulation->FinshStep();
-    blockObserver->Initialize( electricalSimulation->mTime );
 
     electricalSimulation->mRootTwoPort->SetCurrent( -2.0 );
     electricalSimulation->mTime = 10.0;
     electricalSimulation->UpdateSystem();
-    ( *blockObserver )( electricalSimulation->mTime );
 #else
     // Simulate
     boost::numeric::odeint::result_of::make_controlled< boost::numeric::odeint::runge_kutta_cash_karp54< vector< double > > >::type stepperThermal =
@@ -141,9 +136,7 @@ void TestSimulation::RunScenario( double electricalStopCriterion, double thermal
 
         // Electrical
         electricalSimulation->UpdateSystem();
-        // Initialize block Observer
         electricalSimulation->UpdateSystemValues();
-        blockObserver->Initialize( electricalSimulation->mTime );
         electricalSimulation->ResetAllThermalStatesPowerDissipation();
         electricalSimulation->InitializeStopCriterion();
         while ( electricalSimulation->CheckLoopConditionAndSetDeltaTime( currentChangeTime ) )
@@ -210,7 +203,6 @@ void TestSimulation::RunScenario( double electricalStopCriterion, double thermal
 
         // Finish step
         electricalSimulation->FinshStep();
-        ( *blockObserver )( electricalSimulation->mTime );
     }
 
 
@@ -354,7 +346,6 @@ void TestSimulation::TestErrorHandlingAtConstruction()
     boost::scoped_ptr< simulation::ElectricalSimulation< myMatrixType, double > > electricalSimulation;
     boost::scoped_ptr< simulation::ThermalSimulation< myMatrixType, double, true > > thermalSimulation;
     boost::scoped_ptr< observer::TwoPortObserver< myMatrixType > > electricalObserver;
-    boost::scoped_ptr< thermal::BlockObserver< myMatrixType, double > > blockObserver;
     boost::scoped_ptr< observer::ThermalObserver< double > > thermalVisualizer;
 
     try
@@ -377,7 +368,6 @@ void TestSimulation::TestErrorHandlingAtConstruction()
          new simulation::ThermalSimulation< myMatrixType, double, true >( rootXmlNode, 10.0, 100.0, 5.0, &thermalVisualizer,
                                                                           &electricalSimulation->mThermalStates,
                                                                           &thermalStatesOfCellBlocks ) );
-        blockObserver.reset( new thermal::BlockObserver< myMatrixType, double >( cells, thermalStatesOfCellBlocks ) );
     }
     catch ( std::runtime_error &e )
     {

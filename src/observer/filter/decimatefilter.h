@@ -32,7 +32,7 @@ namespace observer
 {
 
 /// Decimates the incoming data with a least stepsize of timeDifference
-template < typename T, template < typename > class TConcrete, typename ArgumentType = PreparationType >
+template < typename T, template < typename > class TConcrete, typename ArgumentType = PreparationType< T > >
 class DecimateFilter : public Filter< T, TConcrete, ArgumentType >
 {
     public:
@@ -68,7 +68,7 @@ class DecimateFilterBase : public DecimateFilter< T, TConcrete, ArgumentType >
 };
 
 template < typename T >
-using DecimateFilterTwoPort = DecimateFilterBase< T, electrical::TwoPort, PreparationType >;
+using DecimateFilterTwoPort = DecimateFilterBase< T, electrical::TwoPort, PreparationType< T > >;
 
 template < typename T >
 using DecimateFilterThermal = DecimateFilterBase< T, thermal::ThermalElement, ThermalPreperation >;

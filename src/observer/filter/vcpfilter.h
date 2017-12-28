@@ -33,10 +33,10 @@ namespace observer
 {
 /// DESCRIPTION
 template < typename T = myMatrixType >
-class VCPFilter : public Filter< T, electrical::TwoPort, PreparationType >
+class VCPFilter : public Filter< T, electrical::TwoPort, PreparationType< T > >
 {
     public:
-    typedef Filter< T, electrical::TwoPort, PreparationType > FilterT;
+    typedef Filter< T, electrical::TwoPort, PreparationType< T > > FilterT;
     VCPFilter( real_T *voltageArray = 0, real_T *currentArray = 0, real_T *powerArray = 0, real_T *socArray = 0,
                real_T *surfaceSoc = 0 );
     virtual ~VCPFilter(){};

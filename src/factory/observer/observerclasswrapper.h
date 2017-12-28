@@ -57,11 +57,12 @@ class ObserverClassWrapperBase
 };
 
 template < typename MatrixT, template < typename > class FilterType >
-class ObserverClassWrapperTwoPort : public ObserverClassWrapperBase< MatrixT, electrical::TwoPort, observer::PreparationType >
+class ObserverClassWrapperTwoPort
+ : public ObserverClassWrapperBase< MatrixT, electrical::TwoPort, observer::PreparationType< MatrixT > >
 {
     public:
     ObserverClassWrapperTwoPort()
-        : ObserverClassWrapperBase< MatrixT, electrical::TwoPort, observer::PreparationType >(){};
+        : ObserverClassWrapperBase< MatrixT, electrical::TwoPort, observer::PreparationType< MatrixT > >(){};
 };
 
 template < typename MatrixT, template < typename > class FilterType >
@@ -77,18 +78,18 @@ class ObserverClassWrapperThermal
 /// Classwrapper for observer::DecimateFilter
 template < typename MatrixT >
 class ObserverClassWrapperTwoPort< MatrixT, observer::DecimateFilterTwoPort >
- : public ObserverClassWrapperBase< MatrixT, electrical::TwoPort, observer::PreparationType >
+ : public ObserverClassWrapperBase< MatrixT, electrical::TwoPort, observer::PreparationType< MatrixT > >
 {
     public:
     ObserverClassWrapperTwoPort()
-        : ObserverClassWrapperBase< MatrixT, electrical::TwoPort, observer::PreparationType >(){};
+        : ObserverClassWrapperBase< MatrixT, electrical::TwoPort, observer::PreparationType< MatrixT > >(){};
 
-    virtual boost::shared_ptr< observer::Filter< MatrixT, electrical::TwoPort, observer::PreparationType > >
+    virtual boost::shared_ptr< observer::Filter< MatrixT, electrical::TwoPort, observer::PreparationType< MatrixT > > >
     CreateInstance( const xmlparser::XmlParameter* param, const ArgumentTypeObserver* arg = 0 )
     {
         UNUSED( arg );
 
-        return boost::shared_ptr< observer::Filter< MatrixT, electrical::TwoPort, observer::PreparationType > >(
+        return boost::shared_ptr< observer::Filter< MatrixT, electrical::TwoPort, observer::PreparationType< MatrixT > > >(
          new observer::DecimateFilterTwoPort< MatrixT >( param->GetElementDoubleValue( "TimeDelay" ) ) );
     }
 };
@@ -115,13 +116,13 @@ class ObserverClassWrapperThermal< MatrixT, observer::DecimateFilterThermal >
 /// Classwrapper for observer::CsvFilter
 template < typename MatrixT >
 class ObserverClassWrapperTwoPort< MatrixT, observer::CsvFilterTwoPort >
- : public ObserverClassWrapperBase< MatrixT, electrical::TwoPort, observer::PreparationType >
+ : public ObserverClassWrapperBase< MatrixT, electrical::TwoPort, observer::PreparationType< MatrixT > >
 {
     public:
     ObserverClassWrapperTwoPort()
-        : ObserverClassWrapperBase< MatrixT, electrical::TwoPort, observer::PreparationType >(){};
+        : ObserverClassWrapperBase< MatrixT, electrical::TwoPort, observer::PreparationType< MatrixT > >(){};
 
-    virtual boost::shared_ptr< observer::Filter< MatrixT, electrical::TwoPort, observer::PreparationType > >
+    virtual boost::shared_ptr< observer::Filter< MatrixT, electrical::TwoPort, observer::PreparationType< MatrixT > > >
     CreateInstance( const xmlparser::XmlParameter* param, const ArgumentTypeObserver* arg = 0 )
     {
         UNUSED( arg );
@@ -129,8 +130,8 @@ class ObserverClassWrapperTwoPort< MatrixT, observer::CsvFilterTwoPort >
         if ( param->HasElement( "PrintHeader" ) )
             printHeader = param->GetElementBoolValue( "PrintHeader" );
 
-        return boost::shared_ptr< observer::Filter< MatrixT, electrical::TwoPort, observer::PreparationType > >(
-         new observer::CsvFilterTwoPort< MatrixT >( param->GetElementStringValue( "Filename" ), printHeader ) );
+        return boost::shared_ptr< observer::Filter< MatrixT, electrical::TwoPort, observer::PreparationType< MatrixT > > >(
+         new observer::CsvFilterTwoPort< MatrixT >( param->GetElementStringValue( "filename" ), printHeader ) );
     }
 };
 
@@ -188,18 +189,18 @@ class ObserverClassWrapperThermal< MatrixT, observer::ElementCounterFilterTherma
 /// Classwrapper for observer::ElementCounterFilterTwoPort
 template < typename MatrixT >
 class ObserverClassWrapperTwoPort< MatrixT, observer::ElementCounterFilterTwoPort >
- : public ObserverClassWrapperBase< MatrixT, electrical::TwoPort, observer::PreparationType >
+ : public ObserverClassWrapperBase< MatrixT, electrical::TwoPort, observer::PreparationType< MatrixT > >
 {
     public:
     ObserverClassWrapperTwoPort()
-        : ObserverClassWrapperBase< MatrixT, electrical::TwoPort, observer::PreparationType >(){};
+        : ObserverClassWrapperBase< MatrixT, electrical::TwoPort, observer::PreparationType< MatrixT > >(){};
 
-    virtual boost::shared_ptr< observer::Filter< MatrixT, electrical::TwoPort, observer::PreparationType > >
+    virtual boost::shared_ptr< observer::Filter< MatrixT, electrical::TwoPort, observer::PreparationType< MatrixT > > >
     CreateInstance( const xmlparser::XmlParameter* param, const ArgumentTypeObserver* arg = 0 )
     {
         UNUSED( param );
         UNUSED( arg );
-        return boost::shared_ptr< observer::Filter< MatrixT, electrical::TwoPort, observer::PreparationType > >(
+        return boost::shared_ptr< observer::Filter< MatrixT, electrical::TwoPort, observer::PreparationType< MatrixT > > >(
          new observer::ElementCounterFilterTwoPort< MatrixT >() );
     }
 };
@@ -208,18 +209,18 @@ class ObserverClassWrapperTwoPort< MatrixT, observer::ElementCounterFilterTwoPor
 /// Classwrapper for observer::BenchmarkFilterTwoPort
 template < typename MatrixT >
 class ObserverClassWrapperTwoPort< MatrixT, observer::BenchmarkFilterTwoPort >
- : public ObserverClassWrapperBase< MatrixT, electrical::TwoPort, observer::PreparationType >
+ : public ObserverClassWrapperBase< MatrixT, electrical::TwoPort, observer::PreparationType< MatrixT > >
 {
     public:
     ObserverClassWrapperTwoPort()
-        : ObserverClassWrapperBase< MatrixT, electrical::TwoPort, observer::PreparationType >(){};
+        : ObserverClassWrapperBase< MatrixT, electrical::TwoPort, observer::PreparationType< MatrixT > >(){};
 
-    virtual boost::shared_ptr< observer::Filter< MatrixT, electrical::TwoPort, observer::PreparationType > >
+    virtual boost::shared_ptr< observer::Filter< MatrixT, electrical::TwoPort, observer::PreparationType< MatrixT > > >
     CreateInstance( const xmlparser::XmlParameter* param, const ArgumentTypeObserver* arg = 0 )
     {
         UNUSED( param );
         UNUSED( arg );
-        return boost::shared_ptr< observer::Filter< MatrixT, electrical::TwoPort, observer::PreparationType > >(
+        return boost::shared_ptr< observer::Filter< MatrixT, electrical::TwoPort, observer::PreparationType< MatrixT > > >(
          new observer::BenchmarkFilterTwoPort< MatrixT >() );
     }
 };
@@ -247,18 +248,18 @@ class ObserverClassWrapperThermal< MatrixT, observer::BenchmarkFilterThermal >
 /// Classwrapper for observer::StdoutFilter
 template < typename MatrixT >
 class ObserverClassWrapperTwoPort< MatrixT, observer::StdoutFilterTwoPort >
- : public ObserverClassWrapperBase< MatrixT, electrical::TwoPort, observer::PreparationType >
+ : public ObserverClassWrapperBase< MatrixT, electrical::TwoPort, observer::PreparationType< MatrixT > >
 {
     public:
     ObserverClassWrapperTwoPort()
-        : ObserverClassWrapperBase< MatrixT, electrical::TwoPort, observer::PreparationType >(){};
+        : ObserverClassWrapperBase< MatrixT, electrical::TwoPort, observer::PreparationType< MatrixT > >(){};
 
-    virtual boost::shared_ptr< observer::Filter< MatrixT, electrical::TwoPort, observer::PreparationType > >
+    virtual boost::shared_ptr< observer::Filter< MatrixT, electrical::TwoPort, observer::PreparationType< MatrixT > > >
     CreateInstance( const xmlparser::XmlParameter* param, const ArgumentTypeObserver* arg = 0 )
     {
         UNUSED( param );
         UNUSED( arg );
-        return boost::shared_ptr< observer::Filter< MatrixT, electrical::TwoPort, observer::PreparationType > >(
+        return boost::shared_ptr< observer::Filter< MatrixT, electrical::TwoPort, observer::PreparationType< MatrixT > > >(
          new observer::StdoutFilterTwoPort< MatrixT >() );
     }
 };
@@ -266,18 +267,18 @@ class ObserverClassWrapperTwoPort< MatrixT, observer::StdoutFilterTwoPort >
 /// Classwrapper for observer::MatlabFilter
 template < typename MatrixT >
 class ObserverClassWrapperTwoPort< MatrixT, observer::MatlabFilterTwoPort >
- : public ObserverClassWrapperBase< MatrixT, electrical::TwoPort, observer::PreparationType >
+ : public ObserverClassWrapperBase< MatrixT, electrical::TwoPort, observer::PreparationType< MatrixT > >
 {
     public:
     ObserverClassWrapperTwoPort()
-        : ObserverClassWrapperBase< MatrixT, electrical::TwoPort, observer::PreparationType >(){};
+        : ObserverClassWrapperBase< MatrixT, electrical::TwoPort, observer::PreparationType< MatrixT > >(){};
 
-    virtual boost::shared_ptr< observer::Filter< MatrixT, electrical::TwoPort, observer::PreparationType > >
+    virtual boost::shared_ptr< observer::Filter< MatrixT, electrical::TwoPort, observer::PreparationType< MatrixT > > >
     CreateInstance( const xmlparser::XmlParameter* param, const ArgumentTypeObserver* arg = 0 )
     {
         UNUSED( arg );
 
-        return boost::shared_ptr< observer::Filter< MatrixT, electrical::TwoPort, observer::PreparationType > >(
+        return boost::shared_ptr< observer::Filter< MatrixT, electrical::TwoPort, observer::PreparationType< MatrixT > > >(
          new observer::MatlabFilterTwoPort< MatrixT >( param->GetElementStringValue( "Filename" ) ) );
     }
 };

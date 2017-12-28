@@ -23,6 +23,6 @@ _._._._._._._._._._._._._._._._._._._._._.*/
 namespace observer
 {
 #ifndef __NO_STRING__
-template class StdoutFilterBase< myMatrixType, electrical::TwoPort, PreparationType >;
+template class StdoutFilterBase< myMatrixType, electrical::TwoPort, PreparationType< myMatrixType > >;
 #endif
 }

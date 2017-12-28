@@ -5,9 +5,9 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/")
 
 CMAKE_POLICY(SET CMP0009 NEW)
 set (ISEAFrameVERSION_MAJOR 2)
-set (ISEAFrameVERSION_MINOR 2)
-set (ISEAFramePATCH_LEVEL 1)
-set (ISEAFrameNAME "PublicRelease")
+set (ISEAFrameVERSION_MINOR 3)
+set (ISEAFramePATCH_LEVEL 0)
+set (ISEAFrameNAME "Tuwat")
 
 option (USE_DEBUG_GDB "Create everything with debug symbols" OFF)
 option (USE_UNITTEST "Create unittests for everything" OFF)

@@ -19,7 +19,6 @@ along with this program.  If not, see http://www.gnu.org/licenses/.
 #include "../src/misc/matrixInclude.h"
 #include "../src/misc/StrCont.h"
 #include "../src/thermal/electrical_simulation.h"
-#include "../src/thermal/block_observer.h"
 #include "../src/thermal/thermal_simulation.h"
 #include "../src/xmlparser/tinyxml2/xmlparserimpl.h"
 
@@ -115,7 +114,6 @@ int main( int argc, char *argv[] )
 
     boost::scoped_ptr< simulation::ElectricalSimulation< myMatrixType, double > > electricalSimulation;
     boost::scoped_ptr< simulation::ThermalSimulation< myMatrixType, double, true > > thermalSimulation;
-    boost::scoped_ptr< thermal::BlockObserver< myMatrixType, double > > blockObserver;
     boost::scoped_ptr< observer::ThermalObserver< double > > thermalVisualizer;
 
     try
@@ -131,7 +129,6 @@ int main( int argc, char *argv[] )
         thermalSimulation.reset( new simulation::ThermalSimulation< myMatrixType, double, true >(
          rootXmlNode, stepTime, currentProfile->GetMaxTime(), thermalStateStopCriterion, &thermalVisualizer,
          &electricalSimulation->mThermalStates, &thermalStatesOfCellBlocks ) );
-        blockObserver.reset( new thermal::BlockObserver< myMatrixType, double >( cells, thermalStatesOfCellBlocks ) );
 
         parser.reset();
     }
@@ -206,7 +203,6 @@ int main( int argc, char *argv[] )
 
 
         // Initialize block Observer
-        blockObserver->Initialize( electricalSimulation->mTime );
         electricalSimulation->ResetAllThermalStatesPowerDissipation();
         electricalSimulation->InitializeStopCriterion();
         while ( electricalSimulation->CheckLoopConditionAndSetDeltaTime( currentChangeTime ) &&
@@ -290,7 +286,6 @@ int main( int argc, char *argv[] )
 
         // Finish step
         electricalSimulation->FinshStep();
-        ( *blockObserver )( electricalSimulation->mTime );
     }
 
     // Sucessful exit

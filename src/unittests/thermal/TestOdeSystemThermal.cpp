@@ -35,7 +35,6 @@ along with this program.  If not, see http://www.gnu.org/licenses/.
 #include "../../thermal/thermal_model.h"
 #include "../../observer/thermal_observer.h"
 #include "../../observer/filter/csvfilter.h"
-#include "../../thermal/block_observer.h"
 #include "exception_tester.h"
 
 

@@ -46,7 +46,8 @@ void AddExternalFilterThermal< double, false >(
 
 /// Add MatlabFilter as default
 template < typename MatrixT, bool matlabSupport >
-void AddExternalFilterTwoPort( Factory< observer::Filter< MatrixT, electrical::TwoPort, observer::PreparationType >, ArgumentTypeObserver >* fct )
+void AddExternalFilterTwoPort(
+ Factory< observer::Filter< MatrixT, electrical::TwoPort, observer::PreparationType< MatrixT > >, ArgumentTypeObserver >* fct )
 {
     fct->AddWrapper( new ObserverClassWrapperTwoPort< MatrixT, observer::MatlabFilterTwoPort >, "MatlabFilter" );
     fct->AddWrapper( new ObserverClassWrapperTwoPort< MatrixT, observer::BenchmarkFilterTwoPort >, "BenchmarkFilter" );
@@ -57,15 +58,15 @@ void AddExternalFilterTwoPort( Factory< observer::Filter< MatrixT, electrical::T
 /// Workaround function for matlab S-Functions
 template <>
 void AddExternalFilterTwoPort< myMatrixType, false >(
- Factory< observer::Filter< myMatrixType, electrical::TwoPort, observer::PreparationType >, ArgumentTypeObserver >* fct );
+ Factory< observer::Filter< myMatrixType, electrical::TwoPort, observer::PreparationType< myMatrixType > >, ArgumentTypeObserver >* fct );
 
 /// Builds a Factory for ::observer::filter
 template < typename MatrixT, bool matlabSupport >
-Factory< observer::Filter< MatrixT, electrical::TwoPort, observer::PreparationType >, ArgumentTypeObserver >*
+Factory< observer::Filter< MatrixT, electrical::TwoPort, observer::PreparationType< MatrixT > >, ArgumentTypeObserver >*
 BuildObserverFactoryTwoPort()
 {
-    Factory< observer::Filter< MatrixT, electrical::TwoPort, observer::PreparationType >, ArgumentTypeObserver >* observerFactory =
-     new Factory< observer::Filter< MatrixT, electrical::TwoPort, observer::PreparationType >, ArgumentTypeObserver >();
+    Factory< observer::Filter< MatrixT, electrical::TwoPort, observer::PreparationType< MatrixT > >, ArgumentTypeObserver >* observerFactory =
+     new Factory< observer::Filter< MatrixT, electrical::TwoPort, observer::PreparationType< MatrixT > >, ArgumentTypeObserver >();
 
     observerFactory->AddWrapper( new ObserverClassWrapperTwoPort< MatrixT, observer::CsvFilterTwoPort >, "CSVFilter" );
     observerFactory->AddWrapper( new ObserverClassWrapperTwoPort< MatrixT, observer::StdoutFilterTwoPort >,

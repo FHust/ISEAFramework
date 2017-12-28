@@ -22,7 +22,6 @@ _._._._._._._._._._._._._._._._._._._._._.*/
 #include "../src/misc/matrixInclude.h"
 #include "../src/thermal/thermal_simulation.h"
 #include "../src/xmlparser/tinyxml2/xmlparserimpl.h"
-#include "../src/thermal/block_observer.h"
 #include "../src/time_series/time_series.h"
 #include "../src/time_series/eval_linear_interpolation.h"
 #include "../src/container/matio_file.h"
@@ -102,7 +101,6 @@ int main( int argc, char *argv[] )
     boost::scoped_ptr< simulation::ThermalSimulation< myMatrixType, double, true > > thermalSimulation;
     boost::shared_ptr< xmlparser::XmlParameter > rootXmlNode = parser->GetRoot();
     boost::scoped_ptr< observer::ThermalObserver< double > > thermalVisualizer;
-    boost::scoped_ptr< thermal::BlockObserver< myMatrixType, double > > blockObserver;
 
     try
     {

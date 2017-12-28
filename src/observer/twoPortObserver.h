@@ -36,18 +36,20 @@ _._._._._._._._._._._._._._._._._._._._._.*/
 namespace observer
 {
 template < typename T = myMatrixType >
-class TwoPortObserver : public Observer< T, electrical::TwoPort, PreparationType >
+class TwoPortObserver : public Observer< T, electrical::TwoPort, PreparationType< T > >
 {
 
     public:
-    typedef Filter< T, electrical::TwoPort, PreparationType > FilterT;
+    typedef Filter< T, electrical::TwoPort, PreparationType< T > > FilterT;
 
-    TwoPortObserver( boost::shared_ptr< electrical::TwoPort< T > > rootPort );
-    TwoPortObserver( std::vector< boost::shared_ptr< electrical::TwoPort< T > > >& observableTwoPorts );
+    TwoPortObserver( boost::shared_ptr< electrical::TwoPort< T > > rootPort, electrical::TwoPort< T >* twoPortRoot = 0 );
+    TwoPortObserver( std::vector< boost::shared_ptr< electrical::TwoPort< T > > >& observableTwoPorts,
+                     electrical::TwoPort< T >* twoPortRoot = 0 );
+
     ~TwoPortObserver(){};
     virtual void operator()( double t );
 
-    virtual void PrepareFilter( Filter< T, electrical::TwoPort, PreparationType >* filt );
+    virtual void PrepareFilter( Filter< T, electrical::TwoPort, PreparationType< T > >* filt );
 
     typename FilterT::Data_t& GetObservedTwoPortsPtr() { return mObservedTwoPortsPtr; };
 
@@ -55,6 +57,7 @@ class TwoPortObserver : public Observer< T, electrical::TwoPort, PreparationType
 
 
     private:
+    electrical::TwoPort< T >* mRootPort;
     std::vector< boost::shared_ptr< electrical::TwoPort< T > > > mObservableTwoPorts;
     typedef typename std::vector< electrical::TwoPort< T >* > ProcessDataT;
 
@@ -66,15 +69,19 @@ class TwoPortObserver : public Observer< T, electrical::TwoPort, PreparationType
 };
 
 template < typename T >
-TwoPortObserver< T >::TwoPortObserver( boost::shared_ptr< electrical::TwoPort< T > > rootPort )
-    : Observer< T, electrical::TwoPort, PreparationType >()
+TwoPortObserver< T >::TwoPortObserver( boost::shared_ptr< electrical::TwoPort< T > > rootPort,
+                                       electrical::TwoPort< T >* /*  twoPortRoot */ )    // ignore
+ : Observer< T, electrical::TwoPort, PreparationType< T > >(),
+   mRootPort( rootPort.get() )
 {
     RegisterObservableTwoPort( rootPort );
 }
 
 template < typename T >
-TwoPortObserver< T >::TwoPortObserver( std::vector< boost::shared_ptr< electrical::TwoPort< T > > >& observableTwoPorts )
-    : Observer< T, electrical::TwoPort, PreparationType >()
+TwoPortObserver< T >::TwoPortObserver( std::vector< boost::shared_ptr< electrical::TwoPort< T > > >& observableTwoPorts,
+                                       electrical::TwoPort< T >* twoPortRoot )
+    : Observer< T, electrical::TwoPort, PreparationType< T > >()
+    , mRootPort( twoPortRoot )
     , mObservableTwoPorts( observableTwoPorts )
 {
     mObservedTwoPortsPtr.resize( mObservableTwoPorts.size() );
@@ -86,9 +93,9 @@ TwoPortObserver< T >::TwoPortObserver( std::vector< boost::shared_ptr< electrica
 
 
 template < typename T >
-void TwoPortObserver< T >::PrepareFilter( Filter< T, electrical::TwoPort, PreparationType >* filt )
+void TwoPortObserver< T >::PrepareFilter( Filter< T, electrical::TwoPort, PreparationType< T > >* filt )
 {
-    PreparationType prepType( mObservableTwoPorts.size() );
+    PreparationType< T > prepType( mObservableTwoPorts.size(), mRootPort );
     filt->PrepareFilter( prepType );
 }
 

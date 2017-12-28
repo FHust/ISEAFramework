@@ -15,7 +15,7 @@ along with this program.  If not, see http://www.gnu.org/licenses/.
 /* -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.
 * File Name : filter.h
 * Creation Date : 18-11-2012
-* Last Modified : Mi 02 Sep 2015 18:44:01 CEST
+* Last Modified : Di 13 Jun 2017 19:02:35 CEST
 * Created By : Friedrich Hust
 _._._._._._._._._._._._._._._._._._._._._.*/
 #ifndef _FILTER_
@@ -33,15 +33,24 @@ _._._._._._._._._._._._._._._._._._._._._.*/
 #include "../../misc/macros.h"
 #include "../../geometry/cartesian.h"
 
+namespace electrical
+{
+template < class T >
+class TwoPort;
+}
+
 namespace observer
 {
+template < typename T = myMatrixType >
 struct PreparationType
 {
     public:
-    PreparationType( const size_t numberOfElements )
-        : mNumberOfElements( numberOfElements ){};
+    PreparationType( const size_t numberOfElements, electrical::TwoPort< T > *rootPort = 0 )
+        : mNumberOfElements( numberOfElements )
+        , mRootPort( rootPort ){};
 
     const size_t mNumberOfElements;
+    electrical::TwoPort< T > *mRootPort;
 };
 
 struct ThermalPreperation
@@ -59,6 +68,7 @@ struct ThermalPreperation
     std::vector< misc::StrCont > &mVolumeNames;
     std::vector< geometry::Cartesian< double > > &mVertices;
 };
+
 
 /// Base Class for filtering the results of the observer
 

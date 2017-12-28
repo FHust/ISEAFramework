@@ -15,7 +15,7 @@ along with this program.  If not, see http://www.gnu.org/licenses/.
 /* -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.
 * File Name :
 * Creation Date : 18-11-2012
-* Last Modified : Do 22 Dez 2016 14:17:43 CET
+* Last Modified : Do 15 Jun 2017 14:19:41 CEST
 * Created By : Friedrich Hust
 _._._._._._._._._._._._._._._._._._._._._.*/
 #ifndef _MAT_FILENAME_
@@ -40,7 +40,7 @@ _._._._._._._._._._._._._._._._._._._._._.*/
 namespace observer
 {
 
-template < typename T, template < typename > class TConcrete, typename ArgumentType = PreparationType >
+template < typename T, template < typename > class TConcrete, typename ArgumentType = PreparationType< T > >
 class MatlabFilter : public Filter< T, TConcrete, ArgumentType >
 {
     public:
@@ -65,6 +65,7 @@ class MatlabFilter : public Filter< T, TConcrete, ArgumentType >
         mTime.push_back( t );
         FilterT::ProcessData( data, t );
     };
+    virtual void PrepareFilter( ArgumentType &prepData ) = 0;
 
     protected:
     std::vector< double > mTime;
@@ -74,34 +75,70 @@ class MatlabFilter : public Filter< T, TConcrete, ArgumentType >
 template < typename T, template < typename > class TConcrete, typename ArgumentType >
 class MatlabFilterBase : public MatlabFilter< T, TConcrete, ArgumentType >
 {
+
     public:
+    virtual void PrepareFilter( ArgumentType &prepData ) = 0;
     MatlabFilterBase( std::string filename )
         : MatlabFilter< T, TConcrete, ArgumentType >( filename ){};
 };
 
 
 template < typename T >
-class MatlabFilterBase< T, electrical::TwoPort, PreparationType > : public MatlabFilter< T, electrical::TwoPort, PreparationType >
+class MatlabFilterBase< T, electrical::TwoPort, PreparationType< T > >
+ : public MatlabFilter< T, electrical::TwoPort, PreparationType< T > >
 {
 
-    typedef Filter< T, electrical::TwoPort, PreparationType > FilterT;
+    private:
+    electrical::TwoPort< T > *mRootPort;
+
+    typedef Filter< T, electrical::TwoPort, PreparationType< T > > FilterT;
 
     public:
     MatlabFilterBase( std::string filename )
-        : MatlabFilter< T, electrical::TwoPort, PreparationType >( filename ){};
+        : MatlabFilter< T, electrical::TwoPort, PreparationType< T > >( filename ){};
 
-    virtual ~MatlabFilterBase()
+    ~MatlabFilterBase()
     {
-        if ( mCurrent.empty() || mVoltage.empty() || mPower.empty() || mSoc.empty() || mTemperature.empty() )
+        if ( mCurrentVec.empty() || mVoltageVec.empty() || mPowerVec.empty() || mSocVec.empty() || mTemperatureVec.empty() )
             return;
+
+        size_t resizer = 0;
+        for ( size_t i = 0; i < mCurrentVec.size(); ++i )
+        {
+            if ( mCurrentVec[i].empty() )
+            {
+                resizer = i;
+                break;
+            }
+        }
+        if ( resizer )
+        {
+            mCurrentVec.resize( resizer );
+            mVoltageVec.resize( resizer );
+            mPowerVec.resize( resizer );
+            mSocVec.resize( resizer );
+            mTemperatureVec.resize( resizer );
+        }
+
+        this->mMatFile << matlab::MatioData( mCurrentVec, "diga.daten.StromVec" );
+        this->mMatFile << matlab::MatioData( mVoltageVec, "diga.daten.SpannungVec" );
+        this->mMatFile << matlab::MatioData( mPowerVec, "diga.daten.ThermischLeistungVec" );
+        this->mMatFile << matlab::MatioData( mSocVec, "diga.daten.SOCVec" );
+        this->mMatFile << matlab::MatioData( mTemperatureVec, "diga.daten.TemperaturVec" );
+
+        if ( mCurrent.empty() || mVoltage.empty() || mPower.empty() )
+            return;
+
         this->mMatFile << matlab::MatioData( mCurrent, "diga.daten.Strom" );
         this->mMatFile << matlab::MatioData( mVoltage, "diga.daten.Spannung" );
         this->mMatFile << matlab::MatioData( mPower, "diga.daten.ThermischLeistung" );
-        this->mMatFile << matlab::MatioData( mSoc, "diga.daten.SOC" );
-        this->mMatFile << matlab::MatioData( mTemperature, "diga.daten.Temperatur" );
     }
 
-    virtual void PrepareFilter( PreparationType &prePareData ) { InitializeVectors( prePareData.mNumberOfElements ); };
+    virtual void PrepareFilter( PreparationType< T > &prePareData )
+    {
+        InitializeVectors( prePareData.mNumberOfElements );
+        mRootPort = prePareData.mRootPort;
+    };
 
     virtual void ProcessData( const typename FilterT::Data_t &data, const double t )
     {
@@ -109,42 +146,52 @@ class MatlabFilterBase< T, electrical::TwoPort, PreparationType > : public Matla
         for ( size_t i = 0; i < data.size(); ++i )
         {
             electrical::TwoPort< T > *port = data[i];
-            mVoltage[i].push_back( port->GetVoltageValue() );
-            mCurrent[i].push_back( port->GetCurrentValue() );
-            mPower[i].push_back( port->GetPowerValue() );
+            mVoltageVec[i].push_back( port->GetVoltageValue() );
+            mCurrentVec[i].push_back( port->GetCurrentValue() );
+            mPowerVec[i].push_back( port->GetPowerValue() );
 
             if ( port->IsCellelement() )
             {
                 electrical::Cellelement< T > *cell = static_cast< electrical::Cellelement< T > * >( port );
-                mSoc[i].push_back( cell->GetSocStateValue() );
-                mTemperature[i].push_back( cell->GetThermalState()->GetValue() );
+                mSocVec[i].push_back( cell->GetSocStateValue() );
+                mTemperatureVec[i].push_back( cell->GetThermalState()->GetValue() );
             }
             else
             {
-                mSoc[i].push_back( -1.0 );
-                mTemperature[i].push_back( -274 );
+                mSocVec[i].push_back( -1.0 );
+                mTemperatureVec[i].push_back( -273 );
             }
         }
-        MatlabFilter< T, electrical::TwoPort, PreparationType >::ProcessData( data, t );
+
+        if ( mRootPort )
+        {
+            electrical::TwoPort< T > *port = mRootPort;
+            mVoltage.push_back( port->GetVoltageValue() );
+            mCurrent.push_back( port->GetCurrentValue() );
+            mPower.push_back( port->GetPowerValue() );
+        }
+        MatlabFilter< T, electrical::TwoPort, PreparationType< T > >::ProcessData( data, t );
     }
 
     private:
     void InitializeVectors( const size_t vectorSizes )
     {
-        mCurrent.resize( vectorSizes );
-        mVoltage.resize( vectorSizes );
-        mSoc.resize( vectorSizes );
-        mPower.resize( vectorSizes );
-        mTemperature.resize( vectorSizes );
+        mCurrentVec.resize( vectorSizes );
+        mVoltageVec.resize( vectorSizes );
+        mSocVec.resize( vectorSizes );
+        mPowerVec.resize( vectorSizes );
+        mTemperatureVec.resize( vectorSizes );
     };
 
-    std::vector< std::vector< double > > mCurrent;
-    std::vector< std::vector< double > > mVoltage;
-    std::vector< std::vector< double > > mSoc;
-    std::vector< std::vector< double > > mPower;
-    std::vector< std::vector< double > > mTemperature;
+    std::vector< std::vector< double > > mCurrentVec;
+    std::vector< std::vector< double > > mVoltageVec;
+    std::vector< std::vector< double > > mSocVec;
+    std::vector< std::vector< double > > mPowerVec;
+    std::vector< std::vector< double > > mTemperatureVec;
 
-    protected:
+    std::vector< double > mCurrent;
+    std::vector< double > mVoltage;
+    std::vector< double > mPower;
 };
 
 template < typename T >
@@ -156,9 +203,16 @@ class MatlabFilterBase< T, thermal::ThermalElement, ThermalPreperation >
 
     public:
     MatlabFilterBase( std::string filename )
-        : MatlabFilter< T, thermal::ThermalElement, ThermalPreperation >( filename ){};
+        : MatlabFilter< T, thermal::ThermalElement, ThermalPreperation >( filename )
+        , mFileNameVertices( "Patch_Vertices.csv" )
+        , mFileNameAreas( "Patch_Areas.csv" )
+        , mFileNameAreasElectrical( "Patch_AreasElectrical.csv" )
+        , mFileNameElectricThermalMapping( "Patch_ElectricThermalMapping.csv" )
+        , mFileNameVolumes( "Patch_Volumes.csv" )
+        , mFileNameVolumeNames( "Patch_VolumeNames.csv" )
+        , mFileNameVolumeMaterials( "Patch_VolumeMaterials.csv" ){};
 
-    virtual ~MatlabFilterBase()
+    ~MatlabFilterBase()
     {
         if ( mTemperature.empty() )
             return;
@@ -190,6 +244,8 @@ class MatlabFilterBase< T, thermal::ThermalElement, ThermalPreperation >
                 fileAreas << "\n";
             }
         }
+
+
         BOOST_FOREACH ( const std::vector< size_t > &volume, prepData.mVolumes )
         {
             std::vector< size_t >::const_iterator it = volume.begin();
@@ -203,10 +259,12 @@ class MatlabFilterBase< T, thermal::ThermalElement, ThermalPreperation >
                 fileVolumes << "\n";
             }
         }
+
         BOOST_FOREACH ( misc::StrCont &volumeName, prepData.mVolumeNames )
         {
             fileVolumeNames << volumeName << "\n";
         }
+
         fileVertices.close();
         fileAreas.close();
         fileVolumes.close();
@@ -229,7 +287,8 @@ class MatlabFilterBase< T, thermal::ThermalElement, ThermalPreperation >
     void InitializeVectors( const size_t vectorSizes ) { mTemperature.resize( vectorSizes ); }
 
     protected:
-    std::string mFileNameVertices, mFileNameAreas, mFileNameVolumes, mFileNameVolumeNames;
+    std::string mFileNameVertices, mFileNameAreas, mFileNameAreasElectrical, mFileNameElectricThermalMapping,
+     mFileNameVolumes, mFileNameVolumeNames, mFileNameVolumeMaterials;
 
     private:
     std::vector< std::vector< double > > mTemperature;
@@ -237,11 +296,11 @@ class MatlabFilterBase< T, thermal::ThermalElement, ThermalPreperation >
 
 
 template < typename T >
-class MatlabFilterTwoPort : public MatlabFilterBase< T, electrical::TwoPort, PreparationType >
+class MatlabFilterTwoPort : public MatlabFilterBase< T, electrical::TwoPort, PreparationType< T > >
 {
     public:
     MatlabFilterTwoPort( std::string filename )
-        : MatlabFilterBase< T, electrical::TwoPort, PreparationType >( filename ){};
+        : MatlabFilterBase< T, electrical::TwoPort, PreparationType< T > >( filename ){};
 };
 
 template < typename T >

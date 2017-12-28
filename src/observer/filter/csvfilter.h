@@ -42,7 +42,7 @@ namespace observer
 {
 
 /// CSV Filter for electrical TwoPorts. Puts Voltage, Current, Power and SOC if availabe into a file
-template < typename T, template < typename > class TConcrete, typename ArgumentType = PreparationType >
+template < typename T, template < typename > class TConcrete, typename ArgumentType = PreparationType< T > >
 class CsvFilter : public Filter< T, TConcrete, ArgumentType >
 {
     public:
@@ -84,17 +84,23 @@ class CsvFilterBase : public CsvFilter< T, TConcrete, ArgumentType >
 };
 
 template < typename T >
-class CsvFilterBase< T, electrical::TwoPort, PreparationType > : public CsvFilter< T, electrical::TwoPort, PreparationType >
+class CsvFilterBase< T, electrical::TwoPort, PreparationType< T > >
+ : public CsvFilter< T, electrical::TwoPort, PreparationType< T > >
 {
+    private:
+    electrical::TwoPort< T >* mRootPort;
+
     public:
-    typedef Filter< T, electrical::TwoPort, PreparationType > FilterT;
+    typedef Filter< T, electrical::TwoPort, PreparationType< T > > FilterT;
 
     CsvFilterBase( std::string filename, bool printHeader = true )
-        : CsvFilter< T, electrical::TwoPort, PreparationType >( filename )
+        : CsvFilter< T, electrical::TwoPort, PreparationType< T > >( filename )
     {
         if ( printHeader )
             PrintHeader();
     }
+
+    virtual void PrepareFilter( PreparationType< T >& prePareData ) { mRootPort = prePareData.mRootPort; }
 
     virtual void PrintHeader()
     {
@@ -120,9 +126,39 @@ class CsvFilterBase< T, electrical::TwoPort, PreparationType > : public CsvFilte
                 this->mFilestream << "," << cell->GetSocStateValue();
                 this->mFilestream << "," << cell->GetThermalState()->GetValue();
             }
+            else
+            {
+                this->mFilestream << "," << -1.0;
+                this->mFilestream << "," << -273;
+            }
 
             this->mFilestream << "\n";
         }
+        if ( mRootPort )
+        {
+            this->mFilestream << t << "," << -1;
+
+            electrical::TwoPort< T >* port = mRootPort;
+            this->mFilestream << "," << port->GetVoltageValue();
+            this->mFilestream << "," << port->GetCurrentValue();
+            this->mFilestream << "," << port->GetPowerValue();
+
+            if ( port->IsCellelement() )
+            {
+                electrical::Cellelement< T >* cell = static_cast< electrical::Cellelement< T >* >( port );
+
+                this->mFilestream << "," << cell->GetSocStateValue();
+                this->mFilestream << "," << cell->GetThermalState()->GetValue();
+            }
+            else
+            {
+                this->mFilestream << "," << -1.0;
+                this->mFilestream << "," << -273;
+            }
+
+            this->mFilestream << "\n";
+        }
+        FilterT::ProcessData( data, t );
     }
 };
 
@@ -218,7 +254,7 @@ class CsvFilterBase< T, thermal::ThermalElement, ThermalPreperation >
 };
 
 template < typename T >
-using CsvFilterTwoPort = CsvFilterBase< T, electrical::TwoPort, PreparationType >;
+using CsvFilterTwoPort = CsvFilterBase< T, electrical::TwoPort, PreparationType< T > >;
 
 template < typename T >
 using CsvFilterThermal = CsvFilterBase< T, thermal::ThermalElement, ThermalPreperation >;

@@ -43,7 +43,7 @@ namespace observer
 {
 /// The BenchmarkFilter allows to time the intervall between creation and destruction and also the amount of times the
 /// function ProcessData is called
-template < typename T, template < typename > class TConcrete, typename ArgumentType = PreparationType >
+template < typename T, template < typename > class TConcrete, typename ArgumentType = PreparationType< T > >
 class BenchmarkFilter : public Filter< T, TConcrete, ArgumentType >
 {
     public:
@@ -83,7 +83,7 @@ BenchmarkFilter< T, TConcrete, ArgumentType >::~BenchmarkFilter()
 }
 
 template < typename T >
-using BenchmarkFilterTwoPort = BenchmarkFilter< T, electrical::TwoPort, PreparationType >;
+using BenchmarkFilterTwoPort = BenchmarkFilter< T, electrical::TwoPort, PreparationType< T > >;
 
 template < typename T >
 using BenchmarkFilterThermal = BenchmarkFilter< T, thermal::ThermalElement, ThermalPreperation >;
