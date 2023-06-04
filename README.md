@@ -43,6 +43,8 @@ Compiling under Linux (debian)
 apt-get install libeigen3-dev libarmadillo-dev libarmadillo6 libboost1.58-all-dev libmatio4 libmatio-dev cmake ccmake build-essentials gcc-4.9
 </pre>
 
+See [updated instructions](docs/fork-building.md).
+
 + change to /usr/include/eigen/
 + apply patch (e.g. patch -p2 < patches/eigen/eigen3_SparseMatrix.patch)
 + mkdir build
