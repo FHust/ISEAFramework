@@ -27,3 +27,8 @@ patch
 + make
 + make doc
 
+## Quickstart
+
+Provided you installed ImageMagick, this is how you'd create an SVG from a working circuit and display after a coversion:
+
+`./SVGExport 2 ../scenarios/thermal_electrical/WIMA_2700F_ThEl.xml  | convert  -  circuit.png && display circuit.png`
