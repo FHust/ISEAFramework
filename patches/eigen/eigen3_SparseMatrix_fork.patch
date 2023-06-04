@@ -1,0 +1,123 @@
+--- SparseMatrix.h	2023-06-04 10:11:18.316988544 +0200
++++ eigen3_SparseMatrix_fork.patch	2023-06-04 10:19:06.700113431 +0200
+@@ -121,6 +121,26 @@
+ 
+     typedef typename Base::IndexVector IndexVector;
+     typedef typename Base::ScalarVector ScalarVector;
++        size_t n_rows, n_cols;
++
++    inline void zeros(const size_t rows, const size_t cols)
++    {
++        resize(rows, cols);
++        n_rows = rows;
++        n_cols = cols;
++        setZero();
++    }
++
++    inline double& operator()(const size_t row, const size_t col)
++    {
++        return coeffRef(row, col);
++    }
++
++    inline double operator()(const size_t row, const size_t col) const
++    {
++        return coeff(row, col);
++    }
++    
+   protected:
+     typedef SparseMatrix<Scalar,(Flags&~RowMajorBit)|(IsRowMajor?RowMajorBit:0)> TransposedSparseMatrix;
+ 
+@@ -598,7 +618,11 @@
+ 
+       // Re-allocate outer index structure if necessary
+       if (outerChange == 0)
+-        return;
++            {
++          n_cols = this->cols();
++          n_rows = this->rows();
++          return;
++      }
+           
+       StorageIndex *newOuterIndex = static_cast<StorageIndex*>(std::realloc(m_outerIndex, (m_outerSize + outerChange + 1) * sizeof(StorageIndex)));
+       if (!newOuterIndex) internal::throw_std_bad_alloc();
+@@ -610,6 +634,8 @@
+           m_outerIndex[i] = last; 
+       }
+       m_outerSize += outerChange;
++           n_cols = this->cols();
++      n_rows = this->rows();
+     }
+     
+     /** Resizes the matrix to a \a rows x \a cols matrix and initializes it to zero.
+@@ -638,6 +664,8 @@
+         m_innerNonZeros = 0;
+       }
+       memset(m_outerIndex, 0, (m_outerSize+1)*sizeof(StorageIndex));
++            n_rows = rows;
++      n_cols = cols;
+     }
+ 
+     /** \internal
+@@ -662,6 +690,8 @@
+     {
+       check_template_parameters();
+       resize(0, 0);
++      n_cols = 0;
++      n_rows = 0;
+     }
+ 
+     /** Constructs a \a rows \c x \a cols empty matrix */
+@@ -670,6 +700,8 @@
+     {
+       check_template_parameters();
+       resize(rows, cols);
++           n_cols = cols;
++      n_rows = rows;
+     }
+ 
+     /** Constructs a sparse matrix from the sparse expression \a other */
+@@ -699,6 +731,8 @@
+     {
+       check_template_parameters();
+       Base::operator=(other);
++            n_rows = rows();
++      n_cols = cols();
+     }
+ 
+     /** Copy constructor (it performs a deep copy) */
+@@ -707,6 +741,8 @@
+     {
+       check_template_parameters();
+       *this = other.derived();
++          n_rows = rows();
++      n_cols = cols();
+     }
+ 
+     /** \brief Copy constructor with in-place evaluation */
+@@ -717,6 +753,8 @@
+       check_template_parameters();
+       initAssignment(other);
+       other.evalTo(*this);
++      n_cols = cols();
++      n_rows = rows();
+     }
+     
+     /** \brief Copy constructor with in-place evaluation */
+@@ -738,6 +776,8 @@
+       std::swap(m_outerSize, other.m_outerSize);
+       std::swap(m_innerNonZeros, other.m_innerNonZeros);
+       m_data.swap(other.m_data);
++      std::swap(n_rows, other.n_rows);
++      std::swap(n_cols, other.n_cols);
+     }
+ 
+     /** Sets *this to the identity matrix.
+@@ -774,6 +814,8 @@
+           Base::operator=(other);
+         }
+       }
++      n_rows = this->rows();
++      n_cols = this->cols();
+       return *this;
+     }
+ 
