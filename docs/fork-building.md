@@ -5,7 +5,7 @@
 patch
 
 + cd /usr/include/eigen3/Eigen/src/SparseCore
-+ apply patch (e.g. patch -p2 < patches/eigen/eigen3_SparseMatrix_fork.patch)
++ apply patch (e.g. patch SparseMatrix.h patches/eigen/eigen3_SparseMatrix_fork.patch)
 + mkdir -p build && cd build
 + cmake ../ \
 -G "CodeBlocks - Unix Makefiles" \
